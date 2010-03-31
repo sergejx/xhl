@@ -15,8 +15,7 @@ public class Symbol {
     public boolean equals(Object obj) {
         if (obj instanceof Symbol) {
             Symbol sym = (Symbol) obj;
-            if (sym.name == this.name)
-                return true;
+            return sym.name.equals(this.name);
         }
         return false;
     }
