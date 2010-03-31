@@ -3,6 +3,11 @@ package xhl.core;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * Lexical analyzer for XHL
+ *
+ * @author Sergej Chodarev
+ */
 public class Lexer {
     private static final String PUNCTUATION = "+-*/_=<>.:?!";
 
@@ -10,24 +15,31 @@ public class Lexer {
         PAR_OPEN, PAR_CLOSE, SYMBOL, STRING, NUMBER;
     }
 
+    /**
+     * Token from lexical analysis
+     */
     public class Token {
+        public final TokenType type;
+        public final double doubleValue;
+        public final String stringValue;
+
         public Token(TokenType t) {
             type = t;
+            doubleValue = 0;
+            stringValue = null;
         }
 
         public Token(TokenType t, double n) {
             type = t;
             doubleValue = n;
+            stringValue = null;
         }
 
         public Token(TokenType t, String s) {
             type = t;
             stringValue = s;
+            doubleValue = 0;
         }
-
-        public TokenType type;
-        public double doubleValue;
-        public String stringValue;
     }
 
     private final Reader input;
@@ -39,28 +51,34 @@ public class Lexer {
     }
 
     public Token nextToken() throws IOException {
-        switch (ch) {
-        case ' ':
-        case '\t':
-        case '\n':
-        case '\r':
-            ch = input.read();
-            return nextToken();
-        case '(':
-            ch = input.read();
-            return new Token(TokenType.PAR_OPEN);
-        case ')':
-            ch = input.read();
-            return new Token(TokenType.PAR_CLOSE);
-        case '"':
-            return readString();
-        default:
-            if (Character.isDigit(ch))
-                return readDouble();
-            else if (Character.isLetter(ch) || PUNCTUATION.indexOf(ch) != -1)
-                return readSymbol();
-            else
-                return null;
+        while (true) {
+            switch (ch) {
+            case ' ':
+            case '\t':
+            case '\n':
+            case '\r':
+                ch = input.read();
+                break;
+            case ';':
+                do ch = input.read();
+                while (ch != '\n');
+                break;
+            case '(':
+                ch = input.read();
+                return new Token(TokenType.PAR_OPEN);
+            case ')':
+                ch = input.read();
+                return new Token(TokenType.PAR_CLOSE);
+            case '"':
+                return readString();
+            default:
+                if (Character.isDigit(ch))
+                    return readDouble();
+                else if (Character.isLetter(ch) || PUNCTUATION.indexOf(ch) != -1)
+                    return readSymbol();
+                else
+                    return null;
+            }
         }
     }
 
