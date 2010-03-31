@@ -1,0 +1,12 @@
+(define black (rgb 0 0 0))
+(define gray (rgb 124 124 124))
+(define a 100)
+(define pos (+ 50 (/ a 2)))
+(define d 15)
+(define square (rectangle a a))
+
+(setcolor gray)
+(draw (- pos d) (- pos d) square)
+(draw (+ pos d) (+ pos d) square)
+(setcolor black)
+(draw 50 50 (ellipse (* a 2) (* a 2)))
