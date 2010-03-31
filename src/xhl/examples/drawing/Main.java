@@ -3,10 +3,10 @@ package xhl.examples.drawing;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.JFrame;
 
+import xhl.core.CodeList;
 import xhl.core.Evaluator;
 import xhl.core.Reader;
 import xhl.core.exceptions.EvaluationException;
@@ -33,7 +33,7 @@ public class Main extends JFrame {
         evaluator.loadModule(module);
 
         Reader reader = new Reader();
-        List<Object> program = reader.read(new FileReader(filename));
+        CodeList program = reader.read(new FileReader(filename));
         evaluator.evalAll(program);
 
         setVisible(true);

@@ -1,8 +1,6 @@
 package xhl.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import xhl.core.Lexer.Token;
 import xhl.core.Lexer.TokenType;
@@ -11,22 +9,22 @@ public class Reader {
     private Lexer lexer;
     private Token token;
 
-    public List<Object> read(java.io.Reader input) throws IOException {
+    public CodeList read(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
         return program();
     }
 
-    private List<Object> program() throws IOException {
-        List<Object> lists = new ArrayList<Object>();
+    private CodeList program() throws IOException {
+        CodeList lists = new CodeList();
         while (token != null && token.type == TokenType.PAR_OPEN) {
             lists.add(list());
         }
         return lists;
     }
 
-    private List<Object> list() throws IOException {
-        List<Object> list = new ArrayList<Object>();
+    private CodeList list() throws IOException {
+        CodeList list = new CodeList();
         token = lexer.nextToken(); // (
         while (token.type != TokenType.PAR_CLOSE) {
             list.add(sexp());

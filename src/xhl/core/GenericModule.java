@@ -63,7 +63,7 @@ public class GenericModule implements Module {
         }
 
         @Override
-        public Object exec(List<?> args) throws EvaluationException {
+        public Object exec(CodeList args) throws EvaluationException {
             List<Object> evArgs = new ArrayList<Object>(args.size());
             for (Object arg : args) {
                 if (evaluateArgs)

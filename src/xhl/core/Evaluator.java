@@ -1,11 +1,6 @@
 package xhl.core;
 
-import java.util.List;
-
-import xhl.core.exceptions.EvaluationException;
-import xhl.core.exceptions.FunctionUndefinedException;
-import xhl.core.exceptions.HeadIsNotSymbolException;
-import xhl.core.exceptions.SymbolNotDefinedException;
+import xhl.core.exceptions.*;
 
 public class Evaluator {
     private final SymbolTable symbolTable = new SymbolTable();
@@ -21,21 +16,21 @@ public class Evaluator {
                 return symbolTable.get(sym);
             else
                 throw new SymbolNotDefinedException(sym);
-        } else if (obj instanceof List<?>) {
-            List<?> list = (List<?>) obj;
-            Object head = list.get(0);
+        } else if (obj instanceof CodeList) {
+            CodeList list = (CodeList) obj;
+            Object head = list.head();
             if (!(head instanceof Symbol))
                 throw new HeadIsNotSymbolException();
             Object func = eval(head);
             if (!(func instanceof Executable))
                 throw new FunctionUndefinedException((Symbol) head);
-            return ((Executable) func).exec(list.subList(1, list.size()));
+            return ((Executable) func).exec(list.tail());
         } else {
             return obj;
         }
     }
 
-    public Object evalAll(List<Object> exprs) throws EvaluationException {
+    public Object evalAll(CodeList exprs) throws EvaluationException {
         Object result = null;
         for (Object expr : exprs) {
             result = eval(expr);
