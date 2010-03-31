@@ -4,23 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable {
-    private final Map<String, Object> table = new HashMap<String, Object>();
+    private final Map<Symbol, Object> table = new HashMap<Symbol, Object>();
 
     public boolean containsKey(Symbol sym) {
-        return table.containsKey(sym.getName());
+        return table.containsKey(sym);
     }
 
     public Object get(Symbol sym) {
-        return table.get(sym.getName());
+        return table.get(sym);
     }
 
     public Object put(Symbol sym, Object value) {
-        return table.put(sym.getName(), value);
+        return table.put(sym, value);
     }
 
     public void putAll(SymbolTable t) {
-        for (String key : t.table.keySet()) {
-            table.put(key, t.table.get(key));
+        for (Symbol key : t.table.keySet()) {
+            put(key, t.get(key));
         }
     }
 
