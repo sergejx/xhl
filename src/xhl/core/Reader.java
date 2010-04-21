@@ -40,11 +40,11 @@ public class Reader {
             token = lexer.nextToken();
             break;
         case STRING:
-            sexp = token.stringValue;
+            sexp = new LString(token.stringValue, token.position);
             token = lexer.nextToken();
             break;
         case NUMBER:
-            sexp = token.doubleValue;
+            sexp = new LNumber(token.doubleValue, token.position);
             token = lexer.nextToken();
             break;
         case PAR_OPEN:
