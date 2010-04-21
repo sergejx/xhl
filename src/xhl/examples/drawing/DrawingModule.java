@@ -5,7 +5,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
-import xhl.core.Evaluator;
 import xhl.core.GenericModule;
 
 public class DrawingModule extends GenericModule {
@@ -13,8 +12,7 @@ public class DrawingModule extends GenericModule {
     private final Canvas canvas;
     private Color color = Color.BLACK;
 
-    public DrawingModule(Evaluator evaluator, Canvas canvas) {
-        super(evaluator);
+    public DrawingModule(Canvas canvas) {
         this.canvas = canvas;
     }
 

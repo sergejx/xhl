@@ -11,6 +11,7 @@ public class Evaluator {
     private final SymbolTable symbolTable = new SymbolTable();
 
     public void loadModule(Module module) {
+        module.setEvaluator(this);
         symbolTable.putAll(module.getSymbols());
     }
 

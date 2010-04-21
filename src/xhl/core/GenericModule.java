@@ -18,11 +18,7 @@ import xhl.core.exceptions.EvaluationException;
  */
 public abstract class GenericModule implements Module {
 
-    protected final Evaluator evaluator;
-
-    public GenericModule(Evaluator evaluator) {
-        this.evaluator = evaluator;
-    }
+    protected Evaluator evaluator;
 
     @Override
     public SymbolTable getSymbols() {
@@ -32,6 +28,11 @@ public abstract class GenericModule implements Module {
             tryAddFunction(table, method);
         }
         return table;
+    }
+
+    @Override
+    public void setEvaluator(Evaluator evaluator) {
+        this.evaluator = evaluator;
     }
 
     /**

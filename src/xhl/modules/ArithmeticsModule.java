@@ -1,13 +1,8 @@
 package xhl.modules;
 
-import xhl.core.Evaluator;
 import xhl.core.GenericModule;
 
 public class ArithmeticsModule extends GenericModule {
-
-    public ArithmeticsModule(Evaluator ev) {
-        super(ev);
-    }
 
     @Function(name = "+")
     public Object plus(Double... args) {
