@@ -6,6 +6,7 @@ public class FunctionUndefinedException extends EvaluationException {
     private final Symbol symbol;
 
     public FunctionUndefinedException(Symbol symbol) {
+        super(symbol.getPosition());
         this.symbol = symbol;
     }
 
@@ -15,7 +16,6 @@ public class FunctionUndefinedException extends EvaluationException {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString() + symbol;
+        return String.format("Symbol '%s' is not callable.", symbol);
     }
 }

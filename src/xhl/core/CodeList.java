@@ -9,10 +9,11 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public class CodeList implements Iterable<Object> {
+public class CodeList extends CodeElement implements Iterable<Object> {
     private final List<Object> list = new LinkedList<Object>();
 
-    public CodeList() {
+    public CodeList(CodePosition position) {
+        super(position);
     }
 
     private CodeList(List<Object> l) {

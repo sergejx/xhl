@@ -2,8 +2,7 @@ package xhl.core;
 
 import java.io.IOException;
 
-import xhl.core.Lexer.Token;
-import xhl.core.Lexer.TokenType;
+import xhl.core.Token.TokenType;
 
 public class Reader {
     private Lexer lexer;
@@ -16,7 +15,7 @@ public class Reader {
     }
 
     private CodeList program() throws IOException {
-        CodeList lists = new CodeList();
+        CodeList lists = new CodeList(token.position);
         while (token != null && token.type == TokenType.PAR_OPEN) {
             lists.add(list());
         }
@@ -24,7 +23,7 @@ public class Reader {
     }
 
     private CodeList list() throws IOException {
-        CodeList list = new CodeList();
+        CodeList list = new CodeList(token.position);
         token = lexer.nextToken(); // (
         while (token.type != TokenType.PAR_CLOSE) {
             list.add(sexp());
@@ -37,7 +36,7 @@ public class Reader {
         Object sexp = null;
         switch (token.type) {
         case SYMBOL:
-            sexp = new Symbol(token.stringValue);
+            sexp = new Symbol(token.stringValue, token.position);
             token = lexer.nextToken();
             break;
         case STRING:

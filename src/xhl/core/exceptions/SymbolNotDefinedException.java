@@ -7,16 +7,16 @@ public class SymbolNotDefinedException extends EvaluationException {
     private final Symbol symbol;
 
     public SymbolNotDefinedException(Symbol symbol) {
+        super(symbol.getPosition());
         this.symbol = symbol;
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString() + symbol;
     }
 
     public Symbol getSymbol() {
         return symbol;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Symbol '%s' was not defined.", symbol);
     }
 }

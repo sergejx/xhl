@@ -3,6 +3,9 @@ package xhl.core;
 import java.io.IOException;
 import java.io.Reader;
 
+import xhl.core.CodeElement.CodePosition;
+import xhl.core.Token.TokenType;
+
 /**
  * Lexical analyzer for XHL
  *
@@ -11,39 +14,10 @@ import java.io.Reader;
 public class Lexer {
     private static final String PUNCTUATION = "+-*/_=<>.:?!";
 
-    public enum TokenType {
-        PAR_OPEN, PAR_CLOSE, SYMBOL, STRING, NUMBER;
-    }
-
-    /**
-     * Token from lexical analysis
-     */
-    public class Token {
-        public final TokenType type;
-        public final double doubleValue;
-        public final String stringValue;
-
-        public Token(TokenType t) {
-            type = t;
-            doubleValue = 0;
-            stringValue = null;
-        }
-
-        public Token(TokenType t, double n) {
-            type = t;
-            doubleValue = n;
-            stringValue = null;
-        }
-
-        public Token(TokenType t, String s) {
-            type = t;
-            stringValue = s;
-            doubleValue = 0;
-        }
-    }
-
     private final Reader input;
     private int ch;
+    private int line = 1;
+    private int column = 0;
 
     public Lexer(Reader input) throws IOException {
         this.input = input;
@@ -57,24 +31,26 @@ public class Lexer {
             case '\t':
             case '\n':
             case '\r':
-                ch = input.read();
+                ch = nextChar();
                 break;
             case ';':
-                do ch = input.read();
+                do
+                    ch = nextChar();
                 while (ch != '\n');
                 break;
             case '(':
-                ch = input.read();
-                return new Token(TokenType.PAR_OPEN);
+                ch = nextChar();
+                return new Token(TokenType.PAR_OPEN, getPosition());
             case ')':
-                ch = input.read();
-                return new Token(TokenType.PAR_CLOSE);
+                ch = nextChar();
+                return new Token(TokenType.PAR_CLOSE, getPosition());
             case '"':
                 return readString();
             default:
                 if (Character.isDigit(ch))
                     return readDouble();
-                else if (Character.isLetter(ch) || PUNCTUATION.indexOf(ch) != -1)
+                else if (Character.isLetter(ch)
+                        || PUNCTUATION.indexOf(ch) != -1)
                     return readSymbol();
                 else
                     return null;
@@ -82,40 +58,56 @@ public class Lexer {
         }
     }
 
+    private int nextChar() throws IOException {
+        int ch = input.read();
+        column++;
+        if (ch == '\n') {
+            line++;
+            column = 0; // FIXME
+        }
+        return ch;
+    }
+
     private Token readString() throws IOException {
         StringBuilder sb = new StringBuilder();
-        ch = input.read(); // "
+        ch = nextChar(); // "
         while (ch != '"') {
             sb.append((char) ch);
-            ch = input.read();
+            ch = nextChar();
         }
-        ch = input.read(); // "
-        return new Token(TokenType.STRING, sb.toString());
+        ch = nextChar(); // "
+        return new Token(TokenType.STRING, sb.toString(), getPosition());
     }
 
     private Token readDouble() throws IOException {
         StringBuilder sb = new StringBuilder();
         while (Character.isDigit(ch)) {
             sb.append((char) ch);
-            ch = input.read();
+            ch = nextChar();
         }
         if (ch == '.') {
             sb.append((char) ch);
-            ch = input.read();
+            ch = nextChar();
             while (Character.isDigit(ch)) {
                 sb.append((char) ch);
-                ch = input.read();
+                ch = nextChar();
             }
         }
-        return new Token(TokenType.NUMBER, Double.valueOf(sb.toString()));
+        return new Token(TokenType.NUMBER, Double.valueOf(sb.toString()),
+                getPosition());
     }
 
     private Token readSymbol() throws IOException {
+        CodePosition position = getPosition();
         StringBuilder sb = new StringBuilder();
         while (Character.isLetterOrDigit(ch) || PUNCTUATION.indexOf(ch) != -1) {
             sb.append((char) ch);
-            ch = input.read();
+            ch = nextChar();
         }
-        return new Token(TokenType.SYMBOL, sb.toString());
+        return new Token(TokenType.SYMBOL, sb.toString(), position);
+    }
+
+    private CodePosition getPosition() {
+        return new CodePosition("input", line, column); // FIXME filename
     }
 }

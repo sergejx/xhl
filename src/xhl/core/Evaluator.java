@@ -39,7 +39,7 @@ public class Evaluator {
     private Object evalList(CodeList list) throws EvaluationException {
         Object head = list.head();
         if (!(head instanceof Symbol))
-            throw new HeadIsNotSymbolException();
+            throw new HeadIsNotSymbolException(list);
         Object func = eval(head);
         if (!(func instanceof Executable))
             throw new FunctionUndefinedException((Symbol) head);
