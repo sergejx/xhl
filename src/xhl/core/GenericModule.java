@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import xhl.core.elements.CodeList;
+import xhl.core.elements.DataList;
 import xhl.core.elements.Symbol;
 import xhl.core.exceptions.EvaluationException;
 
@@ -81,7 +81,7 @@ public abstract class GenericModule implements Module {
         }
 
         @Override
-        public Object exec(CodeList args) throws EvaluationException {
+        public Object exec(DataList args) throws EvaluationException {
             // Prepare arguments
             List<Object> evArgs = new ArrayList<Object>(args.size());
             for (Object arg : args) {

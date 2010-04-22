@@ -44,6 +44,12 @@ public class Lexer {
             case ')':
                 ch = nextChar();
                 return new Token(TokenType.PAR_CLOSE, getPosition());
+            case '[':
+                ch = nextChar();
+                return new Token(TokenType.BRACKET_OPEN, getPosition());
+            case ']':
+                ch = nextChar();
+                return new Token(TokenType.BRACKET_CLOSE, getPosition());
             case '"':
                 return readString();
             default:

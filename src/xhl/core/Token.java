@@ -8,7 +8,9 @@ import xhl.core.elements.CodeElement.CodePosition;
 public class Token {
 
     public static enum TokenType {
-        PAR_OPEN, PAR_CLOSE, SYMBOL, STRING, NUMBER;
+        PAR_OPEN, PAR_CLOSE,
+        BRACKET_OPEN, BRACKET_CLOSE,
+        SYMBOL, STRING, NUMBER;
     }
 
     public final TokenType type;
