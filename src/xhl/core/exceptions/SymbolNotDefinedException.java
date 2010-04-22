@@ -1,6 +1,6 @@
 package xhl.core.exceptions;
 
-import xhl.core.Symbol;
+import xhl.core.elements.Symbol;
 
 public class SymbolNotDefinedException extends EvaluationException {
 

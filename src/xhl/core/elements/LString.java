@@ -1,4 +1,4 @@
-package xhl.core;
+package xhl.core.elements;
 
 public class LString extends CodeElement {
     private final String value;

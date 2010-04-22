@@ -3,6 +3,7 @@ package xhl.core;
 import java.io.IOException;
 
 import xhl.core.Token.TokenType;
+import xhl.core.elements.*;
 
 public class Reader {
     private Lexer lexer;

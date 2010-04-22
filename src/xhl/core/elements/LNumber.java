@@ -1,4 +1,4 @@
-package xhl.core;
+package xhl.core.elements;
 
 public class LNumber extends CodeElement {
 

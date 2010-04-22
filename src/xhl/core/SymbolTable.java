@@ -3,6 +3,8 @@ package xhl.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import xhl.core.elements.Symbol;
+
 public class SymbolTable {
     private final Map<Symbol, Object> table = new HashMap<Symbol, Object>();
 

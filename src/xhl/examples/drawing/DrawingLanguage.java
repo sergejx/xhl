@@ -4,9 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import xhl.core.CodeList;
 import xhl.core.Evaluator;
 import xhl.core.Reader;
+import xhl.core.elements.CodeList;
 import xhl.core.exceptions.EvaluationException;
 import xhl.modules.ArithmeticsModule;
 import xhl.modules.DefineModule;

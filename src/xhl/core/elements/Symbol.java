@@ -1,4 +1,4 @@
-package xhl.core;
+package xhl.core.elements;
 
 public class Symbol extends CodeElement {
     private final String name;

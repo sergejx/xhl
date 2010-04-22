@@ -1,6 +1,6 @@
 package xhl.core.exceptions;
 
-import xhl.core.CodeList;
+import xhl.core.elements.CodeList;
 
 public class HeadIsNotSymbolException extends EvaluationException {
     private final CodeList list;

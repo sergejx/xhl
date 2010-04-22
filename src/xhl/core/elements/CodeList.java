@@ -1,4 +1,4 @@
-package xhl.core;
+package xhl.core.elements;
 
 import java.util.Iterator;
 import java.util.LinkedList;

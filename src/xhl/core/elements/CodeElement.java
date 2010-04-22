@@ -1,4 +1,4 @@
-package xhl.core;
+package xhl.core.elements;
 
 /**
  * Element of XHL source code

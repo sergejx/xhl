@@ -1,6 +1,6 @@
 package xhl.core;
 
-import xhl.core.CodeElement.CodePosition;
+import xhl.core.elements.CodeElement.CodePosition;
 
 /**
  * Token from lexical analysis

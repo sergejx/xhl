@@ -1,7 +1,7 @@
 package xhl.modules;
 
 import xhl.core.GenericModule;
-import xhl.core.Symbol;
+import xhl.core.elements.Symbol;
 import xhl.core.exceptions.EvaluationException;
 
 public class DefineModule extends GenericModule {

@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import xhl.core.elements.CodeList;
+import xhl.core.elements.Symbol;
 import xhl.core.exceptions.EvaluationException;
 
 /**

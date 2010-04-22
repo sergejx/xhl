@@ -3,8 +3,8 @@ package xhl.core;
 import java.io.IOException;
 import java.io.Reader;
 
-import xhl.core.CodeElement.CodePosition;
 import xhl.core.Token.TokenType;
+import xhl.core.elements.CodeElement.CodePosition;
 
 /**
  * Lexical analyzer for XHL

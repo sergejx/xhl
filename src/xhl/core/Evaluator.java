@@ -1,5 +1,6 @@
 package xhl.core;
 
+import xhl.core.elements.*;
 import xhl.core.exceptions.*;
 
 /**
