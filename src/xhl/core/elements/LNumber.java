@@ -1,6 +1,6 @@
 package xhl.core.elements;
 
-public class LNumber extends CodeElement {
+public class LNumber extends CodeElement implements ValueElement {
 
     private final double value;
 
@@ -9,7 +9,7 @@ public class LNumber extends CodeElement {
         this.value = value;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 }

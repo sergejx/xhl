@@ -1,6 +1,8 @@
 package xhl.core;
 
-import xhl.core.elements.*;
+import xhl.core.elements.CodeList;
+import xhl.core.elements.Symbol;
+import xhl.core.elements.ValueElement;
 import xhl.core.exceptions.*;
 
 /**
@@ -33,10 +35,8 @@ public class Evaluator {
                 throw new SymbolNotDefinedException(sym);
         } else if (obj instanceof CodeList) {
             return evalList((CodeList) obj);
-        } if (obj instanceof LNumber) {
-            return ((LNumber) obj).getValue();
-        } if (obj instanceof LString) {
-            return ((LNumber) obj).getValue();
+        } if (obj instanceof ValueElement) {
+            return ((ValueElement) obj).getValue();
         } else {
             return obj;
         }
