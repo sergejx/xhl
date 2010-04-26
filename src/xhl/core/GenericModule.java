@@ -21,20 +21,36 @@ import xhl.core.exceptions.EvaluationException;
 public abstract class GenericModule implements Module {
 
     protected Evaluator evaluator;
+    private final SymbolTable table = new SymbolTable();
+
+    public GenericModule() {
+        findFunctions();
+    }
 
     @Override
     public SymbolTable getSymbols() {
-        SymbolTable table = new SymbolTable();
-        Method[] methods = this.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            tryAddFunction(table, method);
-        }
         return table;
     }
 
     @Override
     public void setEvaluator(Evaluator evaluator) {
         this.evaluator = evaluator;
+    }
+
+    /** Export symbol from module
+     *
+     * @param symbol
+     * @param value
+     */
+    protected void addSymbol(Symbol symbol, Object value) {
+        table.put(symbol, value);
+    }
+
+    private void findFunctions() {
+        Method[] methods = this.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            tryAddFunction(table, method);
+        }
     }
 
     /**
@@ -64,7 +80,7 @@ public abstract class GenericModule implements Module {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Function {
+    protected @interface Function {
         /** Function name. If not specified, method name is uses. */
         public String name() default "";
 
