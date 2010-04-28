@@ -26,7 +26,7 @@ public class ConsoleLanguageProcessor extends LanguageProcessor {
         try {
             execute(program);
         } catch (EvaluationException e) {
-            System.err.printf("%s: %s", e.getPosition(), e);
+            System.err.printf("%s: %s\n", e.getPosition(), e);
         }
     }
 }
