@@ -38,7 +38,7 @@ public class ComputerModule extends GenericModule {
         for (Processor.Type type : Processor.Type.values()) {
             addSymbol(new Symbol(type.name()), type);
         }
-        for (Disk.Interface iface: Disk.Interface.values()) {
+        for (Disk.Interface iface : Disk.Interface.values()) {
             addSymbol(new Symbol(iface.name()), iface);
         }
     }
@@ -74,7 +74,7 @@ public class ComputerModule extends GenericModule {
             } else if (prop instanceof Speed) {
                 speed = ((Speed) prop).speed;
             } else if (prop instanceof Cores) {
-                speed = ((Cores) prop).cores;
+                cores = ((Cores) prop).cores;
             }
         }
         return new Processor(type, speed, cores);
@@ -102,7 +102,7 @@ public class ComputerModule extends GenericModule {
         return type;
     }
 
-    @Function(name="interface")
+    @Function(name = "interface")
     public Disk.Interface interface_(Disk.Interface iface) {
         return iface;
     }
@@ -121,5 +121,4 @@ public class ComputerModule extends GenericModule {
     public Cores cores(double cores) {
         return new Cores((int) cores);
     }
-
 }
