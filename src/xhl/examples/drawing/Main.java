@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import xhl.core.ConsoleLanguageProcessor;
+
 public class Main extends JFrame {
 
     private final DrawingLanguage language;
@@ -18,7 +20,8 @@ public class Main extends JFrame {
     }
 
     private void run(String filename) throws IOException, FileNotFoundException {
-        language.process(filename);
+        ConsoleLanguageProcessor proc = new ConsoleLanguageProcessor(language);
+        proc.process(filename);
         setVisible(true);
     }
 
