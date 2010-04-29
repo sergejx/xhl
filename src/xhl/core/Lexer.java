@@ -110,7 +110,13 @@ public class Lexer {
             sb.append((char) ch);
             ch = nextChar();
         }
-        return new Token(TokenType.SYMBOL, sb.toString(), position);
+        String symbol = sb.toString();
+        if (symbol.equals("true"))
+            return new Token(TokenType.TRUE, position);
+        if (symbol.equals("false"))
+            return new Token(TokenType.FALSE, position);
+        else
+            return new Token(TokenType.SYMBOL, symbol, position);
     }
 
     private CodePosition getPosition() {

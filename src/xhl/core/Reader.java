@@ -13,7 +13,7 @@ import xhl.core.elements.*;
  *   program  ::= { codelist }
  *   codelist ::= '(' { sexp } ')'
  *   datalist ::= '[' { sexp } ']'
- *   sexp ::= symbol | string | number | codelist | datalist
+ *   sexp ::= symbol | string | number | true | false | codelist | datalist
  * </pre>
  *
  * @author Sergej Chodarev
@@ -69,6 +69,14 @@ public class Reader {
             break;
         case NUMBER:
             sexp = new LNumber(token.doubleValue, token.position);
+            token = lexer.nextToken();
+            break;
+        case TRUE:
+            sexp = new LBoolean(true, token.position);
+            token = lexer.nextToken();
+            break;
+        case FALSE:
+            sexp = new LBoolean(false, token.position);
             token = lexer.nextToken();
             break;
         case PAR_OPEN:

@@ -10,7 +10,8 @@ public class Token {
     public static enum TokenType {
         PAR_OPEN, PAR_CLOSE,
         BRACKET_OPEN, BRACKET_CLOSE,
-        SYMBOL, STRING, NUMBER;
+        SYMBOL, STRING, NUMBER,
+        TRUE, FALSE,
     }
 
     public final TokenType type;
