@@ -35,7 +35,7 @@ public class Evaluator {
                 throw new SymbolNotDefinedException(sym);
         } else if (obj instanceof CodeList) {
             return evalList((CodeList) obj);
-        } if (obj instanceof ValueElement) {
+        } else if (obj instanceof ValueElement) {
             return ((ValueElement) obj).getValue();
         } else {
             return obj;
@@ -49,7 +49,16 @@ public class Evaluator {
         Object func = eval(head);
         if (!(func instanceof Executable))
             throw new FunctionUndefinedException((Symbol) head);
-        return ((Executable) func).exec(list.tail());
+        try {
+            return ((Executable) func).exec(list.tail());
+        } catch (EvaluationException e) {
+            // Add error position if not present
+            if (e.getPosition() == null)
+                throw new EvaluationException(e, list.getPosition());
+            else
+                throw e;
+        }
+
     }
 
     /**
@@ -86,5 +95,15 @@ public class Evaluator {
      */
     public Object getSymbol(Symbol symbol) {
         return symbolTable.get(symbol);
+    }
+
+    /**
+     * Does symbol table contain specified symbol?
+     *
+     * @param symbol
+     * @return <code>true</code> if symbol is defined in symbol table
+     */
+    public boolean hasSymbol(Symbol symbol) {
+        return symbolTable.containsKey(symbol);
     }
 }

@@ -2,6 +2,7 @@ package xhl.core;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,8 @@ public abstract class GenericModule implements Module {
         this.evaluator = evaluator;
     }
 
-    /** Export symbol from module
+    /**
+     * Export symbol from module
      *
      * @param symbol
      * @param value
@@ -111,6 +113,8 @@ public abstract class GenericModule implements Module {
 
             try {
                 return method.invoke(GenericModule.this, evArgs.toArray());
+            } catch (InvocationTargetException e) {
+                throw new EvaluationException(e.getCause());
             } catch (Exception e) {
                 throw new EvaluationException();
             }
