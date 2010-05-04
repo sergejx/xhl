@@ -3,9 +3,7 @@ package xhl.examples.statemachine;
 import java.util.*;
 
 import xhl.core.GenericModule;
-import xhl.core.elements.CodeList;
-import xhl.core.elements.LString;
-import xhl.core.elements.Symbol;
+import xhl.core.elements.*;
 
 /**
  * XHL module for configuring state machine
@@ -22,7 +20,7 @@ public class StateMachineModule extends GenericModule {
     // DSL functions =========================================================
 
     @Function(evaluateArgs = false)
-    public void events(Object... args) throws Exception {
+    public void events(CodeElement... args) throws Exception {
         if (args.length % 2 != 0)
             throw new Exception();
         for (int i = 0; i < args.length; i += 2) { // FIXME: catch
@@ -42,7 +40,7 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function(evaluateArgs = false)
-    public void commands(Object... args) throws Exception {
+    public void commands(CodeElement... args) throws Exception {
         if (args.length % 2 != 0)
             throw new Exception();
         for (int i = 0; i < args.length; i += 2) { // FIXME: catch
@@ -55,7 +53,7 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function(evaluateArgs = false)
-    public void state(Object... args) throws Exception {
+    public void state(CodeElement... args) throws Exception {
         try {
             Symbol stateSym = (Symbol) args[0];
             Command[] actions = {};

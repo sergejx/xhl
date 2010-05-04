@@ -1,15 +1,16 @@
 package xhl.modules;
 
 import xhl.core.GenericModule;
+import xhl.core.elements.CodeElement;
 import xhl.core.elements.Symbol;
 import xhl.core.exceptions.EvaluationException;
 
 public class DefineModule extends GenericModule {
 
-    @Function(evaluateArgs=false)
-    public void define(Symbol symbol, Object value) throws EvaluationException {
-        value = evaluator.eval(value);
+    @Function(evaluateArgs = false)
+    public void define(Symbol symbol, CodeElement valueExpr)
+            throws EvaluationException {
+        Object value = evaluator.eval(valueExpr);
         evaluator.putSymbol(symbol, value);
-        System.out.println(symbol + ": " + value);
     }
 }
