@@ -1,3 +1,7 @@
+; Miss Grant's Controller
+;
+; Based on example by Martin Fowler http://martinfowler.com/dslwip/Intro.html
+
 (events
   doorClosed    "D1CL"
   drawOpened    "D2OP"
