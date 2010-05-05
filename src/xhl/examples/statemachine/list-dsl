@@ -1,42 +1,38 @@
 (events
-  doorClosed  "D1CL"
-  drawOpened  "D2OP"
-  lightOn     "L1ON"
-  doorOpened  "D1OP"
-  panelClosed "PNCL"
-)
+  doorClosed    "D1CL"
+  drawOpened    "D2OP"
+  lightOn       "L1ON"
+  doorOpened    "D1OP"
+  panelClosed   "PNCL")
 
-(resetEvents
-  doorOpened
-)
+(resetEvents doorOpened)
 
 (commands
-  unlockPanel "PNUL"
-  lockPanel   "PNLK"
-  lockDoor    "D1LK"
-  unlockDoor  "D1UL"
-)
+  unlockPanel   "PNUL"
+  lockPanel     "PNLK"
+  lockDoor      "D1LK"
+  unlockDoor    "D1UL")
 
 (state idle
-  actions (unlockDoor lockPanel)
-  transitions (doorClosed => active)
-)
+  (actions unlockDoor lockPanel)
+  (transitions
+    doorClosed active))
 
 (state active
-  transitions (drawOpened => waitingForLight
-               lightOn    => waitingForDraw)
-)
+  (transitions
+    drawOpened  waitingForLight
+    lightOn     waitingForDraw))
 
 (state waitingForLight
-  transitions (lightOn => unlockedPanel)
-)
+  (transitions
+    lightOn     unlockedPanel))
 
 (state waitingForDraw
-  transitions (drawOpened => unlockedPanel)
-)
+  (transitions
+    drawOpened  unlockedPanel))
 
 (state unlockedPanel
-  actions (unlockPanel lockDoor)
-  transitions (panelClosed => idle)
-)
+  (actions unlockPanel lockDoor)
+  (transitions
+    panelClosed idle))
 

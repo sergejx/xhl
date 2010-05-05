@@ -1,9 +1,9 @@
 package xhl.examples.statemachine;
 
-import java.util.*;
-
 import xhl.core.GenericModule;
-import xhl.core.elements.*;
+import xhl.core.elements.CodeElement;
+import xhl.core.elements.LString;
+import xhl.core.elements.Symbol;
 
 /**
  * XHL module for configuring state machine
@@ -11,92 +11,87 @@ import xhl.core.elements.*;
  * @author Sergej Chodarev
  */
 public class StateMachineModule extends GenericModule {
-    private final Symbol actionsSection = new Symbol("actions");
-    private final Symbol transitionsSection = new Symbol("transitions");
-
-    private final List<Event> resetEvents = new ArrayList<Event>();
+    private Event[] resetEvents = null;
     private State startState = null;
+    private State currentState = null;
 
     // DSL functions =========================================================
 
     @Function(evaluateArgs = false)
     public void events(CodeElement... args) throws Exception {
         if (args.length % 2 != 0)
-            throw new Exception();
-        for (int i = 0; i < args.length; i += 2) { // FIXME: catch
-            // ClassCastException
-            Symbol sym = (Symbol) args[i];
-            String code = ((LString) args[i + 1]).getValue();
-            Event event = new Event(sym.getName(), code);
-            evaluator.putSymbol(sym, event);
+            throw new Exception("Function needs even number of arguments.");
+        for (int i = 0; i < args.length; i += 2) {
+            try {
+                Symbol sym = (Symbol) args[i];
+                String code = ((LString) args[i + 1]).getValue();
+                Event event = new Event(sym.getName(), code);
+                evaluator.putSymbol(sym, event);
+            } catch (ClassCastException e) {
+                throw new Exception("Wrong type of argument.");
+            }
         }
     }
 
     @Function
     public void resetEvents(Event... events) {
-        for (Event event : events) {
-            resetEvents.add(event);
-        }
+        resetEvents = events;
     }
 
     @Function(evaluateArgs = false)
     public void commands(CodeElement... args) throws Exception {
         if (args.length % 2 != 0)
             throw new Exception();
-        for (int i = 0; i < args.length; i += 2) { // FIXME: catch
-            // ClassCastException
-            Symbol sym = (Symbol) args[i];
-            String code = ((LString) args[i + 1]).getValue();
-            Command cmd = new Command(sym.getName(), code);
-            evaluator.putSymbol(sym, cmd);
+        for (int i = 0; i < args.length; i += 2) {
+            try {
+                Symbol sym = (Symbol) args[i];
+                String code = ((LString) args[i + 1]).getValue();
+                Command cmd = new Command(sym.getName(), code);
+                evaluator.putSymbol(sym, cmd);
+            } catch (ClassCastException e) {
+                throw new Exception("Wrong type of argument.");
+            }
         }
     }
 
     @Function(evaluateArgs = false)
-    public void state(CodeElement... args) throws Exception {
-        try {
-            Symbol stateSym = (Symbol) args[0];
-            Command[] actions = {};
-            Map<Event, State> transitions = null;
-            int i = 1;
-            if (((Symbol) args[i]).equals(actionsSection)) {
-                actions = processActions((CodeList) args[i + 1]);
-                i += 2;
+    public void state(Symbol name, CodeElement... args) throws Exception {
+        currentState = getState(name);
+        for (CodeElement element : args) {
+            evaluator.eval(element);
+        }
+        if (startState == null)
+            startState = currentState;
+        currentState = null;
+    }
+
+    @Function(evaluateArgs = false)
+    public void actions(Symbol... args) throws Exception {
+        for (Symbol symbol : args) {
+            try {
+                currentState.addAction((Command) evaluator.getSymbol(symbol));
+            } catch (ClassCastException e) {
+                throw new Exception(String.format(
+                        "Symbol '%s' does not represent command.", symbol));
             }
-            if (((Symbol) args[i]).equals(transitionsSection)) {
-                transitions = processTransitions((CodeList) args[i + 1]);
+        }
+    }
+
+    @Function(evaluateArgs = false)
+    public void transitions(Symbol... args) throws Exception {
+        for (int i = 0; i < args.length; i += 2) {
+            try {
+                Event trigger = (Event) evaluator.getSymbol(args[i]);
+                State target = getState(args[i + 1]);
+                currentState.addTransition(trigger, target);
+            } catch (ClassCastException e) {
+                throw new Exception(String.format(
+                        "Symbol '%s' does not represent event.", args[i]));
             }
-            addState(stateSym, actions, transitions);
-        } catch (ClassCastException e) {
-            throw new Exception();
         }
     }
 
     // End of DSL functions ==================================================
-
-    private Command[] processActions(CodeList args) {
-        Command[] actions = new Command[args.size()];
-        int i = 0;
-        for (Object obj: args) {
-            actions[i++] = (Command) evaluator.getSymbol((Symbol) obj);
-        }
-        return actions;
-    }
-
-    private Map<Event, State> processTransitions(CodeList args) {
-        Map<Event, State> transitions = new HashMap<Event, State>();
-
-        for (Iterator<Object> i = args.iterator(); i.hasNext(); ) {
-            Symbol trigger = (Symbol) i.next();
-            i.next(); // =>
-            Symbol target = (Symbol) i.next();
-
-            Event event = (Event) evaluator.getSymbol(trigger);
-            State state = getState(target);
-            transitions.put(event, state);
-        }
-        return transitions;
-    }
 
     private State getState(Symbol symbol) {
         State state = (State) evaluator.getSymbol(symbol);
@@ -107,23 +102,10 @@ public class StateMachineModule extends GenericModule {
         return state;
     }
 
-    private void addState(Symbol sym, Command[] actions,
-            Map<Event, State> transitions) {
-        State state = getState(sym);
-        for (Command action : actions) {
-            state.addAction(action);
-        }
-        if (transitions != null) {
-            for (Event event : transitions.keySet()) {
-                state.addTransition(event, transitions.get(event));
-            }
-        }
-        if (startState == null)
-            startState = state;
-    }
-
     public StateMachine getStateMachine() {
-        return new StateMachine(startState);
+        StateMachine machine = new StateMachine(startState);
+        machine.addResetEvents(resetEvents);
+        return machine;
     }
 
     public State getStartState() {
