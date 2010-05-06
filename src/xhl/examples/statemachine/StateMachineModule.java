@@ -65,15 +65,12 @@ public class StateMachineModule extends GenericModule {
         currentState = null;
     }
 
-    @Function(evaluateArgs = false)
-    public void actions(Symbol... args) throws Exception {
-        for (Symbol symbol : args) {
-            try {
-                currentState.addAction((Command) evaluator.getSymbol(symbol));
-            } catch (ClassCastException e) {
-                throw new Exception(String.format(
-                        "Symbol '%s' does not represent command.", symbol));
-            }
+    @Function
+    public void actions(Command... args) throws Exception {
+        if (currentState == null)
+            throw new Exception("Actions must by defined inside state.");
+        for (Command cmd : args) {
+            currentState.addAction(cmd);
         }
     }
 
@@ -106,9 +103,5 @@ public class StateMachineModule extends GenericModule {
         StateMachine machine = new StateMachine(startState);
         machine.addResetEvents(resetEvents);
         return machine;
-    }
-
-    public State getStartState() {
-        return startState;
     }
 }
