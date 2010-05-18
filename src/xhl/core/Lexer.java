@@ -2,6 +2,7 @@ package xhl.core;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.regex.Pattern;
 
 import xhl.core.Token.TokenType;
 import xhl.core.elements.CodeElement.CodePosition;
@@ -13,6 +14,7 @@ import xhl.core.elements.CodeElement.CodePosition;
  */
 public class Lexer {
     private static final String PUNCTUATION = "+-*/_=<>.:?!";
+    private static final String numberRegex = "[+-]?\\d+(\\.\\d*)?";
 
     private final Reader input;
     private int ch;
@@ -53,9 +55,7 @@ public class Lexer {
             case '"':
                 return readString();
             default:
-                if (Character.isDigit(ch))
-                    return readDouble();
-                else if (Character.isLetter(ch)
+                if (Character.isLetterOrDigit(ch)
                         || PUNCTUATION.indexOf(ch) != -1)
                     return readSymbol();
                 else
@@ -85,36 +85,24 @@ public class Lexer {
         return new Token(TokenType.STRING, sb.toString(), getPosition());
     }
 
-    private Token readDouble() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        while (Character.isDigit(ch)) {
-            sb.append((char) ch);
-            ch = nextChar();
-        }
-        if (ch == '.') {
-            sb.append((char) ch);
-            ch = nextChar();
-            while (Character.isDigit(ch)) {
-                sb.append((char) ch);
-                ch = nextChar();
-            }
-        }
-        return new Token(TokenType.NUMBER, Double.valueOf(sb.toString()),
-                getPosition());
-    }
-
     private Token readSymbol() throws IOException {
         CodePosition position = getPosition();
+
+        // Read whole symbol
         StringBuilder sb = new StringBuilder();
         while (Character.isLetterOrDigit(ch) || PUNCTUATION.indexOf(ch) != -1) {
             sb.append((char) ch);
             ch = nextChar();
         }
         String symbol = sb.toString();
+
+        // Check symbol type
         if (symbol.equals("true"))
             return new Token(TokenType.TRUE, position);
         if (symbol.equals("false"))
             return new Token(TokenType.FALSE, position);
+        if (Pattern.matches(numberRegex, symbol))
+            return new Token(TokenType.NUMBER, Double.valueOf(symbol), position);
         else
             return new Token(TokenType.SYMBOL, symbol, position);
     }
