@@ -10,8 +10,12 @@ public class Token {
     public static enum TokenType {
         PAR_OPEN, PAR_CLOSE,
         BRACKET_OPEN, BRACKET_CLOSE,
-        SYMBOL, STRING, NUMBER,
-        TRUE, FALSE,
+        BRACE_OPEN, BRACE_CLOSE,
+        INDENT, DEDENT,
+        COMMA, COLON, NEWLINE,
+        SYMBOL, OPERATOR,
+        STRING, NUMBER,
+        TRUE, FALSE, NONE,
     }
 
     public final TokenType type;
