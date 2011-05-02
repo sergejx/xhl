@@ -44,7 +44,13 @@ import xhl.core.elements.CodeElement.CodePosition;
                 return token(DEDENT);
             }
         }
-        return yylex();
+        // Check indentation level if token is EOF
+        token = yylex();
+        if (token == null && indentLevel > 0) {
+            indentLevel = 0;
+            return token(DEDENT); // First DEDENT then EOF
+        } else
+            return token;
     }
 
     private void bropen() {
@@ -117,7 +123,4 @@ none            { return token(NONE); }
 <INBRACKET>{NewLine}      { /* ignore */ }
 {Space}      { /* ignore */ }
 
-<<EOF>> {
-    if (indentLevel != 0)
-    return token(DEDENT);
-}
+";" .*  { /* comment */ }
