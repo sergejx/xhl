@@ -1,19 +1,19 @@
-; Colors
-(define black (rgb 0 0 0))
-(define gray (rgb 124 124 124))
+# Colors
+define black (rgb 0 0 0)
+define gray (rgb 124 124 124)
 
-; Dimensions
-(define base 50)
-(define a 100)
-(define a2 (* a 2))
-(define pos (+ base (/ a 2)))
-(define d 15)
+# Dimensions
+define base 50
+define a 100
+define a2 (a * 2)
+define pos (base + (a / 2))
+define d 15
 
-(define square (rectangle a a))
+define square (rectangle a a)
 
-; Drawing
-(setcolor gray)
-(draw (- pos d) (- pos d) square)
-(draw (+ pos d) (+ pos d) square)
-(setcolor black)
-(draw base base (rectangle a2 a2))
+# Drawing
+setcolor gray
+draw (pos - d) (pos - d) square
+draw (pos + d) (pos + d) square
+setcolor black
+draw base base (rectangle a2 a2)
