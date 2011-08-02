@@ -166,7 +166,7 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = lexer.nextToken(); // (
-            sexp = application();
+            sexp = (Expression) expressionOrStatement(false);
             token = lexer.nextToken(); // )
             break;
         case BRACKET_OPEN:
