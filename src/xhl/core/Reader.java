@@ -1,6 +1,10 @@
 package xhl.core;
 
+import static xhl.core.Token.TokenType.*;
+
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 
 import xhl.core.Token.TokenType;
 import xhl.core.elements.*;
@@ -9,11 +13,21 @@ import xhl.core.elements.*;
  * XHL parser
  *
  * Grammar:
+ *
  * <pre>
- *   program  ::= { codelist }
- *   codelist ::= '(' { sexp } ')'
- *   datalist ::= '[' { sexp } ']'
- *   sexp ::= symbol | string | number | true | false | codelist | datalist
+ *   program   ::= { statement }
+ *   statement ::= block | expression LINEEND
+ *   block     ::= application ':' LINEEND INDENT { statement } DEDENT
+ *
+ *   expression  ::= application { operator application }
+ *   application ::= term { term }
+ *   term        ::= literal | '(' expression ')'
+ *
+ *   literal ::= symbol | string | number | 'true' | 'false' | 'none'
+ *              | list | map
+ *   list ::= '[]' | '[' expression { ',' expression } ']'
+ *   map  ::= '{}' | '{' key-value { ',' key-value } '}'
+ *   key-value ::= expression ':' expression
  * </pre>
  *
  * @author Sergej Chodarev
@@ -22,42 +36,113 @@ public class Reader {
     private Lexer lexer;
     private Token token;
 
-    public CodeList read(java.io.Reader input) throws IOException {
+    private static final Set<TokenType> termH;
+    static {
+        TokenType elements[] =
+                { SYMBOL, STRING, NUMBER, TRUE, FALSE, NONE, BRACKET_OPEN,
+                        BRACE_OPEN, PAR_OPEN };
+        termH = new HashSet<TokenType>(Arrays.asList(elements));
+    }
+
+    public List<Statement> read(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
         return program();
     }
 
-    private CodeList program() throws IOException {
-        CodeList lists = new CodeList(token.position);
-        while (token != null && token.type == TokenType.PAR_OPEN) {
-            lists.add(codelist());
+    public List<Statement> read(String code) throws IOException {
+        return read(new StringReader(code));
+    }
+
+    private List<Statement> program() throws IOException {
+        List<Statement> lists = new LinkedList<Statement>();
+        while (token != null && token.type != DEDENT) {
+            lists.add(expressionOrStatement(true));
         }
         return lists;
     }
 
-    private CodeList codelist() throws IOException {
-        CodeList list = new CodeList(token.position);
-        token = lexer.nextToken(); // (
-        while (token.type != TokenType.PAR_CLOSE) {
-            list.add(sexp());
+    private Statement expressionOrStatement(boolean statement)
+            throws IOException {
+        Expression first = application();
+        while (token.type == OPERATOR) {
+            CodeList exp = new CodeList(token.position);
+            Symbol op = new Symbol(token.stringValue, token.position);
+            token = lexer.nextToken();
+            Expression second = application();
+            exp.add(op);
+            exp.add(first);
+            exp.add(second);
+            first = exp;
         }
-        token = lexer.nextToken(); // )
-        return list;
+        if (token.type == LINEEND)
+            token = lexer.nextToken();
+        else if (token.type == COLON) {
+            token = lexer.nextToken(); // :
+            token = lexer.nextToken(); // \n
+            token = lexer.nextToken(); // INDENT FIXME: Add checks
+            List<Statement> body = program();
+            token = lexer.nextToken(); // DEDENT FIXME: Add checks
+            Block block = new Block(first, body, first.getPosition());
+            return block;
+        }
+        return first;
+    }
+
+    private Expression application() throws IOException {
+        CodeList list = new CodeList(token.position);
+        while (termH.contains(token.type)) {
+            list.add(term());
+        }
+        if (list.size() == 1)
+            return (Expression) list.head();
+        else
+            return list;
     }
 
     private DataList datalist() throws IOException {
         DataList list = new DataList(token.position);
         token = lexer.nextToken(); // [
+        if (token.type == BRACKET_CLOSE) { // Empty list
+            token = lexer.nextToken(); // ]
+            return list;
+        }
+        // Non-empty list
+        list.add(term());
         while (token.type != TokenType.BRACKET_CLOSE) {
-            list.add(sexp());
+            token = lexer.nextToken(); // ,
+            list.add(term());
         }
         token = lexer.nextToken(); // ]
         return list;
     }
 
-    private Object sexp() throws IOException {
-        Object sexp = null;
+    private LMap map() throws IOException {
+        LMap map = new LMap(token.position);
+        token = lexer.nextToken(); // {
+        if (token.type == BRACE_CLOSE) { // Empty map
+            token = lexer.nextToken(); // }
+            return map;
+        }
+        // Non-empty map
+        keyValue(map);
+        while (token.type != TokenType.BRACE_CLOSE) {
+            token = lexer.nextToken(); // ,
+            keyValue(map);
+        }
+        token = lexer.nextToken(); // }
+        return map;
+    }
+
+    private void keyValue(LMap map) throws IOException {
+        Expression key = term();
+        token = lexer.nextToken(); // :
+        Expression value = term();
+        map.put(key, value);
+    }
+
+    private Expression term() throws IOException {
+        Expression sexp = null;
         switch (token.type) {
         case SYMBOL:
             sexp = new Symbol(token.stringValue, token.position);
@@ -80,10 +165,15 @@ public class Reader {
             token = lexer.nextToken();
             break;
         case PAR_OPEN:
-            sexp = codelist();
+            token = lexer.nextToken(); // (
+            sexp = application();
+            token = lexer.nextToken(); // )
             break;
-        case BRACKET_CLOSE:
+        case BRACKET_OPEN:
             sexp = datalist();
+            break;
+        case BRACE_OPEN:
+            sexp = map();
             break;
         }
         return sexp;

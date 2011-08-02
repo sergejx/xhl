@@ -1,8 +1,9 @@
 package xhl.core;
 
 import java.io.*;
+import java.util.List;
 
-import xhl.core.elements.CodeList;
+import xhl.core.elements.Statement;
 import xhl.core.exceptions.EvaluationException;
 
 /**
@@ -35,7 +36,7 @@ public class LanguageProcessor {
     public void execute(File file) throws FileNotFoundException, IOException,
             EvaluationException {
 
-        CodeList program = reader.read(new FileReader(file));
+        List<Statement> program = reader.read(new FileReader(file));
         execute(program);
     }
 
@@ -46,7 +47,7 @@ public class LanguageProcessor {
      *            code to execute
      * @throws EvaluationException
      */
-    public void execute(CodeList program) throws EvaluationException {
+    public void execute(List<Statement> program) throws EvaluationException {
         evaluator.evalAll(program);
     }
 }

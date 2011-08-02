@@ -1,6 +1,6 @@
 package xhl.core.elements;
 
-public class LBoolean extends CodeElement implements ValueElement {
+public class LBoolean extends Expression implements ValueElement {
     private final boolean value;
 
     public LBoolean(boolean value, CodePosition position) {

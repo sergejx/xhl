@@ -1,6 +1,6 @@
 package xhl.core.elements;
 
-public class Symbol extends CodeElement {
+public class Symbol extends Expression {
     private final String name;
 
     public Symbol(String name) {

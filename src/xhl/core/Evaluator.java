@@ -1,8 +1,8 @@
 package xhl.core;
 
-import xhl.core.elements.CodeList;
-import xhl.core.elements.Symbol;
-import xhl.core.elements.ValueElement;
+import java.util.List;
+
+import xhl.core.elements.*;
 import xhl.core.exceptions.*;
 
 /**
@@ -69,9 +69,9 @@ public class Evaluator {
      * @return result of evaluation
      * @throws EvaluationException
      */
-    public Object evalAll(CodeList exprs) throws EvaluationException {
+    public Object evalAll(List<Statement> exprs) throws EvaluationException {
         Object result = null;
-        for (Object expr : exprs) {
+        for (Statement expr : exprs) {
             result = eval(expr);
         }
         return result;

@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public class DataList extends CodeElement implements Iterable<Object> {
+public class DataList extends Expression implements Iterable<Object> {
 
     private final List<Object> list = new LinkedList<Object>();
 
