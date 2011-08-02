@@ -115,8 +115,10 @@ public class LexerTest {
 
     @Test
     public void emptyLinesAndComments() throws Exception {
-        String code = "a\n\n   #comment\n";
+        String code = "a\n\n   #comment\nb";
         Lexer l = new Lexer(new StringReader(code));
+        assertEquals(SYMBOL, l.nextToken().type);
+        assertEquals(LINEEND, l.nextToken().type);
         assertEquals(SYMBOL, l.nextToken().type);
         assertEquals(LINEEND, l.nextToken().type);
         assertNull(l.nextToken());

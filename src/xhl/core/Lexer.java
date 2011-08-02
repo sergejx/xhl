@@ -92,8 +92,10 @@ public class Lexer {
             // Read indentation
             int indentation = readIndentation();
             // Skip empty line
-            if (endOfLine())
-                break;
+            if (endOfLine()) {
+                line = input.readLine();
+                continue;
+            }
             // Add INDEND or DEDENT tokens
             if (braceLevel == 0)
                 processIndentation(indentation);
