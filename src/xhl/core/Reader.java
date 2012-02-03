@@ -66,7 +66,7 @@ public class Reader {
             throws IOException {
         Expression first = application();
         while (token.type == OPERATOR) {
-            CodeList exp = new CodeList(token.position);
+            Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
             token = lexer.nextToken();
             Expression second = application();
@@ -90,7 +90,7 @@ public class Reader {
     }
 
     private Expression application() throws IOException {
-        CodeList list = new CodeList(token.position);
+        Combination list = new Combination(token.position);
         while (termH.contains(token.type)) {
             list.add(term());
         }
@@ -100,8 +100,8 @@ public class Reader {
             return list;
     }
 
-    private DataList datalist() throws IOException {
-        DataList list = new DataList(token.position);
+    private LList datalist() throws IOException {
+        LList list = new LList(token.position);
         token = lexer.nextToken(); // [
         if (token.type == BRACKET_CLOSE) { // Empty list
             token = lexer.nextToken(); // ]

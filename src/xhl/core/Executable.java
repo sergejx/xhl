@@ -1,10 +1,10 @@
 package xhl.core;
 
-import xhl.core.elements.DataList;
+import xhl.core.elements.LList;
 import xhl.core.exceptions.EvaluationException;
 
 public interface Executable {
 
-    public Object exec(DataList args) throws EvaluationException;
+    public Object exec(LList args) throws EvaluationException;
 
 }

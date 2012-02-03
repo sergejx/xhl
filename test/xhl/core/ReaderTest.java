@@ -33,7 +33,7 @@ public class ReaderTest {
     @Test
     public void list() throws IOException {
         List<Statement> l = reader.read("[1, 2, 3]");
-        DataList list = (DataList) l.get(0);
+        LList list = (LList) l.get(0);
         assertEquals(1, ((LNumber) list.head()).getValue(), 0);
         assertEquals(3, list.size());
     }
@@ -49,7 +49,7 @@ public class ReaderTest {
     @Test
     public void application() throws IOException {
         List<Statement> l = reader.read("foo bar 42");
-        CodeList application = (CodeList) l.get(0);
+        Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
         assertEquals(3, application.size());
@@ -58,7 +58,7 @@ public class ReaderTest {
     @Test
     public void infix() throws IOException {
         List<Statement> l = reader.read("foo + bar");
-        CodeList application = (CodeList) l.get(0);
+        Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("+", head.getName());
         assertEquals(3, application.size());
@@ -69,12 +69,12 @@ public class ReaderTest {
         // All operators have the same priority and left associativity
         List<Statement> l = reader.read("foo + bar - spam");
 
-        CodeList application = (CodeList) l.get(0);
+        Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("-", head.getName());
         assertEquals(3, application.size());
 
-        CodeList subApplication = (CodeList) application.tail().head();
+        Combination subApplication = (Combination) application.tail().head();
         assertEquals("+", ((Symbol) subApplication.head()).getName());
         assertEquals(3, subApplication.size());
     }
@@ -82,11 +82,11 @@ public class ReaderTest {
     @Test
     public void parentheses() throws IOException {
         List<Statement> l = reader.read("foo (bar 42)");
-        CodeList application = (CodeList) l.get(0);
+        Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
         assertEquals(2, application.size());
-        CodeList arg = (CodeList) application.tail().head();
+        Combination arg = (Combination) application.tail().head();
         assertEquals("bar", ((Symbol) arg.head()).getName());
         assertEquals(2, application.size());
     }
@@ -101,7 +101,7 @@ public class ReaderTest {
 
         List<Statement> body = block.getBody();
         assertEquals(1, body.size());
-        CodeList st = (CodeList) body.get(0);
+        Combination st = (Combination) body.get(0);
         assertEquals("bar", ((Symbol) st.head()).getName());
 
         // After block

@@ -9,15 +9,15 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public class DataList extends Expression implements Iterable<Object> {
+public class LList extends Expression implements Iterable<Object> {
 
     private final List<Object> list = new LinkedList<Object>();
 
-    public DataList(CodePosition position) {
+    public LList(CodePosition position) {
         super(position);
     }
 
-    private DataList(List<Object> l) {
+    private LList(List<Object> l) {
         list.addAll(l);
     }
 
@@ -38,7 +38,7 @@ public class DataList extends Expression implements Iterable<Object> {
         return list.get(0);
     }
 
-    public DataList tail() {
-        return new DataList(list.subList(1, list.size()));
+    public LList tail() {
+        return new LList(list.subList(1, list.size()));
     }
 }

@@ -1,16 +1,16 @@
 package xhl.core.exceptions;
 
-import xhl.core.elements.CodeList;
+import xhl.core.elements.Combination;
 
 public class HeadIsNotSymbolException extends EvaluationException {
-    private final CodeList list;
+    private final Combination list;
 
-    public HeadIsNotSymbolException(CodeList list) {
+    public HeadIsNotSymbolException(Combination list) {
         super(list.getPosition());
         this.list = list;
     }
 
-    public CodeList getList() {
+    public Combination getList() {
         return list;
     }
 

@@ -33,8 +33,8 @@ public class Evaluator {
                 return symbolTable.get(sym);
             else
                 throw new SymbolNotDefinedException(sym);
-        } else if (obj instanceof CodeList) {
-            return evalList((CodeList) obj);
+        } else if (obj instanceof Combination) {
+            return evalList((Combination) obj);
         } else if (obj instanceof ValueElement) {
             return ((ValueElement) obj).getValue();
         } else {
@@ -42,7 +42,7 @@ public class Evaluator {
         }
     }
 
-    private Object evalList(CodeList list) throws EvaluationException {
+    private Object evalList(Combination list) throws EvaluationException {
         Object head = list.head();
         if (!(head instanceof Symbol))
             throw new HeadIsNotSymbolException(list);
