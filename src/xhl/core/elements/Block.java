@@ -6,8 +6,8 @@ import java.util.List;
  * @author Sergej Chodarev
  */
 public class Block extends Statement {
-    private Expression head;
-    private List<Statement> body;
+    private final Expression head;
+    private final List<Statement> body;
 
     public Block(Expression head, List<Statement> body, CodePosition position) {
         super(position);
