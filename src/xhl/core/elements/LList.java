@@ -9,19 +9,19 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public class LList extends Expression implements Iterable<Object> {
+public class LList extends Expression implements Iterable<Expression> {
 
-    private final List<Object> list = new LinkedList<Object>();
+    private final List<Expression> list = new LinkedList<Expression>();
 
     public LList(CodePosition position) {
         super(position);
     }
 
-    private LList(List<Object> l) {
+    private LList(List<Expression> l) {
         list.addAll(l);
     }
 
-    public boolean add(Object e) {
+    public boolean add(Expression e) {
         return list.add(e);
     }
 
@@ -30,11 +30,11 @@ public class LList extends Expression implements Iterable<Object> {
     }
 
     @Override
-    public Iterator<Object> iterator() {
+    public Iterator<Expression> iterator() {
         return list.iterator();
     }
 
-    public Object head() {
+    public Expression head() {
         return list.get(0);
     }
 
