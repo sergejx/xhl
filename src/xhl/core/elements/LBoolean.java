@@ -12,4 +12,9 @@ public class LBoolean extends Expression implements ValueElement {
     public Boolean getValue() {
         return value;
     }
+
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

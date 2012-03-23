@@ -41,4 +41,9 @@ public class LList extends Expression implements Iterable<Object> {
     public LList tail() {
         return new LList(list.subList(1, list.size()));
     }
+
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

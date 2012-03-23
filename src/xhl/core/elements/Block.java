@@ -22,4 +22,9 @@ public class Block extends Statement {
     public List<Statement> getBody() {
         return body;
     }
+
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

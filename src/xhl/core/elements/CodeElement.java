@@ -41,4 +41,12 @@ public abstract class CodeElement {
             return String.format("%s:%d:%d", fileName, line, column);
         }
     }
+
+    /**
+     * Accept a visitor object and call corresponding visit method of it.
+     *
+     * @param visitor
+     * @return Result from the visitor.
+     */
+    public abstract <R> R accept(ElementVisitor<R> visitor);
 }

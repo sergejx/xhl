@@ -34,4 +34,9 @@ public class Symbol extends Expression {
     public String toString() {
         return name;
     }
+
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

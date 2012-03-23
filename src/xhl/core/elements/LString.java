@@ -11,4 +11,9 @@ public class LString extends Expression implements ValueElement {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -25,5 +25,8 @@ public class LMap extends Expression {
     }
 
 
-
+    @Override
+    public <R> R accept(ElementVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }
