@@ -2,7 +2,7 @@ package xhl.core.exceptions;
 
 import xhl.core.elements.CodeElement.CodePosition;
 
-public class EvaluationException extends Exception {
+public class EvaluationException extends RuntimeException {
     protected final CodePosition position;
 
     public EvaluationException() {
