@@ -16,6 +16,11 @@ public class Symbol extends Expression {
         return name;
     }
 
+    /** Check if symbol has specified name. */
+    public boolean isNamed(String n) {
+        return name.equals(n);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Symbol) {
