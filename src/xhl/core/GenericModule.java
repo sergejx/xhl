@@ -48,6 +48,15 @@ public abstract class GenericModule implements Module {
         table.put(symbol, value);
     }
 
+    /**
+     * Export self-referencing symbol
+     *
+     * @param symbol
+     */
+    protected void addKeyword(Symbol symbol) {
+        table.put(symbol, symbol);
+    }
+
     private void findFunctions() {
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method method : methods) {
