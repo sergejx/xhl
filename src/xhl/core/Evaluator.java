@@ -127,7 +127,7 @@ public class Evaluator implements ElementVisitor<Object>{
         Expression head = cmb.head();
         Object func = head.accept(this);
         if (!(func instanceof Executable))
-            throw new FunctionUndefinedException((Symbol) head);
+            throw new FunctionUndefinedException(head);
         try {
             return ((Executable) func).exec(cmb.tail());
         } catch (EvaluationException e) {
