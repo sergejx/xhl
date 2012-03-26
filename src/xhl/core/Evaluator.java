@@ -141,12 +141,10 @@ public class Evaluator implements ElementVisitor<Object>{
 
     @Override
     public Object visit(Block blk) {
-        Expression head = blk.getHead();
-        if (head instanceof Combination) {
-            // TODO: Evaluate block
-        } else if (head instanceof Symbol) {
-            // TODO: Evaluate block
+        Object result = null;
+        for (Statement expr : blk) {
+            result = eval(expr);
         }
-        return null;
+        return result;
     }
 }
