@@ -32,7 +32,7 @@ public class Processor {
     @Override
     public String toString() {
         return String.format(
-                "Processor:\n\ttype: %s\n\tspeed %s:\n\tcores: %s", type,
+                "Processor:\n\ttype: %s\n\tspeed: %s\n\tcores: %s", type,
                 speed, cores);
     }
 }

@@ -1,11 +1,4 @@
-(computer
-  (processor
-    (type alpha)
-    (cores 2))
-  (disk
-    (size 80)
-    (speed 7200)
-    (interface ATA133))
-  (disk
-    (size 320)))
-)
+computer:
+    processor {type: alpha, cores: 2}
+    disk {size: 80, speed: 7200, interface: ATA133}
+    disk {size: 320}
