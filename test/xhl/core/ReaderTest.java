@@ -94,12 +94,19 @@ public class ReaderTest {
     @Test
     public void block() throws IOException {
         List<Statement> l = reader.read("foo:\n\tbar 42\nspam");
-        Block block = (Block) l.get(0);
+        Expression exp = (Expression) l.get(0);
 
-        Expression head = block.getHead();
+        // Header
+        assertTrue(exp instanceof Combination);
+        Combination blkExp = (Combination) exp;
+        assertEquals(2, blkExp.size());
+        Expression head = blkExp.head();
         assertEquals("foo", ((Symbol) head).getName());
 
-        List<Statement> body = block.getBody();
+        // Body
+        Expression blk = blkExp.tail().head();
+        assertTrue(blk instanceof Block);
+        List<Statement> body = ((Block) blk).getStatements();
         assertEquals(1, body.size());
         Combination st = (Combination) body.get(0);
         assertEquals("bar", ((Symbol) st.head()).getName());

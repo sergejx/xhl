@@ -83,8 +83,14 @@ public class Reader {
             token = lexer.nextToken(); // INDENT FIXME: Add checks
             List<Statement> body = program();
             token = lexer.nextToken(); // DEDENT FIXME: Add checks
-            Block block = new Block(first, body, first.getPosition());
-            return block;
+            Block block = new Block(body, first.getPosition());
+            // If block header is not a combination -- create combination
+            if (!(first instanceof Combination)) {
+                Combination head = new Combination(first.getPosition());
+                head.add(first);
+                first = head;
+            }
+            ((Combination) first).add(block);
         }
         return first;
     }
@@ -95,7 +101,7 @@ public class Reader {
             list.add(term());
         }
         if (list.size() == 1)
-            return (Expression) list.head();
+            return list.head();
         else
             return list;
     }
