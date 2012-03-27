@@ -34,7 +34,7 @@ public class ReaderTest {
     public void list() throws IOException {
         List<Expression> l = reader.read("[1, 2, 3]");
         LList list = (LList) l.get(0);
-        assertEquals(1, ((LNumber) list.head()).getValue(), 0);
+        assertEquals(1, ((LNumber) list.get(0)).getValue(), 0);
         assertEquals(3, list.size());
     }
 
@@ -74,7 +74,7 @@ public class ReaderTest {
         assertEquals("-", head.getName());
         assertEquals(3, application.size());
 
-        Combination subApplication = (Combination) application.tail().head();
+        Combination subApplication = (Combination) application.get(1);
         assertEquals("+", ((Symbol) subApplication.head()).getName());
         assertEquals(3, subApplication.size());
     }
@@ -86,7 +86,7 @@ public class ReaderTest {
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
         assertEquals(2, application.size());
-        Combination arg = (Combination) application.tail().head();
+        Combination arg = (Combination) application.get(1);
         assertEquals("bar", ((Symbol) arg.head()).getName());
         assertEquals(2, application.size());
     }
@@ -94,7 +94,7 @@ public class ReaderTest {
     @Test
     public void block() throws IOException {
         List<Expression> l = reader.read("foo:\n\tbar 42\nspam");
-        Expression exp = (Expression) l.get(0);
+        Expression exp = l.get(0);
 
         // Header
         assertTrue(exp instanceof Combination);
@@ -104,11 +104,11 @@ public class ReaderTest {
         assertEquals("foo", ((Symbol) head).getName());
 
         // Body
-        Expression blk = blkExp.tail().head();
+        Expression blk = blkExp.get(1);
         assertTrue(blk instanceof Block);
-        List<Expression> body = ((Block) blk).getExpressions();
-        assertEquals(1, body.size());
-        Combination st = (Combination) body.get(0);
+        Block block = (Block) blk;
+        assertEquals(1, block.size());
+        Combination st = (Combination) block.get(0);
         assertEquals("bar", ((Symbol) st.head()).getName());
 
         // After block
