@@ -40,9 +40,9 @@ public class Evaluator implements ElementVisitor<Object>{
      * @return result of evaluation
      * @throws EvaluationException
      */
-    public Object evalAll(List<Statement> exprs) throws EvaluationException {
+    public Object evalAll(List<Expression> exprs) throws EvaluationException {
         Object result = null;
-        for (Statement expr : exprs) {
+        for (Expression expr : exprs) {
             result = eval(expr);
         }
         return result;
@@ -142,7 +142,7 @@ public class Evaluator implements ElementVisitor<Object>{
     @Override
     public Object visit(Block blk) {
         Object result = null;
-        for (Statement expr : blk) {
+        for (Expression expr : blk) {
             result = eval(expr);
         }
         return result;

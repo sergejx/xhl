@@ -3,7 +3,7 @@ package xhl.core.elements;
 /**
  * @author Sergej Chodarev
  */
-public abstract class Expression extends Statement {
+public abstract class Expression extends CodeElement {
     protected Expression() {
     }
 

@@ -24,7 +24,7 @@ public class ReaderTest {
 
     @Test
     public void singleLiteral() throws IOException {
-        List<Statement> l = reader.read("42");
+        List<Expression> l = reader.read("42");
         LNumber num = (LNumber) l.get(0);
         assertEquals(42.0, num.getValue(), 0);
         assertEquals(1, l.size());
@@ -32,7 +32,7 @@ public class ReaderTest {
 
     @Test
     public void list() throws IOException {
-        List<Statement> l = reader.read("[1, 2, 3]");
+        List<Expression> l = reader.read("[1, 2, 3]");
         LList list = (LList) l.get(0);
         assertEquals(1, ((LNumber) list.head()).getValue(), 0);
         assertEquals(3, list.size());
@@ -40,7 +40,7 @@ public class ReaderTest {
 
     @Test
     public void map() throws IOException {
-        List<Statement> l = reader.read("{a: 1, b: 2}");
+        List<Expression> l = reader.read("{a: 1, b: 2}");
         LMap map = (LMap) l.get(0);
         assertTrue(map.containsKey(new Symbol("a")));
         assertTrue(map.containsKey(new Symbol("b")));
@@ -48,7 +48,7 @@ public class ReaderTest {
 
     @Test
     public void application() throws IOException {
-        List<Statement> l = reader.read("foo bar 42");
+        List<Expression> l = reader.read("foo bar 42");
         Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
@@ -57,7 +57,7 @@ public class ReaderTest {
 
     @Test
     public void infix() throws IOException {
-        List<Statement> l = reader.read("foo + bar");
+        List<Expression> l = reader.read("foo + bar");
         Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("+", head.getName());
@@ -67,7 +67,7 @@ public class ReaderTest {
     @Test
     public void infixRepeating() throws IOException {
         // All operators have the same priority and left associativity
-        List<Statement> l = reader.read("foo + bar - spam");
+        List<Expression> l = reader.read("foo + bar - spam");
 
         Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
@@ -81,7 +81,7 @@ public class ReaderTest {
 
     @Test
     public void parentheses() throws IOException {
-        List<Statement> l = reader.read("foo (bar 42)");
+        List<Expression> l = reader.read("foo (bar 42)");
         Combination application = (Combination) l.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
@@ -93,7 +93,7 @@ public class ReaderTest {
 
     @Test
     public void block() throws IOException {
-        List<Statement> l = reader.read("foo:\n\tbar 42\nspam");
+        List<Expression> l = reader.read("foo:\n\tbar 42\nspam");
         Expression exp = (Expression) l.get(0);
 
         // Header
@@ -106,7 +106,7 @@ public class ReaderTest {
         // Body
         Expression blk = blkExp.tail().head();
         assertTrue(blk instanceof Block);
-        List<Statement> body = ((Block) blk).getStatements();
+        List<Expression> body = ((Block) blk).getExpressions();
         assertEquals(1, body.size());
         Combination st = (Combination) body.get(0);
         assertEquals("bar", ((Symbol) st.head()).getName());

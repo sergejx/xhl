@@ -44,25 +44,25 @@ public class Reader {
         termH = new HashSet<TokenType>(Arrays.asList(elements));
     }
 
-    public List<Statement> read(java.io.Reader input) throws IOException {
+    public List<Expression> read(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
         return program();
     }
 
-    public List<Statement> read(String code) throws IOException {
+    public List<Expression> read(String code) throws IOException {
         return read(new StringReader(code));
     }
 
-    private List<Statement> program() throws IOException {
-        List<Statement> lists = new LinkedList<Statement>();
+    private List<Expression> program() throws IOException {
+        List<Expression> lists = new LinkedList<Expression>();
         while (token != null && token.type != DEDENT) {
             lists.add(expressionOrStatement(true));
         }
         return lists;
     }
 
-    private Statement expressionOrStatement(boolean statement)
+    private Expression expressionOrStatement(boolean statement)
             throws IOException {
         Expression first = application();
         while (token.type == OPERATOR) {
@@ -81,7 +81,7 @@ public class Reader {
             token = lexer.nextToken(); // :
             token = lexer.nextToken(); // \n
             token = lexer.nextToken(); // INDENT FIXME: Add checks
-            List<Statement> body = program();
+            List<Expression> body = program();
             token = lexer.nextToken(); // DEDENT FIXME: Add checks
             Block block = new Block(body, first.getPosition());
             // If block header is not a combination -- create combination

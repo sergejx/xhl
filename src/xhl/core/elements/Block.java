@@ -6,20 +6,20 @@ import java.util.List;
 /**
  * @author Sergej Chodarev
  */
-public class Block extends Expression implements Iterable<Statement> {
-    private final List<Statement> body;
+public class Block extends Expression implements Iterable<Expression> {
+    private final List<Expression> body;
 
-    public Block(List<Statement> body, CodePosition position) {
+    public Block(List<Expression> body, CodePosition position) {
         super(position);
         this.body = body;
     }
 
-    public List<Statement> getStatements() {
+    public List<Expression> getExpressions() {
         return body;
     }
 
     @Override
-    public Iterator<Statement> iterator() {
+    public Iterator<Expression> iterator() {
         return body.iterator();
     }
 

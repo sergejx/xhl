@@ -6,7 +6,7 @@ import java.util.Map;
 
 import xhl.core.GenericModule;
 import xhl.core.elements.Block;
-import xhl.core.elements.Statement;
+import xhl.core.elements.Expression;
 import xhl.core.elements.Symbol;
 
 public class ComputerModule extends GenericModule {
@@ -36,8 +36,8 @@ public class ComputerModule extends GenericModule {
     public void computer(Block components) {
         Processor processor = null;
         List<Disk> disks = new ArrayList<Disk>();
-        for (Statement stmt : components) {
-            Object comp = evaluator.eval(stmt);
+        for (Expression expr : components) {
+            Object comp = evaluator.eval(expr);
             if (comp instanceof Processor) {
                 processor = (Processor) comp;
             } else if (comp instanceof Disk) {
