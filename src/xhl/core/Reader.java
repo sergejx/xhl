@@ -17,19 +17,16 @@ import xhl.core.elements.*;
  * Grammar:
  *
  * <pre>
- *   program   ::= { statement }
- *   statement ::= block | expression LINEEND
- *   block     ::= application ':' LINEEND INDENT { statement } DEDENT
- *
- *   expression  ::= application { operator application }
- *   application ::= term { term }
+ *   block       ::= { expression LINEEND | expression-with-block }
+ *   expression  ::= combination { operator combination }
+ *   expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
+ *   combination ::= term { term }
  *   term        ::= literal | '(' expression ')'
- *
- *   literal ::= symbol | string | number | 'true' | 'false' | 'none'
- *              | list | map
- *   list ::= '[]' | '[' expression { ',' expression } ']'
- *   map  ::= '{}' | '{' key-value { ',' key-value } '}'
- *   key-value ::= expression ':' expression
+ *   literal     ::= symbol | string | number | boolean | list | map | 'none'
+ *   boolean     ::= 'true' | 'false'
+ *   list        ::= '[]' | '[' expression { ',' expression } ']'
+ *   map         ::= '{}' | '{' key-value { ',' key-value } '}'
+ *   key-value   ::= expression ':' expression
  * </pre>
  *
  * @author Sergej Chodarev
@@ -49,29 +46,29 @@ public class Reader {
     public Block read(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
-        return program();
+        return block();
     }
 
     public Block read(String code) throws IOException {
         return read(new StringReader(code));
     }
 
-    private Block program() throws IOException {
+    private Block block() throws IOException {
         Block block = new Block(token.position);
         while (token != null && token.type != DEDENT) {
-            block.add(expressionOrStatement(true));
+            block.add(expression(true));
         }
         return block;
     }
 
-    private Expression expressionOrStatement(boolean statement)
+    private Expression expression(boolean withBlock)
             throws IOException {
-        Expression first = application();
+        Expression first = combination();
         while (token.type == OPERATOR) {
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
             token = lexer.nextToken();
-            Expression second = application();
+            Expression second = combination();
             exp.add(op);
             exp.add(first);
             exp.add(second);
@@ -79,11 +76,11 @@ public class Reader {
         }
         if (token.type == LINEEND)
             token = lexer.nextToken();
-        else if (token.type == COLON) {
+        else if (withBlock && token.type == COLON) {
             token = lexer.nextToken(); // :
             token = lexer.nextToken(); // \n
             token = lexer.nextToken(); // INDENT FIXME: Add checks
-            Block block = program();
+            Block block = block();
             token = lexer.nextToken(); // DEDENT FIXME: Add checks
             // If block header is not a combination -- create combination
             if (!(first instanceof Combination)) {
@@ -96,7 +93,7 @@ public class Reader {
         return first;
     }
 
-    private Expression application() throws IOException {
+    private Expression combination() throws IOException {
         Combination list = new Combination(token.position);
         while (termH.contains(token.type)) {
             list.add(term());
@@ -107,7 +104,7 @@ public class Reader {
             return list;
     }
 
-    private LList datalist() throws IOException {
+    private LList list() throws IOException {
         LList list = new LList(token.position);
         token = lexer.nextToken(); // [
         if (token.type == BRACKET_CLOSE) { // Empty list
@@ -173,11 +170,11 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = lexer.nextToken(); // (
-            sexp = expressionOrStatement(false);
+            sexp = expression(false);
             token = lexer.nextToken(); // )
             break;
         case BRACKET_OPEN:
-            sexp = datalist();
+            sexp = list();
             break;
         case BRACE_OPEN:
             sexp = map();
