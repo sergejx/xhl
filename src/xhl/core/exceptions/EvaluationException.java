@@ -5,11 +5,7 @@ import xhl.core.elements.CodeElement.CodePosition;
 public class EvaluationException extends RuntimeException {
     protected final CodePosition position;
 
-    public EvaluationException() {
-        this(null, null);
-    }
-
-    public EvaluationException(CodePosition position) {
+    protected EvaluationException(CodePosition position) {
         this(null, position);
     }
 
@@ -18,7 +14,9 @@ public class EvaluationException extends RuntimeException {
     }
 
     public EvaluationException(Throwable cause, CodePosition position) {
-        super(cause.getMessage(), cause);
+        super(cause.getMessage() != null ? cause.getMessage()
+                                         : cause.toString(),
+                cause);
         this.position = position;
     }
 

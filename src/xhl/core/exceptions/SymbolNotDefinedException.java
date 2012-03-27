@@ -16,7 +16,7 @@ public class SymbolNotDefinedException extends EvaluationException {
     }
 
     @Override
-    public String toString() {
+    public String getMessage() {
         return String.format("Symbol '%s' was not defined.", symbol);
     }
 }

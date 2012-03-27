@@ -15,7 +15,7 @@ public class FunctionUndefinedException extends EvaluationException {
     }
 
     @Override
-    public String toString() {
+    public String getMessage() {
         return String.format("Expression '%s' is not callable.", expression);
     }
 }
