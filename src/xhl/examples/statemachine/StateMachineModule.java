@@ -53,9 +53,7 @@ public class StateMachineModule extends GenericModule {
     @Function(evaluateArgs = false)
     public void state(Symbol name, Block blk) throws Exception {
         currentState = getState(name);
-        for (Expression expr : blk) {
-            evaluator.eval(expr);
-        }
+        evaluator.eval(blk);
         if (startState == null)
             startState = currentState;
         currentState = null;
