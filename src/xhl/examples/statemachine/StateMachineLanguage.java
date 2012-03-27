@@ -2,14 +2,14 @@ package xhl.examples.statemachine;
 
 import java.io.*;
 
-import xhl.core.Util;
 import xhl.core.Language;
 import xhl.core.Module;
+import xhl.core.Util;
 
 /**
  * Language for configuring state machine.
  *
- * Based on examples from http://martinfowler.com/dslwip/
+ * Based on examples from http://martinfowler.com/dsl.html
  *
  * @author Sergej Chodarev
  */

@@ -1,42 +1,37 @@
-; Miss Grant's Controller
-;
-; Based on example by Martin Fowler http://martinfowler.com/dslwip/Intro.html
+# Miss Grant's Controller
+#
+# Based on example by Martin Fowler
+# http://www.informit.com/articles/article.aspx?p=1592379
 
-(events
-  doorClosed    "D1CL"
-  drawOpened    "D2OP"
-  lightOn       "L1ON"
-  doorOpened    "D1OP"
-  panelClosed   "PNCL")
+events:
+    doorClosed  "D1CL"
+    drawOpened  "D2OP"
+    lightOn     "L1ON"
+    doorOpened  "D1OP"
+    panelClosed "PNCL"
 
-(resetEvents doorOpened)
+resetEvents doorOpened
 
-(commands
-  unlockPanel   "PNUL"
-  lockPanel     "PNLK"
-  lockDoor      "D1LK"
-  unlockDoor    "D1UL")
+commands:
+    unlockPanel "PNUL"
+    lockPanel   "PNLK"
+    lockDoor    "D1LK"
+    unlockDoor  "D1UL"
 
-(state idle
-  (actions unlockDoor lockPanel)
-  (transitions
-    doorClosed active))
+state idle:
+    actions unlockDoor lockPanel
+    doorClosed -> active
 
-(state active
-  (transitions
-    drawOpened  waitingForLight
-    lightOn     waitingForDraw))
+state active:
+    drawOpened -> waitingForLight
+    lightOn    -> waitingForDraw
 
-(state waitingForLight
-  (transitions
-    lightOn     unlockedPanel))
+state waitingForLight:
+    lightOn -> unlockedPanel
 
-(state waitingForDraw
-  (transitions
-    drawOpened  unlockedPanel))
+state waitingForDraw:
+    drawOpened -> unlockedPanel
 
-(state unlockedPanel
-  (actions unlockPanel lockDoor)
-  (transitions
-    panelClosed idle))
-
+state unlockedPanel:
+    actions unlockPanel lockDoor
+    panelClosed -> idle

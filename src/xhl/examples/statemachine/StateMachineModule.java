@@ -1,9 +1,7 @@
 package xhl.examples.statemachine;
 
 import xhl.core.GenericModule;
-import xhl.core.elements.CodeElement;
-import xhl.core.elements.LString;
-import xhl.core.elements.Symbol;
+import xhl.core.elements.*;
 
 /**
  * XHL module for configuring state machine
@@ -18,14 +16,13 @@ public class StateMachineModule extends GenericModule {
     // DSL functions =========================================================
 
     @Function(evaluateArgs = false)
-    public void events(CodeElement... args) throws Exception {
-        if (args.length % 2 != 0)
-            throw new Exception("Function needs even number of arguments.");
-        for (int i = 0; i < args.length; i += 2) {
+    public void events(Block blk) throws Exception {
+        for (Expression stmt : blk) {
             try {
-                Symbol sym = (Symbol) args[i];
-                String code = ((LString) args[i + 1]).getValue();
-                Event event = new Event(sym.getName(), code);
+                Combination def = (Combination) stmt;
+                Symbol sym = (Symbol) def.get(0);
+                LString code = (LString) def.get(1);
+                Event event = new Event(sym.getName(), code.getValue());
                 evaluator.putSymbol(sym, event);
             } catch (ClassCastException e) {
                 throw new Exception("Wrong type of argument.");
@@ -39,14 +36,13 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function(evaluateArgs = false)
-    public void commands(CodeElement... args) throws Exception {
-        if (args.length % 2 != 0)
-            throw new Exception();
-        for (int i = 0; i < args.length; i += 2) {
+    public void commands(Block blk) throws Exception {
+        for (Expression expr : blk) {
             try {
-                Symbol sym = (Symbol) args[i];
-                String code = ((LString) args[i + 1]).getValue();
-                Command cmd = new Command(sym.getName(), code);
+                Combination def = (Combination) expr;
+                Symbol sym = (Symbol) def.get(0);
+                LString code = (LString) def.get(1);
+                Command cmd = new Command(sym.getName(), code.getValue());
                 evaluator.putSymbol(sym, cmd);
             } catch (ClassCastException e) {
                 throw new Exception("Wrong type of argument.");
@@ -55,10 +51,10 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function(evaluateArgs = false)
-    public void state(Symbol name, CodeElement... args) throws Exception {
+    public void state(Symbol name, Block blk) throws Exception {
         currentState = getState(name);
-        for (CodeElement element : args) {
-            evaluator.eval(element);
+        for (Expression expr : blk) {
+            evaluator.eval(expr);
         }
         if (startState == null)
             startState = currentState;
@@ -74,17 +70,15 @@ public class StateMachineModule extends GenericModule {
         }
     }
 
-    @Function(evaluateArgs = false)
-    public void transitions(Symbol... args) throws Exception {
-        for (int i = 0; i < args.length; i += 2) {
-            try {
-                Event trigger = (Event) evaluator.getSymbol(args[i]);
-                State target = getState(args[i + 1]);
-                currentState.addTransition(trigger, target);
-            } catch (ClassCastException e) {
-                throw new Exception(String.format(
-                        "Symbol '%s' does not represent event.", args[i]));
-            }
+    @Function(name = "->", evaluateArgs = false)
+    public void transition(Symbol trig, Symbol targ) throws Exception {
+        try {
+            Event trigger = (Event) evaluator.getSymbol(trig);
+            State target = getState(targ);
+            currentState.addTransition(trigger, target);
+        } catch (ClassCastException e) {
+            throw new Exception(String.format(
+                    "Symbol '%s' does not represent event.", trig));
         }
     }
 
