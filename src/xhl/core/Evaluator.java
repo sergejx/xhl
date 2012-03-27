@@ -40,7 +40,7 @@ public class Evaluator implements ElementVisitor<Object>{
      * @return result of evaluation
      * @throws EvaluationException
      */
-    public Object evalAll(List<Expression> exprs) throws EvaluationException {
+    public Object evalAll(Block exprs) throws EvaluationException {
         Object result = null;
         for (Expression expr : exprs) {
             result = eval(expr);

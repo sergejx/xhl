@@ -11,19 +11,14 @@ import java.util.List;
  */
 public abstract class ExpressionsList extends Expression {
 
-    protected final List<Expression> list;
+    protected final List<Expression> list = new LinkedList<Expression>();
 
     public ExpressionsList() {
-        this(null);
+        super();
     }
 
     public ExpressionsList(CodePosition position) {
-        this(position, new LinkedList<Expression>());
-    }
-
-    public ExpressionsList(CodePosition position, List<Expression> list) {
         super(position);
-        this.list = list;
     }
 
     public boolean add(Expression e) {

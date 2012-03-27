@@ -1,9 +1,8 @@
 package xhl.core;
 
 import java.io.*;
-import java.util.List;
 
-import xhl.core.elements.Expression;
+import xhl.core.elements.Block;
 import xhl.core.exceptions.EvaluationException;
 
 /**
@@ -36,7 +35,7 @@ public class LanguageProcessor {
     public void execute(File file) throws FileNotFoundException, IOException,
             EvaluationException {
 
-        List<Expression> program = reader.read(new FileReader(file));
+        Block program = reader.read(new FileReader(file));
         execute(program);
     }
 
@@ -47,7 +46,7 @@ public class LanguageProcessor {
      *            code to execute
      * @throws EvaluationException
      */
-    public void execute(List<Expression> program) throws EvaluationException {
+    public void execute(Block program) throws EvaluationException {
         evaluator.evalAll(program);
     }
 }

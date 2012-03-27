@@ -4,7 +4,9 @@ import static xhl.core.Token.TokenType.*;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import xhl.core.Token.TokenType;
 import xhl.core.elements.*;
@@ -44,22 +46,22 @@ public class Reader {
         termH = new HashSet<TokenType>(Arrays.asList(elements));
     }
 
-    public List<Expression> read(java.io.Reader input) throws IOException {
+    public Block read(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
         return program();
     }
 
-    public List<Expression> read(String code) throws IOException {
+    public Block read(String code) throws IOException {
         return read(new StringReader(code));
     }
 
-    private List<Expression> program() throws IOException {
-        List<Expression> lists = new LinkedList<Expression>();
+    private Block program() throws IOException {
+        Block block = new Block(token.position);
         while (token != null && token.type != DEDENT) {
-            lists.add(expressionOrStatement(true));
+            block.add(expressionOrStatement(true));
         }
-        return lists;
+        return block;
     }
 
     private Expression expressionOrStatement(boolean statement)
@@ -81,9 +83,8 @@ public class Reader {
             token = lexer.nextToken(); // :
             token = lexer.nextToken(); // \n
             token = lexer.nextToken(); // INDENT FIXME: Add checks
-            List<Expression> body = program();
+            Block block = program();
             token = lexer.nextToken(); // DEDENT FIXME: Add checks
-            Block block = new Block(body, first.getPosition());
             // If block header is not a combination -- create combination
             if (!(first instanceof Combination)) {
                 Combination head = new Combination(first.getPosition());
@@ -172,7 +173,7 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = lexer.nextToken(); // (
-            sexp = (Expression) expressionOrStatement(false);
+            sexp = expressionOrStatement(false);
             token = lexer.nextToken(); // )
             break;
         case BRACKET_OPEN:
