@@ -5,7 +5,7 @@ import xhl.core.Module;
 import xhl.modules.ArithmeticsModule;
 import xhl.modules.DefineModule;
 
-public class DrawingLanguage extends Language {
+public class DrawingLanguage implements Language {
 
     private final Canvas canvas = new Canvas();
 
