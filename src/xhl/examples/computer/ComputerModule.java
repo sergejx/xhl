@@ -50,12 +50,11 @@ public class ComputerModule extends GenericModule {
     }
 
     @Function
-    public Processor processor(Map properties) {
+    public Processor processor(Map<Symbol, Object> properties) {
         Processor.Type type = null;
         int speed = Processor.UNKNOWN_SPEED;
         int cores = 1;
-        for (Object prop : properties.keySet()) {
-            Symbol key = (Symbol) prop;
+        for (Symbol key : properties.keySet()) {
             if (key.isNamed("type")) {
                 type = (Processor.Type) properties.get(key);
             } else if  (key.isNamed("speed")) {
@@ -68,12 +67,11 @@ public class ComputerModule extends GenericModule {
     }
 
     @Function
-    public Disk disk(Map properties) {
+    public Disk disk(Map<Symbol, Object> properties) {
         int size = Disk.UNKNOWN_SIZE;
         int speed = Disk.UNKNOWN_SPEED;
         Disk.Interface iface = null;
-        for (Object prop : properties.keySet()) {
-            Symbol key = (Symbol) prop;
+        for (Symbol key : properties.keySet()) {
             if (key.isNamed("size")) {
                 size = ((Double) properties.get(key)).intValue();
             } else if  (key.isNamed("speed")) {
