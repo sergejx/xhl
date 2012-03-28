@@ -1,6 +1,6 @@
 package xhl.core.elements;
 
-public class LBoolean extends Expression implements ValueElement {
+public class LBoolean extends Expression {
     private final boolean value;
 
     public LBoolean(boolean value, CodePosition position) {
@@ -8,7 +8,6 @@ public class LBoolean extends Expression implements ValueElement {
         this.value = value;
     }
 
-    @Override
     public Boolean getValue() {
         return value;
     }

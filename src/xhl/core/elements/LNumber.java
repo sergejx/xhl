@@ -1,6 +1,6 @@
 package xhl.core.elements;
 
-public class LNumber extends Expression implements ValueElement {
+public class LNumber extends Expression {
 
     private final double value;
 
