@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import xhl.core.Util;
+import xhl.core.LanguageProcessor;
 
 public class Main extends JFrame {
 
@@ -20,7 +20,7 @@ public class Main extends JFrame {
     }
 
     private void run(String filename) throws IOException, FileNotFoundException {
-        Util.execute(language, filename);
+        LanguageProcessor.execute(language, filename);
         setVisible(true);
     }
 

@@ -48,4 +48,27 @@ public class LanguageProcessor {
     public void execute(Block program) throws EvaluationException {
         evaluator.evalAll(program);
     }
+
+    /**
+     * Execute code from file and output error messages to standard error output
+     *
+     * This is a simplified interface for this class.
+     *
+     * @param lang
+     *            language of the code
+     * @param filename
+     *            name of the file to execute
+     */
+    public static void execute(Language lang, String filename) {
+        LanguageProcessor processor = new LanguageProcessor(lang);
+        try {
+            processor.execute(new File(filename));
+        } catch (EvaluationException e) {
+            System.err.printf("%s: %s\n", e.getPosition(), e);
+        } catch (FileNotFoundException e) {
+            System.err.println(e);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
 }

@@ -3,8 +3,8 @@ package xhl.examples.statemachine;
 import java.io.*;
 
 import xhl.core.Language;
+import xhl.core.LanguageProcessor;
 import xhl.core.Module;
-import xhl.core.Util;
 
 /**
  * Language for configuring state machine.
@@ -31,7 +31,7 @@ public class StateMachineLanguage implements Language {
         if (args.length >= 1) {
             String filename = args[0];
             StateMachineLanguage lang = new StateMachineLanguage();
-            Util.execute(lang, filename);
+            LanguageProcessor.execute(lang, filename);
             StateMachine machine = lang.getStateMachine();
             runStateMachine(machine);
         } else
