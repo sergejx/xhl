@@ -10,7 +10,6 @@ import java.util.List;
 import xhl.core.elements.CodeElement;
 import xhl.core.elements.LList;
 import xhl.core.elements.Symbol;
-import xhl.core.exceptions.EvaluationException;
 
 /**
  * Base class for implementing new modules.

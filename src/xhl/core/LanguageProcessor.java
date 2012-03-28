@@ -3,7 +3,6 @@ package xhl.core;
 import java.io.*;
 
 import xhl.core.elements.Block;
-import xhl.core.exceptions.EvaluationException;
 
 /**
  * LanguageProcessor is responsible for executing language code.

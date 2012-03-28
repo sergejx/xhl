@@ -3,9 +3,6 @@ package xhl.core;
 import java.util.*;
 
 import xhl.core.elements.*;
-import xhl.core.exceptions.EvaluationException;
-import xhl.core.exceptions.FunctionUndefinedException;
-import xhl.core.exceptions.SymbolNotDefinedException;
 
 /**
  * XHL code evaluator.
@@ -119,7 +116,8 @@ public class Evaluator implements ElementVisitor<Object>{
         if (symbolTable.containsKey(sym))
             return symbolTable.get(sym);
         else
-            throw new SymbolNotDefinedException(sym);
+            throw new EvaluationException(sym.getPosition(),
+                    String.format("Symbol '%s' was not defined.", sym));
     }
 
     @Override
@@ -127,13 +125,14 @@ public class Evaluator implements ElementVisitor<Object>{
         Expression head = cmb.head();
         Object func = head.accept(this);
         if (!(func instanceof Executable))
-            throw new FunctionUndefinedException(head);
+            throw new EvaluationException(head.getPosition(),
+                    String.format("Expression '%s' is not callable.", head));
         try {
             return ((Executable) func).exec(cmb.tail());
         } catch (EvaluationException e) {
             // Add error position if not present
             if (e.getPosition() == null)
-                throw new EvaluationException(e, cmb.getPosition());
+                throw new EvaluationException(cmb.getPosition(), e);
             else
                 throw e;
         }
