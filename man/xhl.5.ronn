@@ -1,0 +1,60 @@
+XHL -- Extensible Host Language
+===============================
+
+## SYNOPSIS
+
+    block of expressions:
+        f 1 2 (g 3)
+        a + b - (c >! f <= g)
+
+    numbers 42 3.14 -1.234e56
+    strings "hello world\n"
+    booleans true false
+    lists [1, 2, 3]
+    maps {a: 1, b: 2}
+    none
+
+## DESCRIPTION
+
+Extensible Host Language is a generic syntax for domain-specific languages. Its goal is to provide generic syntax and tools for building DSLs in a similar way as XML provides generic syntax for data formats. It uses JSON-based notation for data structures and adds Python/Haskel-inspired notation for control structures.
+
+XHL script is a sequence of expressions separated by a new line character. Expressions that are not nested inside other expressions can introduce a block. *Blocks* allow to define structure of code. Block itself is an indented sequence of expressions. An expression, that introduces a block, must be followed by a semicolon.
+
+*Expression* can be an operation or data literal. *Operation* is either combination written as a simple sequence of other expressions, or application of infix operator.
+
+*Literals* are of several types: *symbols* (unquoted words similar to identifiers in other languages), *strings* (enclosed in quotation marks), *numbers*, *boolean* values (`true` and `false`), *lists* (enclosed in square brackets), *maps* (enclosed in curly braces) and `none`.
+
+## SYNTAX
+
+XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF it includes special symbols for repetition `{}` and optional elements `[]`.
+
+    block       ::= { expression NEWLINE | expression-with-block }
+    expression  ::= combination {operator combination}
+    expression-with-block ::= combination ':' NEWLINE INDENT block DEDENT
+    combination ::= term { term }
+    term        ::= literal | '(' expression ')'
+    literal     ::= symbol | string | number | boolean | list | map | 'none'
+    boolean     ::= 'true' | 'false'
+    list        ::= '[]' | '[' expression { ',' expression } ']'
+    map         ::= '{}' | '{' key-value { ',' key-value } '}'
+    key-value   ::= expression ':' expression
+
+
+
+## LEXICAL SYNTAX
+
+Lexical syntax for the tokens is written using regular expressions:
+
+    symbol      ::= [a-zA-Z][a-zA-Z0-9_]+
+    operator    ::= [-+*/<>=!?]+
+    number      ::= -? [0-9]* (\. [0-9]*)?
+    string      ::= " ([^"] | \\")* "
+
+Comments are started with `#` and continue to the end of line.
+
+To simplify parser, lexical analyser transforms physical lines into **logical lines**. Special *NEWLINE* token is generated at the end of every logical line. Transformation is based on following rules:
+
+- Empty lines and lines only with comments are skipped
+- Line breaks inside of any type of brackets are ignored
+
+**Indentation** is also part of the syntax. Special tokens are generated at the beginning of indented block and at its end: *INDENT* and *DEDENT*
