@@ -7,7 +7,7 @@ public class Symbol extends Expression {
         this(name, null);
     }
 
-    public Symbol(String name, CodePosition position) {
+    public Symbol(String name, Position position) {
         super(position);
         this.name = name;
     }

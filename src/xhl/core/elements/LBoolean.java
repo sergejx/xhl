@@ -3,7 +3,7 @@ package xhl.core.elements;
 public class LBoolean extends Expression {
     private final boolean value;
 
-    public LBoolean(boolean value, CodePosition position) {
+    public LBoolean(boolean value, Position position) {
         super(position);
         this.value = value;
     }

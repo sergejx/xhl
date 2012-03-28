@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import xhl.core.Token.TokenType;
-import xhl.core.elements.CodeElement.CodePosition;
+import xhl.core.elements.Position;
 
 /**
  * Lexical analyzer for XHL
@@ -252,8 +252,8 @@ public class Lexer {
         return new Token(STRING, sb.toString(), getPosition());
     }
 
-    private CodePosition getPosition() {
-        return new CodePosition("input", lineN, columnN); // FIXME filename
+    private Position getPosition() {
+        return new Position("input", lineN, columnN); // FIXME filename
     }
 
 }

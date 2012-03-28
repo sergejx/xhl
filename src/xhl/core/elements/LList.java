@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class LList extends ExpressionsList implements Iterable<Expression> {
 
-    public LList(CodePosition position) {
+    public LList(Position position) {
         super(position);
     }
 

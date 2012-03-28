@@ -4,7 +4,7 @@ public class LNumber extends Expression {
 
     private final double value;
 
-    public LNumber(double value, CodePosition position) {
+    public LNumber(double value, Position position) {
         super(position);
         this.value = value;
     }

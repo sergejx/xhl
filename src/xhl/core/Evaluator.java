@@ -25,7 +25,7 @@ public class Evaluator implements ElementVisitor<Object>{
      * @return result of evaluation
      * @throws EvaluationException
      */
-    public Object eval(CodeElement obj) throws EvaluationException {
+    public Object eval(Expression obj) throws EvaluationException {
         return (obj).accept(this);
     }
 

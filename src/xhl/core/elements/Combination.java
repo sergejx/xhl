@@ -9,7 +9,7 @@ package xhl.core.elements;
  * @author Sergej Chodarev
  */
 public class Combination extends ExpressionsList {
-    public Combination(CodePosition position) {
+    public Combination(Position position) {
         super(position);
     }
 

@@ -1,6 +1,6 @@
 package xhl.core;
 
-import xhl.core.elements.CodeElement.CodePosition;
+import xhl.core.elements.Position;
 
 /**
  * Token from lexical analysis
@@ -21,21 +21,21 @@ public class Token {
     public final TokenType type;
     public final double doubleValue;
     public final String stringValue;
-    public final CodePosition position;
+    public final Position position;
 
-    public Token(TokenType t, CodePosition p) {
+    public Token(TokenType t, Position p) {
         this(t, 0, null, p);
     }
 
-    public Token(TokenType t, double n, CodePosition p) {
+    public Token(TokenType t, double n, Position p) {
         this(t, n, null, p);
     }
 
-    public Token(TokenType t, String s, CodePosition p) {
+    public Token(TokenType t, String s, Position p) {
         this(t, 0, s, p);
     }
 
-    private Token(TokenType t, double n, String s, CodePosition p) {
+    private Token(TokenType t, double n, String s, Position p) {
         type = t;
         doubleValue = n;
         stringValue = s;

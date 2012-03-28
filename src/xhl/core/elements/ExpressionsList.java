@@ -13,11 +13,10 @@ public abstract class ExpressionsList extends Expression {
 
     protected final List<Expression> list = new LinkedList<Expression>();
 
-    public ExpressionsList() {
-        super();
+    protected ExpressionsList() {
     }
 
-    public ExpressionsList(CodePosition position) {
+    public ExpressionsList(Position position) {
         super(position);
     }
 

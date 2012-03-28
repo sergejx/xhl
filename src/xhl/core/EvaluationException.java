@@ -1,25 +1,25 @@
 package xhl.core;
 
-import xhl.core.elements.CodeElement.CodePosition;
+import xhl.core.elements.Position;
 
 public class EvaluationException extends RuntimeException {
-    protected final CodePosition position;
+    protected final Position position;
 
     public EvaluationException(Throwable cause) {
         this(null, cause);
     }
 
-    public EvaluationException(CodePosition position, Throwable cause) {
+    public EvaluationException(Position position, Throwable cause) {
         this(position,
           cause.getMessage() != null ? cause.getMessage() : cause.toString());
     }
 
-    public EvaluationException(CodePosition position, String message) {
+    public EvaluationException(Position position, String message) {
         super(message);
         this.position = position;
     }
 
-    public CodePosition getPosition() {
+    public Position getPosition() {
         return position;
     }
 

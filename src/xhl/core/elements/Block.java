@@ -6,7 +6,7 @@ package xhl.core.elements;
  */
 public class Block extends ExpressionsList implements Iterable<Expression> {
 
-    public Block(CodePosition position) {
+    public Block(Position position) {
         super(position);
     }
 

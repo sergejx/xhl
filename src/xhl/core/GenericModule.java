@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import xhl.core.elements.CodeElement;
+import xhl.core.elements.Expression;
 import xhl.core.elements.LList;
 import xhl.core.elements.Symbol;
 
@@ -111,7 +111,7 @@ public abstract class GenericModule implements Module {
         public Object exec(LList args) throws EvaluationException {
             // Prepare arguments
             List<Object> evArgs = new ArrayList<Object>(args.size());
-            for (CodeElement arg : args) {
+            for (Expression arg : args) {
                 if (evaluateArgs)
                     evArgs.add(evaluator.eval(arg));
                 else

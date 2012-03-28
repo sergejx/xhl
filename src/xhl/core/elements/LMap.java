@@ -9,7 +9,7 @@ import java.util.Set;
 public class LMap extends Expression {
     private final HashMap<Expression, Expression> map = new HashMap<Expression, Expression>();
 
-    public LMap(CodePosition position) {
+    public LMap(Position position) {
         super(position);
     }
 
