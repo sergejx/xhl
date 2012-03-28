@@ -3,7 +3,6 @@ package xhl.examples.computer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import xhl.core.Util;
 import xhl.core.Language;
 import xhl.core.Module;
 
@@ -14,7 +13,7 @@ import xhl.core.Module;
  *
  * @author Sergej Chodarev
  */
-public class ComputerLanguage implements Language {
+public class ComputerLanguage extends Language {
 
     private static final ComputerModule module = new ComputerModule();
 
@@ -33,7 +32,7 @@ public class ComputerLanguage implements Language {
         if (args.length >= 1) {
             String filename = args[0];
             ComputerLanguage lang = new ComputerLanguage();
-            Util.execute(lang, filename);
+            lang.execute(filename);
             lang.getComputer().print();
         } else
             System.out.println("Give file name as program argument!");

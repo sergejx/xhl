@@ -4,7 +4,6 @@ import java.io.*;
 
 import xhl.core.Language;
 import xhl.core.Module;
-import xhl.core.Util;
 
 /**
  * Language for configuring state machine.
@@ -13,7 +12,7 @@ import xhl.core.Util;
  *
  * @author Sergej Chodarev
  */
-public class StateMachineLanguage implements Language {
+public class StateMachineLanguage extends Language {
 
     private final StateMachineModule module = new StateMachineModule();
 
@@ -31,7 +30,7 @@ public class StateMachineLanguage implements Language {
         if (args.length >= 1) {
             String filename = args[0];
             StateMachineLanguage lang = new StateMachineLanguage();
-            Util.execute(lang, filename);
+            lang.execute(filename);
             StateMachine machine = lang.getStateMachine();
             runStateMachine(machine);
         } else
