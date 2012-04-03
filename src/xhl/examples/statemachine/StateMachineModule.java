@@ -21,7 +21,7 @@ public class StateMachineModule extends GenericModule {
             try {
                 Combination def = (Combination) stmt;
                 Symbol sym = (Symbol) def.get(0);
-                LString code = (LString) def.get(1);
+                SString code = (SString) def.get(1);
                 Event event = new Event(sym.getName(), code.getValue());
                 evaluator.putSymbol(sym, event);
             } catch (ClassCastException e) {
@@ -41,7 +41,7 @@ public class StateMachineModule extends GenericModule {
             try {
                 Combination def = (Combination) expr;
                 Symbol sym = (Symbol) def.get(0);
-                LString code = (LString) def.get(1);
+                SString code = (SString) def.get(1);
                 Command cmd = new Command(sym.getName(), code.getValue());
                 evaluator.putSymbol(sym, cmd);
             } catch (ClassCastException e) {

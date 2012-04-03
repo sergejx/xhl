@@ -4,7 +4,7 @@ package xhl.core.elements;
  * Combination may be function application (in form of sequence of expressions)
  * or infix operator application.
  *
- * It is similar to LList, but has different interpretation during evaluation.
+ * It is similar to SList, but has different interpretation during evaluation.
  *
  * @author Sergej Chodarev
  */
@@ -19,8 +19,8 @@ public class Combination extends ExpressionsList {
     }
 
     /** Get all but first items -- function arguments */
-    public LList tail() {
-        return new LList(list.subList(1, list.size()));
+    public SList tail() {
+        return new SList(list.subList(1, list.size()));
     }
 
     @Override

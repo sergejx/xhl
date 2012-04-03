@@ -1,9 +1,9 @@
 package xhl.core.elements;
 
-public class LBoolean extends Expression {
+public class SBoolean extends Expression {
     private final boolean value;
 
-    public LBoolean(boolean value, Position position) {
+    public SBoolean(boolean value, Position position) {
         super(position);
         this.value = value;
     }

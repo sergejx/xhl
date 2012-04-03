@@ -7,13 +7,13 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public class LList extends ExpressionsList implements Iterable<Expression> {
+public class SList extends ExpressionsList implements Iterable<Expression> {
 
-    public LList(Position position) {
+    public SList(Position position) {
         super(position);
     }
 
-    LList(List<Expression> l) {
+    SList(List<Expression> l) {
         list.addAll(l);
     }
 

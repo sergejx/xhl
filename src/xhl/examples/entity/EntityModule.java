@@ -21,10 +21,10 @@ public class EntityModule extends GenericModule {
 
     private class EntityBuilder {
         private final String name;
-        private final LMap attrs;
+        private final SMap attrs;
         private Entity entity;
 
-        public EntityBuilder(String name, LMap attrs) {
+        public EntityBuilder(String name, SMap attrs) {
             this.name = name;
             this.attrs = attrs;
         }
@@ -77,7 +77,7 @@ public class EntityModule extends GenericModule {
     }
 
     @Function(evaluateArgs = false)
-    public EntityBuilder entity(Symbol name, LMap attrs) {
+    public EntityBuilder entity(Symbol name, SMap attrs) {
         return new EntityBuilder(name.getName(), attrs);
     }
 }

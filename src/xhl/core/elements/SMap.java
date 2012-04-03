@@ -6,10 +6,10 @@ import java.util.Set;
 /**
  * @author Sergej Chodarev
  */
-public class LMap extends Expression {
+public class SMap extends Expression {
     private final HashMap<Expression, Expression> map = new HashMap<Expression, Expression>();
 
-    public LMap(Position position) {
+    public SMap(Position position) {
         super(position);
     }
 

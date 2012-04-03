@@ -24,7 +24,7 @@ public class ReaderTest {
     @Test
     public void singleLiteral() throws IOException {
         Block prg = reader.read("42");
-        LNumber num = (LNumber) prg.get(0);
+        SNumber num = (SNumber) prg.get(0);
         assertEquals(42.0, num.getValue(), 0);
         assertEquals(1, prg.size());
     }
@@ -32,15 +32,15 @@ public class ReaderTest {
     @Test
     public void list() throws IOException {
         Block prg = reader.read("[1, 2, 3]");
-        LList list = (LList) prg.get(0);
-        assertEquals(1, ((LNumber) list.get(0)).getValue(), 0);
+        SList list = (SList) prg.get(0);
+        assertEquals(1, ((SNumber) list.get(0)).getValue(), 0);
         assertEquals(3, list.size());
     }
 
     @Test
     public void map() throws IOException {
         Block prg = reader.read("{a: 1, b: 2}");
-        LMap map = (LMap) prg.get(0);
+        SMap map = (SMap) prg.get(0);
         assertTrue(map.containsKey(new Symbol("a")));
         assertTrue(map.containsKey(new Symbol("b")));
     }

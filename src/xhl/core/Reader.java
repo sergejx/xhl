@@ -104,8 +104,8 @@ public class Reader {
             return list;
     }
 
-    private LList list() throws IOException {
-        LList list = new LList(token.position);
+    private SList list() throws IOException {
+        SList list = new SList(token.position);
         token = lexer.nextToken(); // [
         if (token.type == BRACKET_CLOSE) { // Empty list
             token = lexer.nextToken(); // ]
@@ -121,8 +121,8 @@ public class Reader {
         return list;
     }
 
-    private LMap map() throws IOException {
-        LMap map = new LMap(token.position);
+    private SMap map() throws IOException {
+        SMap map = new SMap(token.position);
         token = lexer.nextToken(); // {
         if (token.type == BRACE_CLOSE) { // Empty map
             token = lexer.nextToken(); // }
@@ -138,7 +138,7 @@ public class Reader {
         return map;
     }
 
-    private void keyValue(LMap map) throws IOException {
+    private void keyValue(SMap map) throws IOException {
         Expression key = term();
         token = lexer.nextToken(); // :
         Expression value = term();
@@ -153,19 +153,19 @@ public class Reader {
             token = lexer.nextToken();
             break;
         case STRING:
-            sexp = new LString(token.stringValue, token.position);
+            sexp = new SString(token.stringValue, token.position);
             token = lexer.nextToken();
             break;
         case NUMBER:
-            sexp = new LNumber(token.doubleValue, token.position);
+            sexp = new SNumber(token.doubleValue, token.position);
             token = lexer.nextToken();
             break;
         case TRUE:
-            sexp = new LBoolean(true, token.position);
+            sexp = new SBoolean(true, token.position);
             token = lexer.nextToken();
             break;
         case FALSE:
-            sexp = new LBoolean(false, token.position);
+            sexp = new SBoolean(false, token.position);
             token = lexer.nextToken();
             break;
         case PAR_OPEN:

@@ -1,15 +1,14 @@
 package xhl.core.elements;
 
-public class LNumber extends Expression {
+public class SString extends Expression {
+    private final String value;
 
-    private final double value;
-
-    public LNumber(double value, Position position) {
+    public SString(String value, Position position) {
         super(position);
         this.value = value;
     }
 
-    public Double getValue() {
+    public String getValue() {
         return value;
     }
 

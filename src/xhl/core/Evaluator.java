@@ -76,22 +76,22 @@ public class Evaluator implements ElementVisitor<Object>{
     }
 
     @Override
-    public Object visit(LNumber num) {
+    public Object visit(SNumber num) {
         return num.getValue();
     }
 
     @Override
-    public Object visit(LBoolean bool) {
+    public Object visit(SBoolean bool) {
         return bool.getValue();
     }
 
     @Override
-    public Object visit(LString str) {
+    public Object visit(SString str) {
         return str.getValue();
     }
 
     @Override
-    public Object visit(LList lst) {
+    public Object visit(SList lst) {
         List<Object> list = new LinkedList<Object>();
         for (Expression item: lst) {
             Object value = item.accept(this);
@@ -101,7 +101,7 @@ public class Evaluator implements ElementVisitor<Object>{
     }
 
     @Override
-    public Object visit(LMap map) {
+    public Object visit(SMap map) {
         Map<Object, Object> vmap = new HashMap<Object, Object>();
         for (Expression key: map.keySet()) {
             Object vkey = key.accept(this);

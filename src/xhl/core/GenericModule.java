@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xhl.core.elements.Expression;
-import xhl.core.elements.LList;
+import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
 
 /**
@@ -108,7 +108,7 @@ public abstract class GenericModule implements Module {
         }
 
         @Override
-        public Object exec(LList args) throws EvaluationException {
+        public Object exec(SList args) throws EvaluationException {
             // Prepare arguments
             List<Object> evArgs = new ArrayList<Object>(args.size());
             for (Expression arg : args) {

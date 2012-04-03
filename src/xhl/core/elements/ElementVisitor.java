@@ -11,11 +11,11 @@ package xhl.core.elements;
  *            Type of the result
  */
 public interface ElementVisitor<R> {
-    public R visit(LNumber num);
-    public R visit(LBoolean bool);
-    public R visit(LString str);
-    public R visit(LList lst);
-    public R visit(LMap map);
+    public R visit(SNumber num);
+    public R visit(SBoolean bool);
+    public R visit(SString str);
+    public R visit(SList lst);
+    public R visit(SMap map);
     public R visit(Symbol sym);
     public R visit(Combination cmb);
     public R visit(Block blk);
