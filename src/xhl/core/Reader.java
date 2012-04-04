@@ -112,10 +112,10 @@ public class Reader {
             return list;
         }
         // Non-empty list
-        list.add(term());
+        list.add(expression(false));
         while (token.type != TokenType.BRACKET_CLOSE) {
             token = lexer.nextToken(); // ,
-            list.add(term());
+            list.add(expression(false));
         }
         token = lexer.nextToken(); // ]
         return list;
@@ -139,9 +139,9 @@ public class Reader {
     }
 
     private void keyValue(SMap map) throws IOException {
-        Expression key = term();
+        Expression key = expression(false);
         token = lexer.nextToken(); // :
-        Expression value = term();
+        Expression value = expression(false);
         map.put(key, value);
     }
 

@@ -1,6 +1,8 @@
 package xhl.core;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -61,6 +63,28 @@ public class ReaderTest {
         Symbol head = (Symbol) application.head();
         assertEquals("+", head.getName());
         assertEquals(3, application.size());
+    }
+
+    @Test
+    public void combinationInList() throws IOException {
+        Block prg = reader.read("[a 1, b 2]");
+        SList list = (SList) prg.get(0);
+        assertThat(list.get(0), is(Combination.class));
+        assertThat(list.get(1), is(Combination.class));
+        Combination c1 = (Combination) list.get(0);
+        assertThat(c1.head(), is(Symbol.class));
+        assertEquals("a", ((Symbol) c1.head()).getName());
+        assertThat(c1.get(1), is(SNumber.class));
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void combinationInMap() throws IOException {
+        Block prg = reader.read("{a: 1 + 2, b 3: 4}");
+        SMap map = (SMap) prg.get(0);
+        assertTrue(map.containsKey(new Symbol("a")));
+        assertThat(map.get(new Symbol("a")), is(Combination.class));
+        assertEquals(2, map.keySet().size());
     }
 
     @Test
