@@ -11,12 +11,10 @@ import xhl.core.elements.Block;
  */
 public class LanguageProcessor {
     private final Language language;
-    private final Reader reader;
     private final Evaluator evaluator;
 
     public LanguageProcessor(Language lang) {
         language = lang;
-        reader = new Reader();
         evaluator = new Evaluator();
         for (Module module : language.getModules()) {
             evaluator.loadModule(module);
@@ -34,7 +32,7 @@ public class LanguageProcessor {
     public void execute(File file) throws FileNotFoundException, IOException,
             EvaluationException {
 
-        Block program = reader.read(new FileReader(file));
+        Block program = Reader.read(new FileReader(file));
         execute(program);
     }
 

@@ -1,31 +1,22 @@
 package xhl.core;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import xhl.core.elements.*;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 /**
  * @author Sergej Chodarev
  */
 public class ReaderTest {
-    private Reader reader;
-
-    @Before
-    public void createReader() {
-        reader = new Reader();
-    }
 
     @Test
     public void singleLiteral() throws IOException {
-        Block prg = reader.read("42");
+        Block prg = Reader.read("42");
         SNumber num = (SNumber) prg.get(0);
         assertEquals(42.0, num.getValue(), 0);
         assertEquals(1, prg.size());
@@ -33,7 +24,7 @@ public class ReaderTest {
 
     @Test
     public void list() throws IOException {
-        Block prg = reader.read("[1, 2, 3]");
+        Block prg = Reader.read("[1, 2, 3]");
         SList list = (SList) prg.get(0);
         assertEquals(1, ((SNumber) list.get(0)).getValue(), 0);
         assertEquals(3, list.size());
@@ -41,7 +32,7 @@ public class ReaderTest {
 
     @Test
     public void map() throws IOException {
-        Block prg = reader.read("{a: 1, b: 2}");
+        Block prg = Reader.read("{a: 1, b: 2}");
         SMap map = (SMap) prg.get(0);
         assertTrue(map.containsKey(new Symbol("a")));
         assertTrue(map.containsKey(new Symbol("b")));
@@ -49,7 +40,7 @@ public class ReaderTest {
 
     @Test
     public void application() throws IOException {
-        Block prg = reader.read("foo bar 42");
+        Block prg = Reader.read("foo bar 42");
         Combination application = (Combination) prg.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
@@ -58,7 +49,7 @@ public class ReaderTest {
 
     @Test
     public void infix() throws IOException {
-        Block prg = reader.read("foo + bar");
+        Block prg = Reader.read("foo + bar");
         Combination application = (Combination) prg.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("+", head.getName());
@@ -67,7 +58,7 @@ public class ReaderTest {
 
     @Test
     public void combinationInList() throws IOException {
-        Block prg = reader.read("[a 1, b 2]");
+        Block prg = Reader.read("[a 1, b 2]");
         SList list = (SList) prg.get(0);
         assertThat(list.get(0), is(Combination.class));
         assertThat(list.get(1), is(Combination.class));
@@ -80,7 +71,7 @@ public class ReaderTest {
 
     @Test
     public void combinationInMap() throws IOException {
-        Block prg = reader.read("{a: 1 + 2, b 3: 4}");
+        Block prg = Reader.read("{a: 1 + 2, b 3: 4}");
         SMap map = (SMap) prg.get(0);
         assertTrue(map.containsKey(new Symbol("a")));
         assertThat(map.get(new Symbol("a")), is(Combination.class));
@@ -90,7 +81,7 @@ public class ReaderTest {
     @Test
     public void infixRepeating() throws IOException {
         // All operators have the same priority and left associativity
-        Block prg = reader.read("foo + bar - spam");
+        Block prg = Reader.read("foo + bar - spam");
 
         Combination application = (Combination) prg.get(0);
         Symbol head = (Symbol) application.head();
@@ -104,7 +95,7 @@ public class ReaderTest {
 
     @Test
     public void parentheses() throws IOException {
-        Block prg = reader.read("foo (bar 42)");
+        Block prg = Reader.read("foo (bar 42)");
         Combination application = (Combination) prg.get(0);
         Symbol head = (Symbol) application.head();
         assertEquals("foo", head.getName());
@@ -116,7 +107,7 @@ public class ReaderTest {
 
     @Test
     public void block() throws IOException {
-        Block prg = reader.read("foo:\n\tbar 42\nspam");
+        Block prg = Reader.read("foo:\n\tbar 42\nspam");
         Expression exp = prg.get(0);
 
         // Header

@@ -1,15 +1,14 @@
 package xhl.core;
 
-import static xhl.core.Token.TokenType.*;
-
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import xhl.core.Token.TokenType;
 import xhl.core.elements.*;
+
+import com.google.common.collect.ImmutableSet;
+
+import static xhl.core.Token.TokenType.*;
 
 /**
  * XHL parser
@@ -35,22 +34,24 @@ public class Reader {
     private Lexer lexer;
     private Token token;
 
-    private static final Set<TokenType> termH;
-    static {
-        TokenType elements[] =
-                { SYMBOL, STRING, NUMBER, TRUE, FALSE, NONE, BRACKET_OPEN,
-                        BRACE_OPEN, PAR_OPEN };
-        termH = new HashSet<TokenType>(Arrays.asList(elements));
+    private static final ImmutableSet<TokenType> termH = ImmutableSet.of(
+            SYMBOL, STRING, NUMBER, TRUE, FALSE, NONE, BRACKET_OPEN,
+            BRACE_OPEN, PAR_OPEN);
+
+    public static Block read(java.io.Reader input) throws IOException {
+        return new Reader().parse(input);
     }
 
-    public Block read(java.io.Reader input) throws IOException {
+    public static Block read(String code) throws IOException {
+        return read(new StringReader(code));
+    }
+
+    private Reader() {}
+
+    private Block parse(java.io.Reader input) throws IOException {
         lexer = new Lexer(input);
         token = lexer.nextToken();
         return block();
-    }
-
-    public Block read(String code) throws IOException {
-        return read(new StringReader(code));
     }
 
     private Block block() throws IOException {
