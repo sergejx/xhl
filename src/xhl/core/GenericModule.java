@@ -7,9 +7,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import xhl.core.elements.Expression;
 import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
+
+import com.google.common.base.Optional;
+
+import static java.util.Arrays.asList;
+
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.collect.Iterables.tryFind;
 
 /**
  * Base class for implementing new modules.
@@ -81,7 +87,19 @@ public abstract class GenericModule implements Module {
             else
                 name = fann.name();
 
-            Executable exec = new GenericExecutable(method, fann.evaluateArgs());
+            // Check which parameters to evaluate
+            Annotation[][] pann = method.getParameterAnnotations();
+            boolean[] evaluateArgs = new boolean[pann.length];
+            for (int i = 0; i < pann.length; i++) {
+                Optional<Annotation> ann =
+                        tryFind(asList(pann[i]), instanceOf(Symbolic.class));
+                if (ann.isPresent())
+                    evaluateArgs[i] = false;
+                else
+                    evaluateArgs[i] = fann.evaluateArgs();
+            }
+
+            Executable exec = new GenericExecutable(method, evaluateArgs);
             table.put(new Symbol(name), exec);
         }
     }
@@ -98,11 +116,16 @@ public abstract class GenericModule implements Module {
         public boolean evaluateArgs() default true;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.PARAMETER)
+    protected @interface Symbolic {
+    }
+
     private class GenericExecutable implements Executable {
         private final Method method;
-        private final boolean evaluateArgs;
+        private final boolean[] evaluateArgs;
 
-        public GenericExecutable(Method method, boolean evaluateArgs) {
+        public GenericExecutable(Method method, boolean[] evaluateArgs) {
             this.method = method;
             this.evaluateArgs = evaluateArgs;
         }
@@ -111,11 +134,12 @@ public abstract class GenericModule implements Module {
         public Object exec(SList args) throws EvaluationException {
             // Prepare arguments
             List<Object> evArgs = new ArrayList<Object>(args.size());
-            for (Expression arg : args) {
-                if (evaluateArgs)
-                    evArgs.add(evaluator.eval(arg));
+            for (int i = 0; i < args.size(); i++) {
+                if (i >= evaluateArgs.length // for varargs
+                        || evaluateArgs[i])
+                    evArgs.add(evaluator.eval(args.get(i)));
                 else
-                    evArgs.add(arg);
+                    evArgs.add(args.get(i));
             }
             if (method.isVarArgs())
                 packVarArgs(evArgs);
@@ -142,8 +166,8 @@ public abstract class GenericModule implements Module {
             Object[] varArgs = evArgs.subList(last, evArgs.size()).toArray();
 
             // New array for varargs, properly typed
-            Object[] varArgsT = (Object[]) Array.newInstance(type,
-                    varArgs.length);
+            Object[] varArgsT =
+                    (Object[]) Array.newInstance(type, varArgs.length);
             System.arraycopy(varArgs, 0, varArgsT, 0, varArgs.length);
 
             // Pack varargs
