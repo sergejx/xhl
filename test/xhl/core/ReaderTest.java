@@ -57,6 +57,15 @@ public class ReaderTest {
     }
 
     @Test
+    public void prefixOperator() throws IOException {
+        Block prg = Reader.read("(+) foo bar");
+        Combination application = (Combination) prg.get(0);
+        Symbol head = (Symbol) application.head();
+        assertEquals("+", head.getName());
+        assertEquals(3, application.size());
+    }
+
+    @Test
     public void combinationInList() throws IOException {
         Block prg = Reader.read("[a 1, b 2]");
         SList list = (SList) prg.get(0);

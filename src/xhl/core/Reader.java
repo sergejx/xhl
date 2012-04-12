@@ -17,7 +17,7 @@ import static xhl.core.Token.TokenType.*;
  *
  * <pre>
  *   block       ::= { expression LINEEND | expression-with-block }
- *   expression  ::= combination { operator combination }
+ *   expression  ::= combination { operator combination } | operator
  *   expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
  *   combination ::= term { term }
  *   term        ::= literal | '(' expression ')'
@@ -62,8 +62,12 @@ public class Reader {
         return block;
     }
 
-    private Expression expression(boolean withBlock)
-            throws IOException {
+    private Expression expression(boolean withBlock) throws IOException {
+        if (token.type == OPERATOR) { // Single operator can be used as a symbol
+            Symbol op = new Symbol(token.stringValue, token.position);
+            token = lexer.nextToken();
+            return op;
+        }
         Expression first = combination();
         while (token.type == OPERATOR) {
             Combination exp = new Combination(token.position);

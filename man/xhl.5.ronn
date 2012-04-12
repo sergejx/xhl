@@ -29,7 +29,7 @@ XHL script is a sequence of expressions separated by a new line character. Expre
 XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF it includes special symbols for repetition `{}` and optional elements `[]`.
 
     block       ::= { expression NEWLINE | expression-with-block }
-    expression  ::= combination {operator combination}
+    expression  ::= combination {operator combination} | operator
     expression-with-block ::= combination ':' NEWLINE INDENT block DEDENT
     combination ::= term { term }
     term        ::= literal | '(' expression ')'
