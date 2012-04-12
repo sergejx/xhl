@@ -1,26 +1,41 @@
 package xhl.core;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import xhl.core.elements.Symbol;
 
-public class SymbolTable {
-    private final Map<Symbol, Object> table = new HashMap<Symbol, Object>();
+import static com.google.common.collect.Maps.newHashMap;
+
+public class SymbolTable<T> {
+    private final Map<Symbol, T> table = newHashMap();
+    private SymbolTable<T> parent;
+
+    public SymbolTable() {
+    }
+
+    public SymbolTable(SymbolTable<T> parent) {
+        this.parent = parent;
+    }
 
     public boolean containsKey(Symbol sym) {
-        return table.containsKey(sym);
+        return table.containsKey(sym)
+                || ((parent != null) && parent.containsKey(sym));
     }
 
-    public Object get(Symbol sym) {
-        return table.get(sym);
+    public T get(Symbol sym) {
+        if (table.containsKey(sym))
+            return table.get(sym);
+        else if (parent != null)
+            return parent.get(sym);
+        else
+            return null;
     }
 
-    public Object put(Symbol sym, Object value) {
+    public T put(Symbol sym, T value) {
         return table.put(sym, value);
     }
 
-    public void putAll(SymbolTable t) {
+    public void putAll(SymbolTable<T> t) {
         for (Symbol key : t.table.keySet()) {
             put(key, t.get(key));
         }

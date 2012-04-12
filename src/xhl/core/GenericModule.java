@@ -28,14 +28,14 @@ import static com.google.common.collect.Iterables.tryFind;
 public abstract class GenericModule implements Module {
 
     protected Evaluator evaluator;
-    private final SymbolTable table = new SymbolTable();
+    private final SymbolTable<Object> table = new SymbolTable<Object>();
 
     public GenericModule() {
         findFunctions();
     }
 
     @Override
-    public SymbolTable getSymbols() {
+    public SymbolTable<Object> getSymbols() {
         return table;
     }
 
@@ -77,7 +77,7 @@ public abstract class GenericModule implements Module {
      * @param table
      * @param method
      */
-    private void tryAddFunction(SymbolTable table, Method method) {
+    private void tryAddFunction(SymbolTable<Object> table, Method method) {
         Function fann = method.getAnnotation(Function.class);
         if (fann != null) {
             // Find function name
