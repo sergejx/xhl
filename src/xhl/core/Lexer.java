@@ -1,7 +1,5 @@
 package xhl.core;
 
-import static xhl.core.Token.TokenType.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -12,29 +10,31 @@ import java.util.regex.Pattern;
 import xhl.core.Token.TokenType;
 import xhl.core.elements.Position;
 
+import com.google.common.collect.ImmutableMap;
+
+import static xhl.core.Token.TokenType.*;
+
 /**
  * Lexical analyzer for XHL
  *
  * @author Sergej Chodarev
  */
-public class Lexer {
+class Lexer {
     // Regular expressions and maps for tokens
     private static final Pattern numberRx = Pattern.compile("-?\\d+(\\.\\d*)?");
     private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>.?!]+");
     private static final Pattern symbolRx = Pattern.compile("[a-zA-Z]\\w*");
-    private static final Map<Character, TokenType> simpleTokens =
-            new HashMap<Character, TokenType>() {
-                {
-                    put('(', PAR_OPEN);
-                    put(')', PAR_CLOSE);
-                    put('[', BRACKET_OPEN);
-                    put(']', BRACKET_CLOSE);
-                    put('{', BRACE_OPEN);
-                    put('}', BRACE_CLOSE);
-                    put(':', COLON);
-                    put(',', COMMA);
-                }
-            };
+    private static final ImmutableMap<Character, TokenType> simpleTokens =
+            new ImmutableMap.Builder<Character, TokenType>()
+                    .put('(', PAR_OPEN)
+                    .put(')', PAR_CLOSE)
+                    .put('[', BRACKET_OPEN)
+                    .put(']', BRACKET_CLOSE)
+                    .put('{', BRACE_OPEN)
+                    .put('}', BRACE_CLOSE)
+                    .put(':', COLON)
+                    .put(',', COMMA)
+                    .build();
     private static final String OPEN = "([{";
     private static final String CLOSE = "}])";
 
