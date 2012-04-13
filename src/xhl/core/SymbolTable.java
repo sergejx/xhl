@@ -1,6 +1,7 @@
 package xhl.core;
 
 import java.util.Map;
+import java.util.Set;
 
 import xhl.core.elements.Symbol;
 
@@ -41,4 +42,7 @@ public class SymbolTable<T> {
         }
     }
 
+    public Set<Symbol> keySet() {
+        return table.keySet();
+    }
 }
