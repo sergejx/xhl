@@ -32,6 +32,10 @@ public abstract class ExpressionsList extends Expression {
         return list.get(arg0);
     }
 
+    public List<Expression> subList(int from, int to) {
+        return list.subList(from, to);
+    }
+
     public Iterator<Expression> iterator() {
         return list.iterator();
     }

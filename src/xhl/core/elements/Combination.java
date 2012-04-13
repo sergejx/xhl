@@ -15,12 +15,12 @@ public class Combination extends ExpressionsList {
 
     /** Get first item of the combination -- usually function name */
     public Expression head() {
-        return list.get(0);
+        return get(0);
     }
 
     /** Get all but first items -- function arguments */
     public SList tail() {
-        return new SList(list.subList(1, list.size()));
+        return new SList(subList(1, size()));
     }
 
     @Override
