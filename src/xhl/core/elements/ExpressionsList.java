@@ -36,4 +36,8 @@ public abstract class ExpressionsList extends Expression {
         return list.iterator();
     }
 
+    @Override
+    public String toString() {
+        return list.toString();
+    }
 }
