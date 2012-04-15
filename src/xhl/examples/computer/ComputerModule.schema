@@ -1,0 +1,10 @@
+element computer:
+    params [block(val Block)]
+
+element processor:
+    type Processor
+    params [val Map]
+
+element disk:
+    type Disk
+    params [val Map]

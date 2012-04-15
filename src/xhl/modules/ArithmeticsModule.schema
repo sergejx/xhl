@@ -1,0 +1,15 @@
+element (+):
+    params [variadic (val Number)]
+    type Number
+
+element (-):
+    params [variadic (val Number)]
+    type Number
+
+element (*):
+    params [variadic (val Number)]
+    type Number
+
+element (/):
+    params [variadic (val Number)]
+    type Number

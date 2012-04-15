@@ -1,5 +1,7 @@
 package xhl.core;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +11,8 @@ import java.util.List;
 
 import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
+import xhl.core.validator.*;
+import xhl.core.validator.ElementSchema.ParamSpec;
 
 import com.google.common.base.Optional;
 
@@ -16,6 +20,7 @@ import static java.util.Arrays.asList;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.tryFind;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Base class for implementing new modules.
@@ -42,6 +47,36 @@ public abstract class GenericModule implements Module {
     @Override
     public void setEvaluator(Evaluator evaluator) {
         this.evaluator = evaluator;
+    }
+
+    /**
+     * Return module schema
+     *
+     * Try to read module schema from a file with the same name as the class but
+     * with extension ".schema". If it is not available, create generic schema,
+     * that contains all elements defined in the module with the most generic
+     * properties allowing to pass the validation.
+     */
+    @Override
+    public Schema getSchema() {
+        Class<? extends GenericModule> clazz = this.getClass();
+        InputStream in =
+                clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
+        if (in != null) {
+            ValidatorLanguage lang = new ValidatorLanguage();
+            LanguageProcessor.execute(lang, new InputStreamReader(in));
+            return lang.getReadedSchema();
+        } else {
+            Schema schema = new Schema();
+            for (Symbol symbol : table.keySet()) {
+                ElementSchema elem = new ElementSchema(symbol);
+                elem.setType(Type.AnyType);
+                elem.setParams(newArrayList(ParamSpec.variadic(ParamSpec
+                        .val(Type.AnyType))));
+                schema.put(elem);
+            }
+            return schema;
+        }
     }
 
     /**
