@@ -176,6 +176,8 @@ public abstract class GenericModule implements Module {
                 else
                     evArgs.add(args.get(i));
             }
+            processBuilders(evArgs);
+
             if (method.isVarArgs())
                 packVarArgs(evArgs);
 
@@ -185,6 +187,26 @@ public abstract class GenericModule implements Module {
                 throw new EvaluationException(e.getCause());
             } catch (Exception e) {
                 throw new EvaluationException(e);
+            }
+        }
+
+        private void processBuilders(List<Object> evArgs) {
+            Class<?>[] params = method.getParameterTypes();
+            for (int i = 0; i < evArgs.size(); i++) {
+                Object arg = evArgs.get(i);
+                Class<?> param;
+                if (i < params.length)
+                    param = params[i];
+                else // varargs
+                    param = params[params.length - 1];
+                boolean pb = Builder.class.isAssignableFrom(param);
+                boolean ab = Builder.class.isAssignableFrom(arg.getClass());
+                if (!pb && ab) {
+                    evArgs.set(i, ((Builder<?>) arg).toValue());
+                } else if (pb && !ab) {
+                    ConstBuilder<?> b = new ConstBuilder<Object>(arg);
+                    evArgs.set(i, b);
+                }
             }
         }
 
