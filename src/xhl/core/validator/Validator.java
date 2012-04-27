@@ -109,7 +109,11 @@ public class Validator implements ElementVisitor<Type> {
                 Symbol head = (Symbol) cmb.head();
                 SList tail = cmb.tail();
                 ElementSchema schema = elements.get(head);
-                table.putAll(schema.definedSymbols(tail, true));
+                if (schema == null) {
+                    errors.add(new Error(head.getPosition(), "Element '" + head
+                            + "' not defined."));
+                } else
+                    table.putAll(schema.definedSymbols(tail, true));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }
