@@ -50,11 +50,17 @@ public class Validator implements ElementVisitor<Type> {
 
     @Override
     public Type visit(SList lst) {
+        for (Expression exp : lst) {
+            check(exp);
+        }
         return Type.List;
     }
 
     @Override
     public Type visit(SMap map) {
+        for (Expression key : map.keySet()) {
+            check(map.get(key));
+        }
         return Type.Map;
     }
 
