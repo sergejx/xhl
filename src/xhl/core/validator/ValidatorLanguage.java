@@ -78,7 +78,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
         Schema langSchema = new Schema();
         ElementSchema element = new ElementSchema(new Symbol("element"));
         element.setParams(newArrayList(ParamSpec.sym(new Type("Symbol")),
-                ParamSpec.block(ParamSpec.sym(new Type("Block")))));
+                ParamSpec.block(ParamSpec.val(new Type("Block")))));
         element.setType(new Type("Symbol"));
         langSchema.put(element);
         ElementSchema params = new ElementSchema(new Symbol("params"));
