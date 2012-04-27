@@ -4,9 +4,7 @@ import java.util.List;
 
 import xhl.core.Error;
 import xhl.core.SymbolTable;
-import xhl.core.elements.Expression;
-import xhl.core.elements.SList;
-import xhl.core.elements.Symbol;
+import xhl.core.elements.*;
 import xhl.core.validator.Validator.ValidationResult;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -31,15 +29,26 @@ public class ElementSchema {
             if (onlyForward && !def.forward)
                 continue;
             ParamSpec argspec = params.get(def.arg - 1);
-            if (argspec.method != PassingMethod.SYM
-                    || argspec.type != Type.Symbol)
-                continue;
-            Expression arg = args.get(def.arg - 1);
-            if (!(arg instanceof Symbol))
-                continue;
-            Symbol name = (Symbol) arg;
-            Type type = def.type;
-            symbols.put(name, type);
+            if (argspec.method == PassingMethod.SYM
+                    && argspec.type == Type.Symbol) {
+                Expression arg = args.get(def.arg - 1);
+                if (!(arg instanceof Symbol))
+                    continue;
+                Symbol name = (Symbol) arg;
+                Type type = def.type;
+                symbols.put(name, type);
+            } else if (argspec.method == PassingMethod.SYM
+                    && argspec.type == Type.Map) {
+                Expression arg = args.get(def.arg - 1);
+                if (!(arg instanceof SMap))
+                    continue;
+                SMap map = (SMap) arg;
+                Type type = def.type;
+                for (Expression key : map.keySet()) {
+                    Symbol sym = (Symbol) key;
+                    symbols.put(sym, type);
+                }
+            }
         }
         return symbols;
     }
