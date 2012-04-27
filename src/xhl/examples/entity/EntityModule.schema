@@ -1,0 +1,16 @@
+element module:
+    params [sym Symbol, block(val Block)]
+
+element entity:
+    params [sym Symbol, val Map]
+    defines_forward 1 Entity
+    defines_forward 2 Property
+
+element int:
+    type Entity
+
+element string:
+    type Entity
+
+element boolean:
+    type Entity
