@@ -33,14 +33,14 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class GenericModule implements Module {
 
     protected Evaluator evaluator;
-    private final SymbolTable<Object> table = new SymbolTable<Object>();
+    private final Environment<Object> table = new Environment<Object>();
 
     public GenericModule() {
         findFunctions();
     }
 
     @Override
-    public SymbolTable<Object> getSymbols() {
+    public Environment<Object> getSymbols() {
         return table;
     }
 
@@ -112,7 +112,7 @@ public abstract class GenericModule implements Module {
      * @param table
      * @param method
      */
-    private void tryAddFunction(SymbolTable<Object> table, Method method) {
+    private void tryAddFunction(Environment<Object> table, Method method) {
         Function fann = method.getAnnotation(Function.class);
         if (fann != null) {
             // Find function name

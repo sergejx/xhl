@@ -7,14 +7,14 @@ import xhl.core.elements.Symbol;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class SymbolTable<T> {
+public class Environment<T> {
     private final Map<Symbol, T> table = newHashMap();
-    private SymbolTable<T> parent;
+    private Environment<T> parent;
 
-    public SymbolTable() {
+    public Environment() {
     }
 
-    public SymbolTable(SymbolTable<T> parent) {
+    public Environment(Environment<T> parent) {
         this.parent = parent;
     }
 
@@ -36,7 +36,7 @@ public class SymbolTable<T> {
         return table.put(sym, value);
     }
 
-    public void putAll(SymbolTable<T> t) {
+    public void putAll(Environment<T> t) {
         for (Symbol key : t.table.keySet()) {
             put(key, t.get(key));
         }

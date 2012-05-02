@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import xhl.core.Error;
-import xhl.core.SymbolTable;
+import xhl.core.Environment;
 import xhl.core.elements.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class Validator implements ElementVisitor<Type> {
-    private final SymbolTable<Type> table = new SymbolTable<Type>();
+    private final Environment<Type> table = new Environment<Type>();
     private final Map<Symbol, ElementSchema> elements = newHashMap();
     private final List<Error> errors = newArrayList();
 

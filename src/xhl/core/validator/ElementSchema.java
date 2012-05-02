@@ -3,7 +3,7 @@ package xhl.core.validator;
 import java.util.List;
 
 import xhl.core.Error;
-import xhl.core.SymbolTable;
+import xhl.core.Environment;
 import xhl.core.elements.*;
 import xhl.core.validator.Validator.ValidationResult;
 
@@ -23,8 +23,8 @@ public class ElementSchema {
         return params.get(params.size()-1).variadic;
     }
 
-    public SymbolTable<Type> definedSymbols(SList args, boolean onlyForward) {
-        SymbolTable<Type> symbols = new SymbolTable<Type>();
+    public Environment<Type> definedSymbols(SList args, boolean onlyForward) {
+        Environment<Type> symbols = new Environment<Type>();
         for (DefSpec def : defines) {
             if (onlyForward && !def.forward)
                 continue;

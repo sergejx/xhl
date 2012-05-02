@@ -10,7 +10,7 @@ import xhl.core.elements.*;
  * @author Sergej Chodarev
  */
 public class Evaluator implements ElementVisitor<Object>{
-    private final SymbolTable<Object> symbolTable = new SymbolTable<Object>();
+    private final Environment<Object> symbolTable = new Environment<Object>();
 
     public void loadModule(Module module) {
         module.setEvaluator(this);
