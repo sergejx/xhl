@@ -10,11 +10,11 @@ import xhl.core.elements.*;
  * @author Sergej Chodarev
  */
 public class Evaluator implements ElementVisitor<Object>{
-    private final Environment<Object> symbolTable = new Environment<Object>();
+    private final Environment<Object> environment = new Environment<Object>();
 
     public void loadModule(Module module) {
         module.setEvaluator(this);
-        symbolTable.putAll(module.getSymbols());
+        environment.putAll(module.getSymbols());
     }
 
     /**
@@ -52,7 +52,7 @@ public class Evaluator implements ElementVisitor<Object>{
      * @param value
      */
     public void putSymbol(Symbol symbol, Object value) {
-        symbolTable.put(symbol, value);
+        environment.put(symbol, value);
     }
 
     /**
@@ -62,7 +62,7 @@ public class Evaluator implements ElementVisitor<Object>{
      * @return value associated with symbol
      */
     public Object getSymbol(Symbol symbol) {
-        return symbolTable.get(symbol);
+        return environment.get(symbol);
     }
 
     /**
@@ -72,7 +72,7 @@ public class Evaluator implements ElementVisitor<Object>{
      * @return <code>true</code> if symbol is defined in symbol table
      */
     public boolean hasSymbol(Symbol symbol) {
-        return symbolTable.containsKey(symbol);
+        return environment.containsKey(symbol);
     }
 
     @Override
@@ -113,8 +113,8 @@ public class Evaluator implements ElementVisitor<Object>{
 
     @Override
     public Object visit(Symbol sym) {
-        if (symbolTable.containsKey(sym))
-            return symbolTable.get(sym);
+        if (environment.containsKey(sym))
+            return environment.get(sym);
         else
             throw new EvaluationException(sym.getPosition(),
                     String.format("Symbol '%s' was not defined.", sym));
