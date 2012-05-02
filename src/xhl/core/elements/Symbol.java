@@ -1,19 +1,27 @@
 package xhl.core.elements;
 
+import java.util.Arrays;
+
+import com.google.common.base.Joiner;
+
 public class Symbol extends Expression {
-    private final String name;
+    private final String name[];
 
     public Symbol(String name) {
-        this(name, null);
+        this(new String[]{name}, null);
     }
 
     public Symbol(String name, Position position) {
+        this(new String[]{name}, position);
+    }
+
+    public Symbol(String[] name, Position position) {
         super(position);
         this.name = name;
     }
 
     public String getName() {
-        return name;
+        return name[name.length-1];
     }
 
     /** Check if symbol has specified name. */
@@ -25,19 +33,19 @@ public class Symbol extends Expression {
     public boolean equals(Object obj) {
         if (obj instanceof Symbol) {
             Symbol sym = (Symbol) obj;
-            return sym.name.equals(this.name);
+            return Arrays.equals(sym.name, this.name);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return Arrays.hashCode(name);
     }
 
     @Override
     public String toString() {
-        return name;
+        return Joiner.on('.').join(name);
     }
 
     @Override

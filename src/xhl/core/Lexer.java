@@ -33,6 +33,7 @@ class Lexer {
                     .put('{', BRACE_OPEN)
                     .put('}', BRACE_CLOSE)
                     .put(',', COMMA)
+                    .put('.', DOT)
                     .build();
     private static final String OPEN = "([{";
     private static final String CLOSE = "}])";

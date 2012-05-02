@@ -2,6 +2,7 @@ package xhl.core;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 import xhl.core.Token.TokenType;
 import xhl.core.elements.*;
@@ -9,6 +10,8 @@ import xhl.core.elements.*;
 import com.google.common.collect.ImmutableSet;
 
 import static xhl.core.Token.TokenType.*;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * XHL parser
@@ -26,6 +29,7 @@ import static xhl.core.Token.TokenType.*;
  *   list        ::= '[]' | '[' expression { ',' expression } ']'
  *   map         ::= '{}' | '{' key-value { ',' key-value } '}'
  *   key-value   ::= expression ':' expression
+ *   symbol      ::= plain-symbol { '.' plain-symbol }
  * </pre>
  *
  * @author Sergej Chodarev
@@ -158,8 +162,7 @@ public class Reader {
         Expression sexp = null;
         switch (token.type) {
         case SYMBOL:
-            sexp = new Symbol(token.stringValue, token.position);
-            token = lexer.nextToken();
+            sexp = symbol();
             break;
         case STRING:
             sexp = new SString(token.stringValue, token.position);
@@ -190,6 +193,18 @@ public class Reader {
             break;
         }
         return sexp;
+    }
+
+    private Expression symbol() {
+        Position position = token.position;
+        List<String> name = newArrayList(token.stringValue);
+        token = lexer.nextToken();
+        while (token.type == DOT) {
+            lexer.nextToken(); // .
+            name.add(token.stringValue);
+            lexer.nextToken();
+        }
+        return new Symbol(name.toArray(new String[0]), position);
     }
 
     private boolean isColon(Token token2) {
