@@ -10,22 +10,22 @@ import static com.google.common.collect.Lists.newArrayList;
 public class ArithmeticsModule extends GenericModule {
 
     @Function(name = "+")
-    public Object plus(Builder<Double> arg1, Builder<Double> arg2) {
+    public Builder<Double> plus(Builder<Double> arg1, Builder<Double> arg2) {
         return new ArithmeticsBuilder(ArithmOperation.ADD, arg1, arg2);
     }
 
     @Function(name = "-")
-    public Object minus(Builder<Double> arg1, Builder<Double> arg2) {
+    public Builder<Double> minus(Builder<Double> arg1, Builder<Double> arg2) {
         return new ArithmeticsBuilder(ArithmOperation.SUB, arg1, arg2);
     }
 
     @Function(name = "*")
-    public Object multiply(Builder<Double> arg1, Builder<Double> arg2) {
+    public Builder<Double> multiply(Builder<Double> arg1, Builder<Double> arg2) {
         return new ArithmeticsBuilder(ArithmOperation.MUL, arg1, arg2);
     }
 
     @Function(name = "/")
-    public Object divide(Builder<Double> arg1, Builder<Double> arg2) {
+    public Builder<Double> divide(Builder<Double> arg1, Builder<Double> arg2) {
         return new ArithmeticsBuilder(ArithmOperation.DIV, arg1, arg2);
     }
 
