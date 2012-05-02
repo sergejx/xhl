@@ -3,7 +3,9 @@ package xhl.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,8 @@ import xhl.core.elements.Position;
 import com.google.common.collect.ImmutableMap;
 
 import static xhl.core.Token.TokenType.*;
+
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 
 /**
  * Lexical analyzer for XHL
@@ -51,7 +55,7 @@ class Lexer {
     private int braceLevel = 0;
 
     // List of tokens
-    private final List<Token> tokens = new LinkedList<Token>();
+    private final List<Token> tokens = newArrayListWithExpectedSize(120);
     private final ListIterator<Token> tokensIterator;
 
     /**
