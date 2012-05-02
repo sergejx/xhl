@@ -1,7 +1,11 @@
 package xhl.examples.statemachine;
 
+import java.util.List;
+
 import xhl.core.GenericModule;
-import xhl.core.elements.*;
+import xhl.core.elements.Block;
+import xhl.core.elements.Expression;
+import xhl.core.elements.Symbol;
 
 /**
  * XHL module for configuring state machine
@@ -19,11 +23,9 @@ public class StateMachineModule extends GenericModule {
     public void events(Block blk) throws Exception {
         for (Expression stmt : blk) {
             try {
-                Combination def = (Combination) stmt;
-                Symbol sym = (Symbol) def.get(0);
-                SString code = (SString) def.get(1);
-                Event event = new Event(sym.getName(), code.getValue());
-                evaluator.putSymbol(sym, event);
+                Definition def = (Definition) evaluator.eval(stmt);
+                Event event = new Event(def.symbol.getName(), def.value);
+                evaluator.putSymbol(def.symbol, event);
             } catch (ClassCastException e) {
                 throw new Exception("Wrong type of argument.");
             }
@@ -31,23 +33,26 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function
-    public void resetEvents(Event... events) {
-        resetEvents = events;
+    public void resetEvents(List<Event> events) {
+        resetEvents = events.toArray(new Event[0]);
     }
 
     @Function(evaluateArgs = false)
     public void commands(Block blk) throws Exception {
         for (Expression expr : blk) {
             try {
-                Combination def = (Combination) expr;
-                Symbol sym = (Symbol) def.get(0);
-                SString code = (SString) def.get(1);
-                Command cmd = new Command(sym.getName(), code.getValue());
-                evaluator.putSymbol(sym, cmd);
+                Definition def = (Definition) evaluator.eval(expr);
+                Command cmd = new Command(def.symbol.getName(), def.value);
+                evaluator.putSymbol(def.symbol, cmd);
             } catch (ClassCastException e) {
                 throw new Exception("Wrong type of argument.");
             }
         }
+    }
+
+    @Function(name=":")
+    public Definition colon(@Symbolic Symbol name, String code) {
+        return new Definition(name, code);
     }
 
     @Function(evaluateArgs = false)
@@ -60,7 +65,7 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function
-    public void actions(Command... args) throws Exception {
+    public void actions(List<Command> args) throws Exception {
         if (currentState == null)
             throw new Exception("Actions must by defined inside state.");
         for (Command cmd : args) {
@@ -95,5 +100,15 @@ public class StateMachineModule extends GenericModule {
         StateMachine machine = new StateMachine(startState);
         machine.addResetEvents(resetEvents);
         return machine;
+    }
+
+    private static class Definition {
+        public final Symbol symbol;
+        public final String value;
+
+        public Definition(Symbol name, String value) {
+            this.symbol = name;
+            this.value = value;
+        }
     }
 }

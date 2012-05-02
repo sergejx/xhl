@@ -4,22 +4,22 @@
 # http://www.informit.com/articles/article.aspx?p=1592379
 
 events:
-    doorClosed  "D1CL"
-    drawOpened  "D2OP"
-    lightOn     "L1ON"
-    doorOpened  "D1OP"
-    panelClosed "PNCL"
+    doorClosed:  "D1CL"
+    drawOpened:  "D2OP"
+    lightOn:     "L1ON"
+    doorOpened:  "D1OP"
+    panelClosed: "PNCL"
 
-resetEvents doorOpened
+resetEvents [doorOpened]
 
 commands:
-    unlockPanel "PNUL"
-    lockPanel   "PNLK"
-    lockDoor    "D1LK"
-    unlockDoor  "D1UL"
+    unlockPanel: "PNUL"
+    lockPanel:   "PNLK"
+    lockDoor:    "D1LK"
+    unlockDoor:  "D1UL"
 
 state idle:
-    actions unlockDoor lockPanel
+    actions [unlockDoor, lockPanel]
     doorClosed -> active
 
 state active:
@@ -33,5 +33,5 @@ state waitingForDraw:
     drawOpened -> unlockedPanel
 
 state unlockedPanel:
-    actions unlockPanel lockDoor
+    actions [unlockPanel, lockDoor]
     panelClosed -> idle
