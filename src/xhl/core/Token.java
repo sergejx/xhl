@@ -12,7 +12,7 @@ public class Token {
         BRACKET_OPEN, BRACKET_CLOSE,
         BRACE_OPEN, BRACE_CLOSE,
         INDENT, DEDENT,
-        COMMA, COLON, LINEEND,
+        COMMA, LINEEND,
         SYMBOL, OPERATOR,
         STRING, NUMBER,
         TRUE, FALSE, NONE,

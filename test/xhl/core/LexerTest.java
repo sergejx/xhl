@@ -1,12 +1,12 @@
 package xhl.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static xhl.core.Token.TokenType.*;
-
 import java.io.StringReader;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+import static xhl.core.Token.TokenType.*;
 
 /**
  * Test lexer module.
@@ -28,10 +28,9 @@ public class LexerTest {
 
     @Test
     public void punctuation() throws Exception {
-        String code = ",:";
+        String code = ",";
         Lexer l = new Lexer(new StringReader(code));
         assertEquals(COMMA, l.nextToken().type);
-        assertEquals(COLON, l.nextToken().type);
     }
 
     @Test
@@ -129,7 +128,7 @@ public class LexerTest {
         String code = "a:\n  b\nc\n    d";
         Lexer l = new Lexer(new StringReader(code));
         assertEquals(SYMBOL, l.nextToken().type);
-        assertEquals(COLON, l.nextToken().type);
+        assertEquals(OPERATOR, l.nextToken().type);
         assertEquals(LINEEND, l.nextToken().type);
         assertEquals(INDENT, l.nextToken().type);
         assertEquals(SYMBOL, l.nextToken().type);
@@ -149,7 +148,7 @@ public class LexerTest {
         Lexer l = new Lexer(new StringReader(code));
         assertEquals(SYMBOL, l.nextToken().type);
         assertEquals(STRING, l.nextToken().type);
-        assertEquals(COLON, l.nextToken().type);
+        assertEquals(OPERATOR, l.nextToken().type);
         assertEquals(LINEEND, l.nextToken().type);
         assertEquals(INDENT, l.nextToken().type);
         assertEquals(SYMBOL, l.nextToken().type);

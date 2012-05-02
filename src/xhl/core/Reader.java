@@ -57,12 +57,13 @@ public class Reader {
     private Block block() throws IOException {
         Block block = new Block(token.position);
         while (token != null && token.type != DEDENT) {
-            block.add(expression(true));
+            block.add(expression(true, true));
         }
         return block;
     }
 
-    private Expression expression(boolean withBlock) throws IOException {
+    private Expression expression(boolean withBlock, boolean colonAccepted)
+            throws IOException {
         if (token.type == OPERATOR) { // Single operator can be used as a symbol
             Symbol op = new Symbol(token.stringValue, token.position);
             token = lexer.nextToken();
@@ -70,6 +71,9 @@ public class Reader {
         }
         Expression first = combination();
         while (token.type == OPERATOR) {
+            if (isColon(token)
+                    && (lexer.checkNextToken().type == LINEEND || !colonAccepted))
+                break;
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
             token = lexer.nextToken();
@@ -81,7 +85,7 @@ public class Reader {
         }
         if (token.type == LINEEND)
             token = lexer.nextToken();
-        else if (withBlock && token.type == COLON) {
+        else if (withBlock && isColon(token)) {
             token = lexer.nextToken(); // :
             token = lexer.nextToken(); // \n
             token = lexer.nextToken(); // INDENT FIXME: Add checks
@@ -117,10 +121,10 @@ public class Reader {
             return list;
         }
         // Non-empty list
-        list.add(expression(false));
+        list.add(expression(false, true));
         while (token.type != TokenType.BRACKET_CLOSE) {
             token = lexer.nextToken(); // ,
-            list.add(expression(false));
+            list.add(expression(false, true));
         }
         token = lexer.nextToken(); // ]
         return list;
@@ -144,9 +148,9 @@ public class Reader {
     }
 
     private void keyValue(SMap map) throws IOException {
-        Expression key = expression(false);
+        Expression key = expression(false, false);
         token = lexer.nextToken(); // :
-        Expression value = expression(false);
+        Expression value = expression(false, false);
         map.put(key, value);
     }
 
@@ -175,7 +179,7 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = lexer.nextToken(); // (
-            sexp = expression(false);
+            sexp = expression(false, true);
             token = lexer.nextToken(); // )
             break;
         case BRACKET_OPEN:
@@ -186,5 +190,9 @@ public class Reader {
             break;
         }
         return sexp;
+    }
+
+    private boolean isColon(Token token2) {
+        return token.type == OPERATOR && token.stringValue.equals(":");
     }
 }

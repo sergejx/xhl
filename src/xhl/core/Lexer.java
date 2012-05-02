@@ -22,7 +22,7 @@ import static xhl.core.Token.TokenType.*;
 class Lexer {
     // Regular expressions and maps for tokens
     private static final Pattern numberRx = Pattern.compile("-?\\d+(\\.\\d*)?");
-    private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>.?!]+");
+    private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>?!:]+");
     private static final Pattern symbolRx = Pattern.compile("[a-zA-Z]\\w*");
     private static final ImmutableMap<Character, TokenType> simpleTokens =
             new ImmutableMap.Builder<Character, TokenType>()
@@ -32,7 +32,6 @@ class Lexer {
                     .put(']', BRACKET_CLOSE)
                     .put('{', BRACE_OPEN)
                     .put('}', BRACE_CLOSE)
-                    .put(':', COLON)
                     .put(',', COMMA)
                     .build();
     private static final String OPEN = "([{";
@@ -52,7 +51,7 @@ class Lexer {
 
     // List of tokens
     private final List<Token> tokens = new LinkedList<Token>();
-    private final Iterator<Token> tokensIterator;
+    private final ListIterator<Token> tokensIterator;
 
     /**
      * Initialize lexical analyzer and analyze text in input stream.
@@ -65,7 +64,7 @@ class Lexer {
         this.input = new BufferedReader(input);
         indent.push(0);
         readTokens();
-        tokensIterator = tokens.iterator();
+        tokensIterator = tokens.listIterator();
     }
 
     /**
@@ -76,6 +75,14 @@ class Lexer {
     public Token nextToken() {
         if (tokensIterator.hasNext())
             return tokensIterator.next();
+        else
+            return null;
+    }
+
+    /** Get next token without removing it from the list. */
+    public Token checkNextToken() {
+        if (tokensIterator.hasNext())
+            return tokens.get(tokensIterator.nextIndex());
         else
             return null;
     }
