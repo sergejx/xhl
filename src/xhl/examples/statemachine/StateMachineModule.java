@@ -73,16 +73,10 @@ public class StateMachineModule extends GenericModule {
         }
     }
 
-    @Function(name = "->", evaluateArgs = false)
-    public void transition(Symbol trig, Symbol targ) throws Exception {
-        try {
-            Event trigger = (Event) evaluator.getSymbol(trig);
-            State target = getState(targ);
-            currentState.addTransition(trigger, target);
-        } catch (ClassCastException e) {
-            throw new Exception(String.format(
-                    "Symbol '%s' does not represent event.", trig));
-        }
+    @Function(name = "->")
+    public void transition(Event trigger, @Symbolic Symbol targ) {
+        State target = getState(targ);
+        currentState.addTransition(trigger, target);
     }
 
     // End of DSL functions ==================================================
