@@ -62,7 +62,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
     }
 
     @Function
-    public void defines_forward(double arg, @Symbolic Symbol type) {
+    public void defines_backward(double arg, @Symbolic Symbol type) {
         checkArgument(arg % 1 == 0);
         DefSpec def = new DefSpec((int) arg, new Type(type), true);
         currentElement.addDefine(def);
@@ -109,10 +109,10 @@ public class ValidatorLanguage extends GenericModule implements Language {
         defines.setParams(newArrayList(ParamSpec.val(new Type("Number")), ParamSpec.sym(new Type("Symbol"))));
         defines.setType(new Type("Define"));
         langSchema.put(defines);
-        ElementSchema defines_forward = new ElementSchema(new Symbol("defines_forward"));
-        defines_forward.setParams(newArrayList(ParamSpec.val(new Type("Number")), ParamSpec.sym(new Type("Symbol"))));
-        defines_forward.setType(new Type("Define"));
-        langSchema.put(defines_forward);
+        ElementSchema defines_backward = new ElementSchema(new Symbol("defines_backward"));
+        defines_backward.setParams(newArrayList(ParamSpec.val(new Type("Number")), ParamSpec.sym(new Type("Symbol"))));
+        defines_backward.setType(new Type("Define"));
+        langSchema.put(defines_backward);
         return langSchema;
     }
 

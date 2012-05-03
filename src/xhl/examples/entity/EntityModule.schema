@@ -3,8 +3,8 @@ element module:
 
 element entity:
     params [sym Symbol, val Map]
-    defines_forward 1 Entity
-    defines_forward 2 Property
+    defines_backward 1 Entity
+    defines_backward 2 Property
 
 element int:
     type Entity

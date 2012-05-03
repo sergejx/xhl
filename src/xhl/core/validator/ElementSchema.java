@@ -2,8 +2,8 @@ package xhl.core.validator;
 
 import java.util.List;
 
-import xhl.core.Error;
 import xhl.core.Environment;
+import xhl.core.Error;
 import xhl.core.elements.*;
 import xhl.core.validator.Validator.ValidationResult;
 
@@ -23,10 +23,10 @@ public class ElementSchema {
         return params.get(params.size()-1).variadic;
     }
 
-    public Environment<Type> definedSymbols(SList args, boolean onlyForward) {
+    public Environment<Type> definedSymbols(SList args, boolean onlyBackward) {
         Environment<Type> symbols = new Environment<Type>();
         for (DefSpec def : defines) {
-            if (onlyForward && !def.forward)
+            if (onlyBackward && !def.backward)
                 continue;
             ParamSpec argspec = params.get(def.arg - 1);
             if (argspec.method == PassingMethod.SYM
@@ -166,7 +166,7 @@ public class ElementSchema {
     public static class DefSpec {
         public final Type type;
         public final int arg;
-        public final boolean forward;
+        public final boolean backward;
 
         public DefSpec(int arg, Type type) {
             this(arg, type, false);
@@ -175,7 +175,7 @@ public class ElementSchema {
         public DefSpec(int arg, Type type, boolean forward) {
             this.arg = arg;
             this.type = type;
-            this.forward = forward;
+            this.backward = forward;
         }
     }
 }

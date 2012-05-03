@@ -3,8 +3,8 @@ package xhl.core.validator;
 import java.util.List;
 import java.util.Map;
 
-import xhl.core.Error;
 import xhl.core.Environment;
+import xhl.core.Error;
 import xhl.core.elements.*;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -96,13 +96,13 @@ public class Validator implements ElementVisitor<Type> {
 
     @Override
     public Type visit(Block blk) {
-        collectForwardDefunitions(blk);
+        collectBackwardDefunitions(blk);
         for (Expression exp : blk)
             check(exp);
         return Type.Block;
     }
 
-    private void collectForwardDefunitions(Block blk) {
+    private void collectBackwardDefunitions(Block blk) {
         for (Expression exp : blk) {
             try {
                 Combination cmb = (Combination) exp;
