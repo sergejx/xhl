@@ -38,6 +38,12 @@ public class Evaluator implements ElementVisitor<Object>{
      * @throws EvaluationException
      */
     public Object evalAll(Block exprs) throws EvaluationException {
+        Executable func = (Executable) environment.get(new Symbol("!script"));
+        if (func != null) {
+            SList args = new SList(exprs.getPosition());
+            args.add(exprs);
+            return func.exec(args);
+        }
         Object result = null;
         for (Expression expr : exprs) {
             result = eval(expr);
