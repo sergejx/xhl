@@ -30,7 +30,7 @@ public class ElementSchema {
                 continue;
             ParamSpec argspec = params.get(def.arg - 1);
             if (argspec.method == PassingMethod.SYM
-                    && argspec.type == Type.Symbol) {
+                    && argspec.type.equals(Type.Symbol)) {
                 Expression arg = args.get(def.arg - 1);
                 if (!(arg instanceof Symbol))
                     continue;
@@ -38,7 +38,7 @@ public class ElementSchema {
                 Type type = def.type;
                 symbols.put(name, type);
             } else if (argspec.method == PassingMethod.SYM
-                    && argspec.type == Type.Map) {
+                    && argspec.type.equals(Type.Map)) {
                 Expression arg = args.get(def.arg - 1);
                 if (!(arg instanceof SMap))
                     continue;
