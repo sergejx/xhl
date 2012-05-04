@@ -26,7 +26,7 @@ public class Symbol extends Expression {
 
     /** Check if symbol has specified name. */
     public boolean isNamed(String n) {
-        return name.equals(n);
+        return getName().equals(n);
     }
 
     @Override
