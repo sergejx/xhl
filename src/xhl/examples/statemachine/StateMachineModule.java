@@ -27,7 +27,7 @@ public class StateMachineModule extends GenericModule {
         Map<Symbol, Type> defined =
                 Validator.backwardDefunitions(exprs, getSchema());
         for (Symbol sym : defined.keySet())
-            if (defined.get(sym).is(new Type("State")))
+            if (defined.get(sym).isNamed("State"))
                 evaluator.putSymbol(sym, new State(sym.getName()));
         evaluator.eval(exprs);
     }

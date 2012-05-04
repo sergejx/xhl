@@ -50,6 +50,10 @@ public class Type {
             return this.equals(that);
     }
 
+    public boolean isNamed(String n) {
+        return name.isNamed(n);
+    }
+
     public static Type typeOfElement(Expression ex) {
         if (ex instanceof Symbol)
             return Symbol;
