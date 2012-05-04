@@ -29,8 +29,7 @@ public class StateMachineModule extends GenericModule {
         for (Symbol sym : defined.keySet())
             if (defined.get(sym).is(new Type("State")))
                 evaluator.putSymbol(sym, new State(sym.getName()));
-        for (Expression expr : exprs)
-            evaluator.eval(expr);
+        evaluator.eval(exprs);
     }
 
     @Function(evaluateArgs = false)
