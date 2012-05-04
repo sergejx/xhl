@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Module {
     private final String name;
-    private final List<Entity> entitiess = new ArrayList<Entity>();
+    private final List<Entity> entities = new ArrayList<Entity>();
 
     public Module(String name) {
         this.name = name;
@@ -16,15 +16,15 @@ public class Module {
     }
 
     public List<Entity> getEntities() {
-        return entitiess;
+        return entities;
     }
 
     public boolean add(Entity e) {
-        return entitiess.add(e);
+        return entities.add(e);
     }
 
     public Entity get(String name) {
-        for (Entity entity : entitiess) {
+        for (Entity entity : entities) {
             if (entity.getName().equals(name))
                 return entity;
         }
