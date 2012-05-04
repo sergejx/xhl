@@ -5,6 +5,10 @@ import xhl.core.elements.Position;
 public class EvaluationException extends RuntimeException {
     protected final Position position;
 
+    public EvaluationException(String message) {
+        this(null, message);
+    }
+
     public EvaluationException(Throwable cause) {
         this(null, cause);
     }
