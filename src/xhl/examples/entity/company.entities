@@ -1,12 +1,10 @@
 module company:
-    entity Employee {
-        id : int,
-        name : string,
-        role : string,
-        worksAt : Department,
+    entity Employee:
+        id : int
+        name : string
+        role : string
+        worksAt : Department
         freelancer : boolean
-    }
-    entity Department {
-        id : int,
+    entity Department:
+        id : int
         description : string
-    }

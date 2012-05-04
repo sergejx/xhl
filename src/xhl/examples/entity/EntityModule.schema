@@ -2,9 +2,12 @@ element module:
     params [sym Symbol, block(val Block)]
 
 element entity:
-    params [sym Symbol, val Map]
+    params [sym Symbol, block(val Block)]
     defines_backward 1 Entity
-    defines_backward 2 Property
+
+element (:):
+    params [sym Symbol, val Entity]
+    defines 1 Property
 
 element int:
     type Entity

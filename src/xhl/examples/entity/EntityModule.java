@@ -1,83 +1,61 @@
 package xhl.examples.entity;
 
-import static xhl.examples.entity.Type.reference;
-import static xhl.examples.entity.Type.simple;
+import java.util.Map;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import xhl.core.EvaluationException;
 import xhl.core.GenericModule;
-import xhl.core.elements.*;
+import xhl.core.elements.Block;
+import xhl.core.elements.Symbol;
+import xhl.core.validator.Validator;
 import xhl.examples.entity.Type.T;
+import static xhl.examples.entity.Type.*;
 
 public class EntityModule extends GenericModule {
 
     private Module module;
+    private Entity currentEntity;
 
     public Module getModule() {
         return module;
     }
 
-    private class EntityBuilder {
-        private final String name;
-        private final SMap attrs;
-        private Entity entity;
-
-        public EntityBuilder(String name, SMap attrs) {
-            this.name = name;
-            this.attrs = attrs;
-        }
-
-        public Entity createEntity() {
-            entity = new Entity(name);
-            return entity;
-        }
-        public void fillAttributes() {
-            for (Expression key : attrs.keySet()) {
-                try {
-                    Symbol atrName = (Symbol) key;
-                    Symbol atrType = (Symbol) attrs.get(key);
-                    Type type;
-                    if (atrType.isNamed("int"))
-                        type = simple(T.INT);
-                    else if (atrType.isNamed("string"))
-                        type = simple(T.STRING);
-                    else if (atrType.isNamed("boolean"))
-                        type = simple(T.BOOLEAN);
-                    else {
-                        Entity ref = module.get(atrType.getName());
-                        type = reference(ref);
-                    }
-                    entity.add(new Attribute(atrName.getName(), type));
-                } catch (ClassCastException e) {
-                    throw new EvaluationException(key.getPosition(),
-                            "Unexpected expression inside attribute definition");
-                }
-            }
-        }
-    }
-
     @Function(evaluateArgs = false)
     public void module(Symbol name, Block body) {
         module = new Module(name.getName());
-        List<EntityBuilder> builders = new LinkedList<EntityBuilder>();
-        for (Expression exp : body) {
-            try {
-                EntityBuilder b = (EntityBuilder) evaluator.eval(exp);
-                module.add(b.createEntity());
-                builders.add(b);
-            } catch (ClassCastException e) {
-                throw new EvaluationException(exp.getPosition(),
-                        "Unexpected expression inside module");
+
+        // Initialize all defined entities
+        Map<Symbol, xhl.core.validator.Type> defined =
+                Validator.backwardDefunitions(body, getSchema());
+        for (Symbol sym : defined.keySet()) {
+            if (defined.get(sym).isNamed("Entity")) {
+                Entity entity = new Entity(sym.getName());
+                module.add(entity);
+                evaluator.putSymbol(sym, entity);
             }
         }
-        for (EntityBuilder b : builders)
-            b.fillAttributes();
+
+        evaluator.eval(body);
     }
 
     @Function(evaluateArgs = false)
-    public EntityBuilder entity(Symbol name, SMap attrs) {
-        return new EntityBuilder(name.getName(), attrs);
+    public Entity entity(Symbol name, Block attrs) {
+        currentEntity = (Entity) evaluator.getSymbol(name);
+        evaluator.eval(attrs);
+        return currentEntity;
+    }
+
+    @Function(name = ":")
+    public void attribute(@Symbolic Symbol name, @Symbolic Symbol typeName) {
+        Type type;
+        if (typeName.isNamed("int"))
+            type = simple(T.INT);
+        else if (typeName.isNamed("string"))
+            type = simple(T.STRING);
+        else if (typeName.isNamed("boolean"))
+            type = simple(T.BOOLEAN);
+        else {
+            Entity ref = module.get(typeName.getName());
+            type = reference(ref);
+        }
+        currentEntity.add(new Attribute(name.getName(), type));
     }
 }
