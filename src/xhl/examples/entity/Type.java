@@ -1,7 +1,9 @@
 package xhl.examples.entity;
 
 public class Type {
-    public enum T {INT, STRING, BOOLEAN, REFERENCE};
+    public enum T {
+        INT, STRING, BOOLEAN, REFERENCE
+    };
 
     private final T type;
     private Entity entity;
@@ -29,5 +31,21 @@ public class Type {
 
     public Entity getEntity() {
         return entity;
+    }
+
+    @Override
+    public String toString() {
+        switch (type) {
+        case REFERENCE:
+            return entity.getName();
+        case INT:
+            return "int";
+        case STRING:
+            return "String";
+        case BOOLEAN:
+            return "boolean";
+        default:
+            return "(invalid type)";
+        }
     }
 }

@@ -30,4 +30,10 @@ public class Module {
         }
         return null;
     }
+
+    public void generate() {
+        for (Entity ent : entities) {
+            ent.generate();
+        }
+    }
 }

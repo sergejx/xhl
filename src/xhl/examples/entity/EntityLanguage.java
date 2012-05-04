@@ -27,6 +27,7 @@ public class EntityLanguage implements Language {
             LanguageProcessor.execute(lang, filename);
             xhl.examples.entity.Module m = lang.getModule();
             System.out.println(m);
+            m.generate();
         } else
             System.out.println("Give file name as program argument!");
     }

@@ -1,0 +1,15 @@
+public class $name {
+#foreach( $attr in $attributes )
+    private $attr.type $attr.name;
+#end
+#foreach( $attr in $attributes )
+    #set( $aname = $attr.name )
+
+    public void set${Util.capitalize($aname)}() {
+        this.$aname = $aname;
+    }
+    public $attr.type get${Util.capitalize($aname)}() {
+        return $aname;
+    }
+#end
+}
