@@ -102,6 +102,28 @@ public class Validator implements ElementVisitor<Type> {
         return Type.Block;
     }
 
+    public static Map<Symbol, Type> backwardDefunitions(Block blk, Schema schema) {
+        // FIXME: Remove duplication!
+        Map<Symbol, Type> table = newHashMap();
+        for (Expression exp : blk) {
+            try {
+                Combination cmb = (Combination) exp;
+                Symbol head = (Symbol) cmb.head();
+                SList tail = cmb.tail();
+                ElementSchema elemSchema = schema.get(head);
+                if (schema != null) {
+                    Environment<Type> defined =
+                            elemSchema.definedSymbols(tail, true);
+                    for (Symbol sym : defined.keySet())
+                        table.put(sym, defined.get(sym));
+                }
+            } catch (ClassCastException e) {
+                // Ignore cases, where types did not match expectations
+            }
+        }
+        return table;
+    }
+
     private void collectBackwardDefunitions(Block blk) {
         for (Expression exp : blk) {
             try {

@@ -1,11 +1,14 @@
 package xhl.examples.statemachine;
 
 import java.util.List;
+import java.util.Map;
 
 import xhl.core.GenericModule;
 import xhl.core.elements.Block;
 import xhl.core.elements.Expression;
 import xhl.core.elements.Symbol;
+import xhl.core.validator.Type;
+import xhl.core.validator.Validator;
 
 /**
  * XHL module for configuring state machine
@@ -18,6 +21,17 @@ public class StateMachineModule extends GenericModule {
     private State currentState = null;
 
     // DSL functions =========================================================
+
+    @Function(name = "!script")
+    public void script(@Symbolic Block exprs) {
+        Map<Symbol, Type> defined =
+                Validator.backwardDefunitions(exprs, getSchema());
+        for (Symbol sym : defined.keySet())
+            if (defined.get(sym).is(new Type("State")))
+                evaluator.putSymbol(sym, new State(sym.getName()));
+        for (Expression expr : exprs)
+            evaluator.eval(expr);
+    }
 
     @Function(evaluateArgs = false)
     public void events(Block blk) throws Exception {
@@ -57,7 +71,7 @@ public class StateMachineModule extends GenericModule {
 
     @Function(evaluateArgs = false)
     public void state(Symbol name, Block blk) throws Exception {
-        currentState = getState(name);
+        currentState = (State) evaluator.getSymbol(name);
         evaluator.eval(blk);
         if (startState == null)
             startState = currentState;
@@ -74,21 +88,11 @@ public class StateMachineModule extends GenericModule {
     }
 
     @Function(name = "->")
-    public void transition(Event trigger, @Symbolic Symbol targ) {
-        State target = getState(targ);
+    public void transition(Event trigger, State target) {
         currentState.addTransition(trigger, target);
     }
 
     // End of DSL functions ==================================================
-
-    private State getState(Symbol symbol) {
-        State state = (State) evaluator.getSymbol(symbol);
-        if (state == null) {
-            state = new State(symbol.getName());
-            evaluator.putSymbol(symbol, state);
-        }
-        return state;
-    }
 
     public StateMachine getStateMachine() {
         StateMachine machine = new StateMachine(startState);
