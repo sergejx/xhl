@@ -5,6 +5,13 @@ module company:
         role : string
         worksAt : Department
         freelancer : boolean
+        
+        validate:
+            (length name < 20) & (length name > 0)
+            
     entity Department:
         id : int
         description : string
+
+        validate:
+            length description < 20

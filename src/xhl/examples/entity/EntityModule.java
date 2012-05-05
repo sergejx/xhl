@@ -2,8 +2,11 @@ package xhl.examples.entity;
 
 import java.util.Map;
 
+import xhl.core.Builder;
+import xhl.core.EvaluationException;
 import xhl.core.GenericModule;
 import xhl.core.elements.Block;
+import xhl.core.elements.Expression;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.Validator;
 import xhl.examples.entity.Type.T;
@@ -56,6 +59,47 @@ public class EntityModule extends GenericModule {
             Entity ref = module.get(typeName.getName());
             type = reference(ref);
         }
-        currentEntity.add(new Attribute(name.getName(), type));
+        Attribute attr = new Attribute(name.getName(), type);
+        currentEntity.add(attr);
+        evaluator.putSymbol(name, attr);
+    }
+
+    @Function
+    public void validate(@Symbolic Block block) {
+        for (Expression expr : block) {
+            try {
+                // TODO: Nomal values are not converted to builders in this case
+                @SuppressWarnings("unchecked")
+                Builder<Boolean> rule = (Builder<Boolean>) evaluator.eval(expr);
+                currentEntity.addValidation(rule);
+            } catch (ClassCastException e) {
+                throw new EvaluationException(
+                        "Validate block can only contain boolean expressions.");
+            }
+        }
+    }
+
+    @Function
+    public Builder<Double> length(Attribute attr) {
+        return new LengthBuilder(attr);
+    }
+
+    public static class LengthBuilder implements Builder<Double> {
+        public final Attribute attr;
+
+        public LengthBuilder(Attribute attr) {
+            this.attr = attr;
+        }
+
+        @Override
+        public Double toValue() {
+            throw new UnsupportedOperationException(
+                    "LengthBuilder can not be evaluated.");
+        }
+
+        @Override
+        public String toCode() {
+            return attr.getName() + ".size()";
+        }
     }
 }

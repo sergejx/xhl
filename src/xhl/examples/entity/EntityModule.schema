@@ -17,3 +17,10 @@ element string:
 
 element boolean:
     type Entity
+
+element validate:
+    params [block(val Block)]
+
+element length:
+    params [val Property]
+    type Number

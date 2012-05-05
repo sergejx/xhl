@@ -12,4 +12,14 @@ public class $name {
         return $aname;
     }
 #end
+
+#if( !$validation.isEmpty() )
+    private boolean validate() {
+        boolean valid = true;
+        #foreach( $rule in $validation )
+        valid &&= ${rule.toCode()};
+        #end
+        return valid;
+    }
+#end
 }
