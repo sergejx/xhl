@@ -6,6 +6,7 @@ element commands:
 
 element (:):
     params [sym Symbol, val String]
+    defines 1 EventCommand
 
 element resetEvents:
     params [val List]
@@ -18,5 +19,4 @@ element actions:
     params [val List]
 
 element (->):
-    params [sym Symbol, val State]
-    
+    params [val EventCommand, val State]
