@@ -1,0 +1,11 @@
+element (&):
+    params [val Boolean, val Boolean]
+    type Boolean
+
+element (|):
+    params [val Boolean, val Boolean]
+    type Boolean
+
+element not:
+    params [val Boolean, val Boolean]
+    type Boolean

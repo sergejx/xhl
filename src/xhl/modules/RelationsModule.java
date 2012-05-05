@@ -1,7 +1,12 @@
 package xhl.modules;
 
+import java.util.Map;
+
 import xhl.core.Builder;
 import xhl.core.GenericModule;
+
+import com.google.common.collect.ImmutableMap;
+
 import static xhl.modules.RelationsModule.RelationOperation.*;
 
 public class RelationsModule extends GenericModule {
@@ -40,6 +45,9 @@ public class RelationsModule extends GenericModule {
         public Builder<Double> operand2;
         public RelationOperation operation;
 
+        private static final Map<RelationOperation, String> opcodes =
+            ImmutableMap.of(GT, ">", LT, "<", EQ, "==", GTEQ, ">=", LTEQ, "<=");
+
         public RelationBuilder(RelationOperation operation,
                 Builder<Double> op1, Builder<Double> op2) {
             this.operation = operation;
@@ -69,8 +77,8 @@ public class RelationsModule extends GenericModule {
 
         @Override
         public String toCode() {
-            // TODO Auto-generated method stub
-            return null;
+            String op = opcodes.get(operation);
+            return "(" + operand1.toCode() + op + operand2.toCode() + ")";
         }
     }
 }

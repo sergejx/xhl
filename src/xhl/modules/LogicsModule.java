@@ -1,7 +1,12 @@
 package xhl.modules;
 
+import java.util.Map;
+
 import xhl.core.Builder;
 import xhl.core.GenericModule;
+
+import com.google.common.collect.ImmutableMap;
+
 import static xhl.modules.LogicsModule.LogicsOperation.*;
 
 public class LogicsModule extends GenericModule {
@@ -28,6 +33,9 @@ public class LogicsModule extends GenericModule {
         public Builder<Boolean> operand2;
         public LogicsOperation operation;
 
+        private static final Map<LogicsOperation, String> opcodes =
+                ImmutableMap.of(AND, "&&", OR, "||", NOT, "!");
+
         public LogicsBuilder(LogicsOperation operation,
                 Builder<Boolean> op1, Builder<Boolean> op2) {
             this.operation = operation;
@@ -53,8 +61,12 @@ public class LogicsModule extends GenericModule {
 
         @Override
         public String toCode() {
-            // TODO Auto-generated method stub
-            return null;
+            if (operation == NOT)
+                return "(!" + operand1.toCode() + ")";
+            else {
+                String op = opcodes.get(operation);
+                return "(" + operand1.toCode() + op + operand2.toCode() + ")";
+            }
         }
     }
 }

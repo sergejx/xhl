@@ -1,0 +1,19 @@
+element (>):
+    params [val Number, val Number]
+    type Boolean
+
+element (<):
+    params [val Number, val Number]
+    type Boolean
+
+element (=):
+    params [val Number, val Number]
+    type Boolean
+
+element (>=):
+    params [val Number, val Number]
+    type Boolean
+
+element (<=):
+    params [val Number, val Number]
+    type Boolean
