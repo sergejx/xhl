@@ -26,7 +26,7 @@ import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 class Lexer {
     // Regular expressions and maps for tokens
     private static final Pattern numberRx = Pattern.compile("-?\\d+(\\.\\d*)?");
-    private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>?!:]+");
+    private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>?!:&|]+");
     private static final Pattern symbolRx = Pattern.compile("[a-zA-Z]\\w*");
     private static final ImmutableMap<Character, TokenType> simpleTokens =
             new ImmutableMap.Builder<Character, TokenType>()
