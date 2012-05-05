@@ -66,7 +66,7 @@ public class Validator implements ElementVisitor<Type> {
 
     @Override
     public Type visit(Symbol sym) {
-        if (table.containsKey(sym))
+        if (table.containsKey(sym)) {
             if (table.get(sym).is(Type.Element)) {
                 ElementSchema schema = elements.get(sym);
                 ValidationResult result =
@@ -76,17 +76,26 @@ public class Validator implements ElementVisitor<Type> {
                 return result.type;
             } else
                 return table.get(sym);
-        else
+        } else {
+            errors.add(new Error(sym.getPosition(), String.format(
+                    "Symbol '%s' is not defined", sym)));
             return Type.AnyType;
+        }
     }
 
     @Override
     public Type visit(Combination cmb) {
-        if (!(cmb.get(0) instanceof Symbol))
+        if (!(cmb.get(0) instanceof Symbol)) {
+            errors.add(new Error(cmb.getPosition(),
+                    "Combinaiton head is not a symbol"));
             return Type.AnyType;
+        }
         Symbol head = (Symbol) cmb.get(0);
-        if (!elements.containsKey(head))
+        if (!elements.containsKey(head)) {
+            errors.add(new Error(head.getPosition(), String.format(
+                    "Symbol '%s' is not defined", head)));
             return Type.AnyType;
+        }
         ElementSchema schema = elements.get(head);
         table.putAll(schema.definedSymbols(cmb.tail(), false));
         ValidationResult result = schema.checkCombination(this, cmb.tail());
