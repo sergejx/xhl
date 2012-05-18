@@ -1,13 +1,14 @@
 package xhl.core.validator;
 
 import java.util.List;
+import java.util.Map;
 
-import xhl.core.Environment;
 import xhl.core.Error;
 import xhl.core.elements.*;
 import xhl.core.validator.Validator.ValidationResult;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class ElementSchema {
     private final Symbol symbol;
@@ -23,8 +24,8 @@ public class ElementSchema {
         return params.get(params.size()-1).variadic;
     }
 
-    public Environment<Type> definedSymbols(SList args, boolean onlyBackward) {
-        Environment<Type> symbols = new Environment<Type>();
+    public Map<Symbol, Type> definedSymbols(SList args, boolean onlyBackward) {
+        Map<Symbol, Type> symbols = newHashMap();
         for (DefSpec def : defines) {
             if (onlyBackward && !def.backward)
                 continue;

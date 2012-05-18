@@ -120,12 +120,8 @@ public class Validator implements ElementVisitor<Type> {
                 Symbol head = (Symbol) cmb.head();
                 SList tail = cmb.tail();
                 ElementSchema elemSchema = schema.get(head);
-                if (schema != null) {
-                    Environment<Type> defined =
-                            elemSchema.definedSymbols(tail, true);
-                    for (Symbol sym : defined.keySet())
-                        table.put(sym, defined.get(sym));
-                }
+                if (schema != null)
+                    table.putAll(elemSchema.definedSymbols(tail, true));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }

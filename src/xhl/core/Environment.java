@@ -46,6 +46,12 @@ public class Environment<T> {
         }
     }
 
+    public void putAll(Map<Symbol, T> t) {
+        for (Symbol key : t.keySet()) {
+            put(key, t.get(key));
+        }
+    }
+
     public Set<Symbol> keySet() {
         Set<Symbol> keys = newHashSet();
         for (Map<Symbol, T> tbl : stack)
