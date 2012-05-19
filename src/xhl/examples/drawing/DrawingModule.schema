@@ -1,0 +1,17 @@
+element rgb:
+    params [val Number, val Number, val Number]
+    type Color
+
+element setcolor:
+    params [val Color]
+
+element rectangle:
+    params [val Number, val Number]
+    type Shape
+
+element ellipse:
+    params [val Number, val Number]
+    type Shape
+
+element draw:
+    params [val Number, val Number, val Shape]
