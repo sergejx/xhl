@@ -1,5 +1,6 @@
 package xhl.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.*;
@@ -9,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import xhl.core.elements.Block;
 import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.*;
@@ -59,24 +61,39 @@ public abstract class GenericModule implements Module {
      */
     @Override
     public Schema getSchema() {
-        Class<? extends GenericModule> clazz = this.getClass();
-        InputStream in =
-                clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
+        InputStream in = findSchemaStream();
         if (in != null) {
             ValidatorLanguage lang = new ValidatorLanguage();
-            LanguageProcessor.execute(lang, new InputStreamReader(in));
+            LanguageProcessor schemaProcessor = new LanguageProcessor(lang);
+            Block program;
+            try {
+                program = Reader.read(new InputStreamReader(in));
+                schemaProcessor.executeWithoutValidation(program);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             return lang.getReadedSchema();
         } else {
-            Schema schema = new Schema();
-            for (Symbol symbol : table.keySet()) {
-                ElementSchema elem = new ElementSchema(symbol);
-                elem.setType(Type.AnyType);
-                elem.setParams(newArrayList(ParamSpec.variadic(ParamSpec
-                        .val(Type.AnyType))));
-                schema.put(elem);
-            }
-            return schema;
+            return makeGenericSchema();
         }
+    }
+
+    protected InputStream findSchemaStream() {
+        Class<? extends GenericModule> clazz = this.getClass();
+        return clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
+    }
+
+    private Schema makeGenericSchema() {
+        Schema schema = new Schema();
+        for (Symbol symbol : table.keySet()) {
+            ElementSchema elem = new ElementSchema(symbol);
+            elem.setType(Type.AnyType);
+            elem.setParams(newArrayList(ParamSpec.variadic(ParamSpec
+                    .val(Type.AnyType))));
+            schema.put(elem);
+        }
+        return schema;
     }
 
     /**

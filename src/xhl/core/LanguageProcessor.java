@@ -16,16 +16,16 @@ import xhl.core.validator.Validator;
  */
 public class LanguageProcessor {
     private final Language language;
+    private final Module[] modules;
     private final Evaluator evaluator;
-    private final Validator validator;
+    private Validator validator;
 
     public LanguageProcessor(Language lang) {
         language = lang;
+        modules = language.getModules();
         evaluator = new Evaluator();
-        validator = new Validator();
-        for (Module module : language.getModules()) {
+        for (Module module : modules) {
             evaluator.loadModule(module);
-            validator.addElements(module.getSchema());
         }
     }
 
@@ -62,7 +62,14 @@ public class LanguageProcessor {
      *            code to execute
      * @throws EvaluationException
      */
-    public List<xhl.core.Error> validate(Block program) throws EvaluationException {
+    public List<xhl.core.Error> validate(Block program)
+            throws EvaluationException {
+        if (validator == null) {
+            validator = new Validator();
+            for (Module module : modules) {
+                validator.addElements(module.getSchema());
+            }
+        }
         validator.check(program);
         return validator.getErrors();
     }
@@ -75,11 +82,16 @@ public class LanguageProcessor {
      * @throws EvaluationException
      */
     public void execute(Block program) throws EvaluationException {
-        validator.check(program);
-        if (validator.getErrors().isEmpty())
-            evaluator.evalAll(program);
+        List<Error> errors = validate(program);
+        if (errors.isEmpty())
+            executeWithoutValidation(program);
         else
-            throw new ValidationException(validator.getErrors());
+            throw new ValidationException(errors);
+    }
+
+    public void executeWithoutValidation(Block program)
+            throws EvaluationException {
+        evaluator.evalAll(program);
     }
 
     /**
