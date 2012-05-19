@@ -44,7 +44,7 @@ public class Type {
      * @return
      */
     public boolean is(Type that) {
-        if (this == AnyType || that == AnyType)
+        if (this.equals(AnyType) || that.equals(AnyType))
             return true;
         else
             return this.equals(that);

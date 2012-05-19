@@ -67,7 +67,7 @@ public class Validator implements ElementVisitor<Type> {
     @Override
     public Type visit(Symbol sym) {
         if (table.containsKey(sym)) {
-            if (table.get(sym).is(Type.Element)) {
+            if (table.get(sym).equals(Type.Element)) {
                 ElementSchema schema = elements.get(sym);
                 ValidationResult result =
                         schema.checkCombination(this,
