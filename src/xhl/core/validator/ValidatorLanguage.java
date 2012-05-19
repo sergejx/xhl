@@ -11,7 +11,6 @@ import xhl.core.validator.ElementSchema.DefSpec;
 import xhl.core.validator.ElementSchema.ParamSpec;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
 
 public class ValidatorLanguage extends GenericModule implements Language {
 
@@ -71,49 +70,6 @@ public class ValidatorLanguage extends GenericModule implements Language {
     @Override
     public Module[] getModules() {
         return new Module[] { this };
-    }
-
-    @Override
-    public Schema getSchema() {
-        Schema langSchema = new Schema();
-        ElementSchema element = new ElementSchema(new Symbol("element"));
-        element.setParams(newArrayList(ParamSpec.sym(new Type("Symbol")),
-                ParamSpec.block(ParamSpec.val(new Type("Block")))));
-        element.setType(new Type("Symbol"));
-        langSchema.put(element);
-        ElementSchema params = new ElementSchema(new Symbol("params"));
-        params.setParams(newArrayList(ParamSpec.val(Type.List)));
-        params.setType(new Type("Parameters"));
-        langSchema.put(params);
-        ElementSchema val = new ElementSchema(new Symbol("val"));
-        val.setParams(newArrayList(ParamSpec.sym(Type.Symbol)));
-        val.setType(new Type("Parameter"));
-        langSchema.put(val);
-        ElementSchema sym = new ElementSchema(new Symbol("sym"));
-        sym.setParams(newArrayList(ParamSpec.sym(Type.Symbol)));
-        sym.setType(new Type("Parameter"));
-        langSchema.put(sym);
-        ElementSchema variadic = new ElementSchema(new Symbol("variadic"));
-        variadic.setParams(newArrayList(ParamSpec.val(new Type("Parameter"))));
-        variadic.setType(new Type("Parameter"));
-        langSchema.put(variadic);
-        ElementSchema block = new ElementSchema(new Symbol("block"));
-        block.setParams(newArrayList(ParamSpec.val(new Type("Parameter"))));
-        block.setType(new Type("Parameter"));
-        langSchema.put(block);
-        ElementSchema type = new ElementSchema(new Symbol("type"));
-        type.setParams(newArrayList(ParamSpec.sym(new Type("Symbol"))));
-        type.setType(new Type("Type"));
-        langSchema.put(type);
-        ElementSchema defines = new ElementSchema(new Symbol("defines"));
-        defines.setParams(newArrayList(ParamSpec.val(new Type("Number")), ParamSpec.sym(new Type("Symbol"))));
-        defines.setType(new Type("Define"));
-        langSchema.put(defines);
-        ElementSchema defines_backward = new ElementSchema(new Symbol("defines_backward"));
-        defines_backward.setParams(newArrayList(ParamSpec.val(new Type("Number")), ParamSpec.sym(new Type("Symbol"))));
-        defines_backward.setType(new Type("Define"));
-        langSchema.put(defines_backward);
-        return langSchema;
     }
 
     public Schema getReadedSchema() {

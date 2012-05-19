@@ -1,0 +1,35 @@
+element element:
+    params [sym Symbol, block(val Block)]
+    type Symbol
+
+element params:
+    params [val List]
+    type Parameters
+
+element val:
+    params [sym Symbol]
+    type Parameter
+
+element sym:
+    params [sym Symbol]
+    type Parameter
+
+element variadic:
+    params [val Parameter]
+    type Parameter
+
+element block:
+    params [val Parameter]
+    type Parameter
+
+element type:
+    params [sym Symbol]
+    type Type
+
+element defines:
+    params [val Number, sym Symbol]
+    type Define
+
+element defines_backward:
+    params [val Number, sym Symbol]
+    type Define
