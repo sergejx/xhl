@@ -3,8 +3,8 @@ element computer:
 
 element processor:
     type Processor
-    params [val Map]
+    params [sym Map]
 
 element disk:
     type Disk
-    params [val Map]
+    params [sym Map]
