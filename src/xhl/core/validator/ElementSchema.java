@@ -5,7 +5,6 @@ import java.util.Map;
 
 import xhl.core.Error;
 import xhl.core.elements.*;
-import xhl.core.validator.Validator.ValidationResult;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;

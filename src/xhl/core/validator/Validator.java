@@ -146,14 +146,4 @@ public class Validator implements ElementVisitor<Type> {
             }
         }
     }
-
-    static class ValidationResult {
-        public final Type type;
-        public final List<Error> errors;
-
-        public ValidationResult(Type type, List<Error> errors) {
-            this.type = type;
-            this.errors = errors;
-        }
-    }
 }
