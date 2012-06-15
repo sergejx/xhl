@@ -28,7 +28,7 @@ public class LogicsModule extends GenericModule {
         AND, OR, NOT
     }
 
-    static class LogicsBuilder implements Builder<Boolean> {
+    public static class LogicsBuilder implements Builder<Boolean> {
         public Builder<Boolean> operand1;
         public Builder<Boolean> operand2;
         public LogicsOperation operation;

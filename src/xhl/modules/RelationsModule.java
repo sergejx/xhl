@@ -40,7 +40,7 @@ public class RelationsModule extends GenericModule {
         GT, LT, EQ, GTEQ, LTEQ
     }
 
-    static class RelationBuilder implements Builder<Boolean> {
+    public static class RelationBuilder implements Builder<Boolean> {
         public Builder<Double> operand1;
         public Builder<Double> operand2;
         public RelationOperation operation;

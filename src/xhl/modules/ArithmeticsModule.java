@@ -33,7 +33,7 @@ public class ArithmeticsModule extends GenericModule {
         ADD, SUB, MUL, DIV
     }
 
-    static class ArithmeticsBuilder implements Builder<Double> {
+    public static class ArithmeticsBuilder implements Builder<Double> {
         public List<Builder<Double>> operands = newArrayList();
         public ArithmOperation operation;
 
