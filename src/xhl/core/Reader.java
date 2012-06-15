@@ -75,7 +75,7 @@ public class Reader {
         }
         Expression first = combination();
         while (token.type == OPERATOR) {
-            if (isColon(token)
+            if (isColon()
                     && (lexer.checkNextToken().type == LINEEND || !colonAccepted))
                 break;
             Combination exp = new Combination(token.position);
@@ -89,7 +89,7 @@ public class Reader {
         }
         if (token.type == LINEEND)
             token = lexer.nextToken();
-        else if (withBlock && isColon(token)) {
+        else if (withBlock && isColon()) {
             token = lexer.nextToken(); // :
             token = lexer.nextToken(); // \n
             token = lexer.nextToken(); // INDENT FIXME: Add checks
@@ -207,7 +207,7 @@ public class Reader {
         return new Symbol(name.toArray(new String[0]), position);
     }
 
-    private boolean isColon(Token token2) {
+    private boolean isColon() {
         return token.type == OPERATOR && token.stringValue.equals(":");
     }
 }

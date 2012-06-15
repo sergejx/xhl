@@ -3,7 +3,7 @@ package xhl.examples.entity;
 public class Type {
     public enum T {
         INT, STRING, BOOLEAN, REFERENCE
-    };
+    }
 
     private final T type;
     private Entity entity;

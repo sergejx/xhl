@@ -46,7 +46,7 @@ public class LogicsModule extends GenericModule {
         @Override
         public Boolean toValue() {
             boolean arg1 = operand1.toValue();
-            boolean arg2 = operand2.toValue();;
+            boolean arg2 = operand2.toValue();
             switch (operation) {
             case AND:
                 return arg1 && arg2;

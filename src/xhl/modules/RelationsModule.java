@@ -58,7 +58,7 @@ public class RelationsModule extends GenericModule {
         @Override
         public Boolean toValue() {
             double arg1 = operand1.toValue();
-            double arg2 = operand2.toValue();;
+            double arg2 = operand2.toValue();
             switch (operation) {
             case GT:
                 return arg1 > arg2;
