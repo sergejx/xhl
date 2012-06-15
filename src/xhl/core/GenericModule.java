@@ -216,12 +216,12 @@ public abstract class GenericModule implements Module {
                     param = params[i];
                 else // varargs
                     param = params[params.length - 1];
-                boolean pb = Builder.class.isAssignableFrom(param);
-                boolean ab = Builder.class.isAssignableFrom(arg.getClass());
+                boolean pb = Producer.class.isAssignableFrom(param);
+                boolean ab = Producer.class.isAssignableFrom(arg.getClass());
                 if (!pb && ab) {
-                    evArgs.set(i, ((Builder<?>) arg).toValue());
+                    evArgs.set(i, ((Producer<?>) arg).toValue());
                 } else if (pb && !ab) {
-                    ConstBuilder<?> b = new ConstBuilder<Object>(arg);
+                    ConstProducer<?> b = new ConstProducer<Object>(arg);
                     evArgs.set(i, b);
                 }
             }

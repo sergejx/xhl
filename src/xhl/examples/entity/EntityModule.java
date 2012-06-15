@@ -2,7 +2,7 @@ package xhl.examples.entity;
 
 import java.util.Map;
 
-import xhl.core.Builder;
+import xhl.core.Producer;
 import xhl.core.EvaluationException;
 import xhl.core.GenericModule;
 import xhl.core.elements.Block;
@@ -70,7 +70,7 @@ public class EntityModule extends GenericModule {
             try {
                 // TODO: Nomal values are not converted to builders in this case
                 @SuppressWarnings("unchecked")
-                Builder<Boolean> rule = (Builder<Boolean>) evaluator.eval(expr);
+                Producer<Boolean> rule = (Producer<Boolean>) evaluator.eval(expr);
                 currentEntity.addValidation(rule);
             } catch (ClassCastException e) {
                 throw new EvaluationException(
@@ -80,21 +80,21 @@ public class EntityModule extends GenericModule {
     }
 
     @Function
-    public Builder<Double> length(Attribute attr) {
-        return new LengthBuilder(attr);
+    public Producer<Double> length(Attribute attr) {
+        return new LengthProducer(attr);
     }
 
-    public static class LengthBuilder implements Builder<Double> {
+    public static class LengthProducer implements Producer<Double> {
         public final Attribute attr;
 
-        public LengthBuilder(Attribute attr) {
+        public LengthProducer(Attribute attr) {
             this.attr = attr;
         }
 
         @Override
         public Double toValue() {
             throw new UnsupportedOperationException(
-                    "LengthBuilder can not be evaluated.");
+                    "LengthProducer can not be evaluated.");
         }
 
         @Override

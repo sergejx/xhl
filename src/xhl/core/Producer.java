@@ -1,6 +1,6 @@
 package xhl.core;
 
-public interface Builder<T> {
+public interface Producer<T> {
     T toValue();
     String toCode();
 }

@@ -1,9 +1,9 @@
 package xhl.core;
 
-public class ConstBuilder<T> implements Builder<T> {
+public class ConstProducer<T> implements Producer<T> {
     private final T value;
 
-    public ConstBuilder(T value) {
+    public ConstProducer(T value) {
         this.value = value;
     }
 

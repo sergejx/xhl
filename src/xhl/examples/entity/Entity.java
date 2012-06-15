@@ -8,14 +8,14 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
-import xhl.core.Builder;
+import xhl.core.Producer;
 
 import static com.google.common.collect.Lists.newArrayList;
 
 public class Entity {
     private final String name;
     private final List<Attribute> attributes = newArrayList();
-    private final List<Builder<Boolean>> validation = newArrayList();
+    private final List<Producer<Boolean>> validation = newArrayList();
 
     public Entity(String name) {
         this.name = name;
@@ -33,7 +33,7 @@ public class Entity {
         return attributes.add(e);
     }
 
-    public boolean addValidation(Builder<Boolean> rule) {
+    public boolean addValidation(Producer<Boolean> rule) {
         return validation.add(rule);
     }
 

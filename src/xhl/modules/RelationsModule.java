@@ -2,7 +2,7 @@ package xhl.modules;
 
 import java.util.Map;
 
-import xhl.core.Builder;
+import xhl.core.Producer;
 import xhl.core.GenericModule;
 
 import com.google.common.collect.ImmutableMap;
@@ -12,44 +12,44 @@ import static xhl.modules.RelationsModule.RelationOperation.*;
 public class RelationsModule extends GenericModule {
 
     @Function(name=">")
-    public Builder<Boolean> gt(Builder<Double> arg1, Builder<Double> arg2) {
-        return new RelationBuilder(GT, arg1, arg2);
+    public Producer<Boolean> gt(Producer<Double> arg1, Producer<Double> arg2) {
+        return new RelationProducer(GT, arg1, arg2);
     }
 
     @Function(name="<")
-    public Builder<Boolean> lt(Builder<Double> arg1, Builder<Double> arg2) {
-        return new RelationBuilder(LT, arg1, arg2);
+    public Producer<Boolean> lt(Producer<Double> arg1, Producer<Double> arg2) {
+        return new RelationProducer(LT, arg1, arg2);
     }
 
     @Function(name="=")
-    public Builder<Boolean> eq(Builder<Double> arg1, Builder<Double> arg2) {
-        return new RelationBuilder(EQ, arg1, arg2);
+    public Producer<Boolean> eq(Producer<Double> arg1, Producer<Double> arg2) {
+        return new RelationProducer(EQ, arg1, arg2);
     }
 
     @Function(name=">=")
-    public Builder<Boolean> gteq(Builder<Double> arg1, Builder<Double> arg2) {
-        return new RelationBuilder(GTEQ, arg1, arg2);
+    public Producer<Boolean> gteq(Producer<Double> arg1, Producer<Double> arg2) {
+        return new RelationProducer(GTEQ, arg1, arg2);
     }
 
     @Function(name="<=")
-    public Builder<Boolean> lteq(Builder<Double> arg1, Builder<Double> arg2) {
-        return new RelationBuilder(LTEQ, arg1, arg2);
+    public Producer<Boolean> lteq(Producer<Double> arg1, Producer<Double> arg2) {
+        return new RelationProducer(LTEQ, arg1, arg2);
     }
 
     public enum RelationOperation {
         GT, LT, EQ, GTEQ, LTEQ
     }
 
-    public static class RelationBuilder implements Builder<Boolean> {
-        public Builder<Double> operand1;
-        public Builder<Double> operand2;
+    public static class RelationProducer implements Producer<Boolean> {
+        public Producer<Double> operand1;
+        public Producer<Double> operand2;
         public RelationOperation operation;
 
         private static final Map<RelationOperation, String> opcodes =
             ImmutableMap.of(GT, ">", LT, "<", EQ, "==", GTEQ, ">=", LTEQ, "<=");
 
-        public RelationBuilder(RelationOperation operation,
-                Builder<Double> op1, Builder<Double> op2) {
+        public RelationProducer(RelationOperation operation,
+                                Producer<Double> op1, Producer<Double> op2) {
             this.operation = operation;
             operand1 = op1;
             operand2 = op2;

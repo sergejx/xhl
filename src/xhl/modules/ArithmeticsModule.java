@@ -2,7 +2,7 @@ package xhl.modules;
 
 import java.util.List;
 
-import xhl.core.Builder;
+import xhl.core.Producer;
 import xhl.core.GenericModule;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -10,36 +10,36 @@ import static com.google.common.collect.Lists.newArrayList;
 public class ArithmeticsModule extends GenericModule {
 
     @Function(name = "+")
-    public Builder<Double> plus(Builder<Double> arg1, Builder<Double> arg2) {
-        return new ArithmeticsBuilder(ArithmOperation.ADD, arg1, arg2);
+    public Producer<Double> plus(Producer<Double> arg1, Producer<Double> arg2) {
+        return new ArithmeticsProducer(ArithmOperation.ADD, arg1, arg2);
     }
 
     @Function(name = "-")
-    public Builder<Double> minus(Builder<Double> arg1, Builder<Double> arg2) {
-        return new ArithmeticsBuilder(ArithmOperation.SUB, arg1, arg2);
+    public Producer<Double> minus(Producer<Double> arg1, Producer<Double> arg2) {
+        return new ArithmeticsProducer(ArithmOperation.SUB, arg1, arg2);
     }
 
     @Function(name = "*")
-    public Builder<Double> multiply(Builder<Double> arg1, Builder<Double> arg2) {
-        return new ArithmeticsBuilder(ArithmOperation.MUL, arg1, arg2);
+    public Producer<Double> multiply(Producer<Double> arg1, Producer<Double> arg2) {
+        return new ArithmeticsProducer(ArithmOperation.MUL, arg1, arg2);
     }
 
     @Function(name = "/")
-    public Builder<Double> divide(Builder<Double> arg1, Builder<Double> arg2) {
-        return new ArithmeticsBuilder(ArithmOperation.DIV, arg1, arg2);
+    public Producer<Double> divide(Producer<Double> arg1, Producer<Double> arg2) {
+        return new ArithmeticsProducer(ArithmOperation.DIV, arg1, arg2);
     }
 
     public enum ArithmOperation {
         ADD, SUB, MUL, DIV
     }
 
-    public static class ArithmeticsBuilder implements Builder<Double> {
-        public List<Builder<Double>> operands = newArrayList();
+    public static class ArithmeticsProducer implements Producer<Double> {
+        public List<Producer<Double>> operands = newArrayList();
         public ArithmOperation operation;
 
 
-        public ArithmeticsBuilder(ArithmOperation operation,
-                Builder<Double> op1, Builder<Double> op2) {
+        public ArithmeticsProducer(ArithmOperation operation,
+                                   Producer<Double> op1, Producer<Double> op2) {
             this.operation = operation;
             operands.add(op1);
             operands.add(op2);
