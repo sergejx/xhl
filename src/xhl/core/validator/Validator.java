@@ -111,7 +111,7 @@ public class Validator implements ElementVisitor<Type> {
         return Type.Block;
     }
 
-    public static Map<Symbol, Type> backwardDefunitions(Block blk,
+    public static Map<Symbol, Type> backwardDefinitions(Block blk,
                                                         Schema schema) {
         // FIXME: Remove duplication!
         Map<Symbol, Type> table = newHashMap();

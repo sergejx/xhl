@@ -25,7 +25,7 @@ public class StateMachineModule extends GenericModule {
     @Function(name = "!script")
     public void script(@Symbolic Block exprs) {
         Map<Symbol, Type> defined =
-                Validator.backwardDefunitions(exprs, getSchema());
+                Validator.backwardDefinitions(exprs, getSchema());
         for (Symbol sym : defined.keySet())
             if (defined.get(sym).isNamed("State"))
                 evaluator.putSymbol(sym, new State(sym.getName()));

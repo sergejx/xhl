@@ -27,7 +27,7 @@ public class EntityModule extends GenericModule {
 
         // Initialize all defined entities
         Map<Symbol, xhl.core.validator.Type> defined =
-                Validator.backwardDefunitions(body, getSchema());
+                Validator.backwardDefinitions(body, getSchema());
         for (Symbol sym : defined.keySet()) {
             if (defined.get(sym).isNamed("Entity")) {
                 Entity entity = new Entity(sym.getName());
