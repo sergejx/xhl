@@ -1,23 +1,23 @@
 package xhl.core.validator;
 
-import java.util.List;
-import java.util.Map;
-
 import xhl.core.Environment;
 import xhl.core.Error;
 import xhl.core.elements.*;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class Validator implements ElementVisitor<Type> {
     private final Environment<Type> table = new Environment<Type>();
-    private final Map<Symbol, ElementSchema> elements = newHashMap();
+    private final Map<Symbol, ElementValidator> elements = newHashMap();
     private final List<Error> errors = newArrayList();
 
     public void addElements(Schema schema) {
         for (ElementSchema element : schema) {
-            this.elements.put(element.getSymbol(), element);
+            this.elements.put(element.getSymbol(), element.getValidator());
             if (element.getParams().size() == 0)
                 table.put(element.getSymbol(), element.getType());
             else
@@ -68,9 +68,9 @@ public class Validator implements ElementVisitor<Type> {
     public Type visit(Symbol sym) {
         if (table.containsKey(sym)) {
             if (table.get(sym).equals(Type.Element)) {
-                ElementSchema schema = elements.get(sym);
+                ElementValidator elValidator = elements.get(sym);
                 ValidationResult result =
-                        schema.checkCombination(this,
+                        elValidator.check(this,
                                 new SList(sym.getPosition()));
                 errors.addAll(result.errors);
                 return result.type;
@@ -87,7 +87,7 @@ public class Validator implements ElementVisitor<Type> {
     public Type visit(Combination cmb) {
         if (!(cmb.get(0) instanceof Symbol)) {
             errors.add(new Error(cmb.getPosition(),
-                    "Combinaiton head is not a symbol"));
+                    "Combination head is not a symbol"));
             return Type.AnyType;
         }
         Symbol head = (Symbol) cmb.get(0);
@@ -96,9 +96,9 @@ public class Validator implements ElementVisitor<Type> {
                     "Symbol '%s' is not defined", head)));
             return Type.AnyType;
         }
-        ElementSchema schema = elements.get(head);
-        table.putAll(schema.definedSymbols(cmb.tail(), false));
-        ValidationResult result = schema.checkCombination(this, cmb.tail());
+        ElementValidator elValidator = elements.get(head);
+        table.putAll(elValidator.definedSymbols(cmb.tail(), false));
+        ValidationResult result = elValidator.check(this, cmb.tail());
         errors.addAll(result.errors);
         return result.type;
     }
@@ -111,7 +111,8 @@ public class Validator implements ElementVisitor<Type> {
         return Type.Block;
     }
 
-    public static Map<Symbol, Type> backwardDefunitions(Block blk, Schema schema) {
+    public static Map<Symbol, Type> backwardDefunitions(Block blk,
+                                                        Schema schema) {
         // FIXME: Remove duplication!
         Map<Symbol, Type> table = newHashMap();
         for (Expression exp : blk) {
@@ -121,7 +122,8 @@ public class Validator implements ElementVisitor<Type> {
                 SList tail = cmb.tail();
                 ElementSchema elemSchema = schema.get(head);
                 if (schema != null)
-                    table.putAll(elemSchema.definedSymbols(tail, true));
+                    table.putAll(elemSchema.getValidator().definedSymbols
+                            (tail, true));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }
@@ -135,12 +137,12 @@ public class Validator implements ElementVisitor<Type> {
                 Combination cmb = (Combination) exp;
                 Symbol head = (Symbol) cmb.head();
                 SList tail = cmb.tail();
-                ElementSchema schema = elements.get(head);
-                if (schema == null) {
+                ElementValidator elValidator = elements.get(head);
+                if (elValidator == null) {
                     errors.add(new Error(head.getPosition(), "Element '" + head
                             + "' not defined."));
                 } else
-                    table.putAll(schema.definedSymbols(tail, true));
+                    table.putAll(elValidator.definedSymbols(tail, true));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }

@@ -1,14 +1,14 @@
 package xhl.core.validator;
 
-import java.util.List;
-import java.util.Map;
+import xhl.core.elements.Symbol;
 
-import xhl.core.Error;
-import xhl.core.elements.*;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
+/**
+ * Element declaration.
+ */
 public class ElementSchema {
     private final Symbol symbol;
     private List<ParamSpec> params = newArrayList();
@@ -19,83 +19,22 @@ public class ElementSchema {
         this.symbol = sym;
     }
 
-    public boolean isVariadic() {
-        return params.get(params.size()-1).variadic;
+    public ElementValidator getValidator() {
+        return new ElementValidator(this);
     }
 
-    public Map<Symbol, Type> definedSymbols(SList args, boolean onlyBackward) {
-        Map<Symbol, Type> symbols = newHashMap();
-        for (DefSpec def : defines) {
-            if (onlyBackward && !def.backward)
-                continue;
-            ParamSpec argspec = params.get(def.arg - 1);
-            if (argspec.method == PassingMethod.SYM
-                    && argspec.type.equals(Type.Symbol)) {
-                Expression arg = args.get(def.arg - 1);
-                if (!(arg instanceof Symbol))
-                    continue;
-                Symbol name = (Symbol) arg;
-                Type type = def.type;
-                symbols.put(name, type);
-            } else if (argspec.method == PassingMethod.SYM
-                    && argspec.type.equals(Type.Map)) {
-                Expression arg = args.get(def.arg - 1);
-                if (!(arg instanceof SMap))
-                    continue;
-                SMap map = (SMap) arg;
-                Type type = def.type;
-                for (Expression key : map.keySet()) {
-                    Symbol sym = (Symbol) key;
-                    symbols.put(sym, type);
-                }
-            }
-        }
-        return symbols;
-    }
-
-    public ValidationResult checkCombination(Validator validator, SList tail) {
-        List<Error> errors = newArrayList();
-        // Check number of arguments
-        int minArgsSize = isVariadic() ? params.size() - 1 : params.size();
-        if (tail.size() < minArgsSize
-                || (!isVariadic() && tail.size() > minArgsSize)) {
-            errors.add(new Error(tail.getPosition(),
-                    "Wrong number of arguments"));
-            return new ValidationResult(type, errors);
-        }
-        // Check arguments types
-        for (int i = 0; i < minArgsSize; i++) {
-            errors.addAll(checkArgument(validator, params.get(i), tail.get(i)));
-        }
-        // Variadic arguments
-        if (isVariadic()) {
-            List<Expression> varargs = tail.subList(params.size(), tail.size());
-            ParamSpec spec = params.get(params.size()-1);
-            for (Expression arg : varargs)
-                errors.addAll(checkArgument(validator, spec, arg));
-        }
-        return new ValidationResult(type, errors);
-    }
-
-    private List<Error> checkArgument(Validator validator, ParamSpec spec,
-            Expression arg) {
-        List<Error> errors = newArrayList();
-        Type argtype;
-        if (spec.method == PassingMethod.SYM)
-            argtype = Type.typeOfElement(arg);
-        else
-            argtype = validator.check(arg);
-        if (!argtype.is(spec.type))
-            errors.add(new Error(arg.getPosition(),
-                    "Wrong type of an argument (expected " + spec.type
-                            + ", found " + argtype + ")"));
-        return errors;
-    }
-
+    /**
+     * Get symbol representing the element.
+     * @return Element symbol
+     */
     public Symbol getSymbol() {
         return symbol;
     }
 
+    /**
+     * Get properties of the element parameters.
+     * @return List of parameter specifications
+     */
     public List<ParamSpec> getParams() {
         return params;
     }
@@ -104,6 +43,10 @@ public class ElementSchema {
         this.params = params;
     }
 
+    /**
+     * Get type of the result of element application.
+     * @return Element type
+     */
     public Type getType() {
         return type;
     }
@@ -112,6 +55,10 @@ public class ElementSchema {
         this.type = type;
     }
 
+    /**
+     * Get a list of
+     * @return Definition specifications
+     */
     public List<DefSpec> getDefines() {
         return defines;
     }
@@ -120,29 +67,47 @@ public class ElementSchema {
         defines.add(spec);
     }
 
+    /**
+     * Check if the element has variable parameters list.
+     * @return <code>true</code> if the element is variadic
+     */
+    public boolean isVariadic() {
+        return params.get(params.size()-1).isVariadic();
+    }
+
     public static enum PassingMethod { VAL, SYM }
 
+    /**
+     * Element parameter specification
+     */
     public static class ParamSpec {
-        /** Argument specification */
-        public final Type type;
-        public final PassingMethod method;
-        public final boolean variadic;
-        public final boolean block;
+        private final Type type;
+        private final PassingMethod method;
+        private final boolean variadic;
+        private final boolean block;
 
+        /** Declare parameter received by value. */
         public static ParamSpec val(Type type) {
             return new ParamSpec(PassingMethod.VAL, type, false, false);
         }
 
+        /** Declare parameter received symbolically. */
         public static ParamSpec sym(Type type) {
             return new ParamSpec(PassingMethod.SYM, type, false, false);
         }
 
+        /** Mark the parameter as variadic.
+         * @return A new parameter specification with the same type
+         */
         public static ParamSpec variadic(ParamSpec spec) {
-            return new ParamSpec(spec.method, spec.type, true, false);
+            return new ParamSpec(spec.getMethod(), spec.getType(), true, false);
         }
 
+        /** Mark the parameter as a block parameter.
+         * @return A new parameter specification with the same type
+         */
         public static ParamSpec block(ParamSpec spec) {
-            return new ParamSpec(spec.method, spec.type, false, true);
+            return new ParamSpec(spec.getMethod(), spec.getType(), false, true);
         }
 
         private ParamSpec(PassingMethod method, Type type, boolean variadic,
@@ -151,6 +116,26 @@ public class ElementSchema {
             this.type = type;
             this.variadic = variadic;
             this.block = block;
+        }
+
+        /** Get parameter passing method */
+        public PassingMethod getMethod() {
+            return method;
+        }
+
+        /** Get a type of the parameter */
+        public Type getType() {
+            return type;
+        }
+
+        /** Is the parameter variadic? */
+        public boolean isVariadic() {
+            return variadic;
+        }
+
+        /** Does the parameter expect a block */
+        public boolean isBlock() {
+            return block;
         }
 
         @Override
@@ -163,10 +148,13 @@ public class ElementSchema {
         }
     }
 
+    /**
+     * Specification of a symbol defined by the element.
+     */
     public static class DefSpec {
-        public final Type type;
-        public final int arg;
-        public final boolean backward;
+        private final Type type;
+        private final int arg;
+        private final boolean backward;
 
         public DefSpec(int arg, Type type) {
             this(arg, type, false);
@@ -176,6 +164,21 @@ public class ElementSchema {
             this.arg = arg;
             this.type = type;
             this.backward = forward;
+        }
+
+        /** Symbol type */
+        public Type getType() {
+            return type;
+        }
+
+        /** Index of an element argument that contains defined symbol. */
+        public int getArg() {
+            return arg;
+        }
+
+        /** Is the symbol defined backwards? */
+        public boolean isBackward() {
+            return backward;
         }
     }
 }
