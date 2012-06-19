@@ -38,7 +38,7 @@ public abstract class GenericModule implements Module {
     private final Environment<Object> table = new Environment<Object>();
 
     public GenericModule() {
-        findFunctions();
+        findEvalFunctions();
     }
 
     @Override
@@ -115,7 +115,7 @@ public abstract class GenericModule implements Module {
         table.put(symbol, symbol);
     }
 
-    private void findFunctions() {
+    private void findEvalFunctions() {
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method method : methods) {
             tryAddFunction(table, method);
@@ -157,7 +157,7 @@ public abstract class GenericModule implements Module {
     }
 
     /**
-     * Indicates that method should be exported as module function.
+     * Indicates that a method is an evaluation function for a module element.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
