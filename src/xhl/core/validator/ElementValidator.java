@@ -23,13 +23,24 @@ public class ElementValidator {
     }
 
     /**
+     * Get a map with symbols defined forward by the combination and their
+     * types.
+     *
+     * @param args Combination arguments
+     * @return A map from defined symbols to their types
+     */
+    public Map<Symbol, Type> forwardDefinitions(SList args) {
+        return definedSymbols(args, true);
+    }
+
+    /**
      * Get a map with symbols defined by the element and their types.
      *
      * @param args         Combination arguments
      * @param onlyBackward Get only backward defined symbols
      * @return A map from defined symbols to their types
      */
-    public Map<Symbol, Type> definedSymbols(SList args,
+    private Map<Symbol, Type> definedSymbols(SList args,
                                             boolean onlyBackward) {
         Map<Symbol, Type> symbols = newHashMap();
         for (ElementSchema.DefSpec def : schema.getDefines()) {
@@ -93,7 +104,8 @@ public class ElementValidator {
             for (Expression arg : varargs)
                 errors.addAll(checkArgument(validator, spec, arg));
         }
-        return new ValidationResult(schema.getType(), errors);
+        return new ValidationResult(schema.getType(), errors,
+                definedSymbols(tail, false));
     }
 
     private List<Error> checkArgument(Validator validator,

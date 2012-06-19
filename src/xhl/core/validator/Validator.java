@@ -72,8 +72,8 @@ public class Validator implements ElementVisitor<Type> {
                 ValidationResult result =
                         elValidator.check(this,
                                 new SList(sym.getPosition()));
-                errors.addAll(result.errors);
-                return result.type;
+                errors.addAll(result.getErrors());
+                return result.getType();
             } else
                 return table.get(sym);
         } else {
@@ -97,10 +97,10 @@ public class Validator implements ElementVisitor<Type> {
             return Type.AnyType;
         }
         ElementValidator elValidator = elements.get(head);
-        table.putAll(elValidator.definedSymbols(cmb.tail(), false));
         ValidationResult result = elValidator.check(this, cmb.tail());
-        errors.addAll(result.errors);
-        return result.type;
+        table.putAll(result.getDefined());
+        errors.addAll(result.getErrors());
+        return result.getType();
     }
 
     @Override
@@ -122,8 +122,8 @@ public class Validator implements ElementVisitor<Type> {
                 SList tail = cmb.tail();
                 ElementSchema elemSchema = schema.get(head);
                 if (schema != null)
-                    table.putAll(elemSchema.getValidator().definedSymbols
-                            (tail, true));
+                    table.putAll(elemSchema.getValidator().forwardDefinitions(
+                            tail));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }
@@ -142,7 +142,7 @@ public class Validator implements ElementVisitor<Type> {
                     errors.add(new Error(head.getPosition(), "Element '" + head
                             + "' not defined."));
                 } else
-                    table.putAll(elValidator.definedSymbols(tail, true));
+                    table.putAll(elValidator.forwardDefinitions(tail));
             } catch (ClassCastException e) {
                 // Ignore cases, where types did not match expectations
             }
