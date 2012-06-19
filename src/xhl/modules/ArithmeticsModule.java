@@ -9,22 +9,22 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class ArithmeticsModule extends GenericModule {
 
-    @Function(name = "+")
+    @Element(name = "+")
     public Producer<Double> plus(Producer<Double> arg1, Producer<Double> arg2) {
         return new ArithmeticsProducer(ArithmOperation.ADD, arg1, arg2);
     }
 
-    @Function(name = "-")
+    @Element(name = "-")
     public Producer<Double> minus(Producer<Double> arg1, Producer<Double> arg2) {
         return new ArithmeticsProducer(ArithmOperation.SUB, arg1, arg2);
     }
 
-    @Function(name = "*")
+    @Element(name = "*")
     public Producer<Double> multiply(Producer<Double> arg1, Producer<Double> arg2) {
         return new ArithmeticsProducer(ArithmOperation.MUL, arg1, arg2);
     }
 
-    @Function(name = "/")
+    @Element(name = "/")
     public Producer<Double> divide(Producer<Double> arg1, Producer<Double> arg2) {
         return new ArithmeticsProducer(ArithmOperation.DIV, arg1, arg2);
     }

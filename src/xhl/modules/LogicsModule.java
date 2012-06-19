@@ -10,12 +10,12 @@ import com.google.common.collect.ImmutableMap;
 import static xhl.modules.LogicsModule.LogicsOperation.*;
 
 public class LogicsModule extends GenericModule {
-    @Function(name="&")
+    @Element(name="&")
     public Producer<Boolean> and(Producer<Boolean> arg1, Producer<Boolean> arg2) {
         return new LogicsProducer(AND, arg1, arg2);
     }
 
-    @Function(name="|")
+    @Element(name="|")
     public Producer<Boolean> or(Producer<Boolean> arg1, Producer<Boolean> arg2) {
         return new LogicsProducer(OR, arg1, arg2);
     }

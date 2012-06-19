@@ -21,7 +21,7 @@ public class EntityModule extends GenericModule {
         return module;
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public void module(Symbol name, Block body) {
         module = new Module(name.getName());
 
@@ -39,14 +39,14 @@ public class EntityModule extends GenericModule {
         evaluator.eval(body);
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public Entity entity(Symbol name, Block attrs) {
         currentEntity = (Entity) evaluator.getSymbol(name);
         evaluator.eval(attrs);
         return currentEntity;
     }
 
-    @Function(name = ":")
+    @Element(name = ":")
     public void attribute(@Symbolic Symbol name, @Symbolic Symbol typeName) {
         Type type;
         if (typeName.isNamed("int"))
@@ -64,7 +64,7 @@ public class EntityModule extends GenericModule {
         evaluator.putSymbol(name, attr);
     }
 
-    @Function
+    @Element
     public void validate(@Symbolic Block block) {
         for (Expression expr : block) {
             try {
@@ -79,7 +79,7 @@ public class EntityModule extends GenericModule {
         }
     }
 
-    @Function
+    @Element
     public Producer<Double> length(Attribute attr) {
         return new LengthProducer(attr);
     }

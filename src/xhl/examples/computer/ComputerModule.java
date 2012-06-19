@@ -32,7 +32,7 @@ public class ComputerModule extends GenericModule {
         return computer;
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public void computer(Block components) {
         Processor processor = null;
         List<Disk> disks = new ArrayList<Disk>();
@@ -49,7 +49,7 @@ public class ComputerModule extends GenericModule {
         computer = new Computer(processor, diskaArray);
     }
 
-    @Function
+    @Element
     public Processor processor(Map<Symbol, Object> properties) {
         Processor.Type type = null;
         int speed = Processor.UNKNOWN_SPEED;
@@ -66,7 +66,7 @@ public class ComputerModule extends GenericModule {
         return new Processor(type, speed, cores);
     }
 
-    @Function
+    @Element
     public Disk disk(Map<Symbol, Object> properties) {
         int size = Disk.UNKNOWN_SIZE;
         int speed = Disk.UNKNOWN_SPEED;

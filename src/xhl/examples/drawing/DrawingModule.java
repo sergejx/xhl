@@ -16,27 +16,27 @@ public class DrawingModule extends GenericModule {
         this.canvas = canvas;
     }
 
-    @Function
+    @Element
     public Color rgb(double r, double g, double b) {
         return new Color((int) r, (int) g, (int) b);
     }
 
-    @Function
+    @Element
     public void setcolor(Color color) {
         this.color = color;
     }
 
-    @Function
+    @Element
     public RectangularShape rectangle(double width, double height) {
         return new Rectangle2D.Double(0, 0, width, height);
     }
 
-    @Function
+    @Element
     public RectangularShape ellipse(double width, double height) {
         return new Ellipse2D.Double(0, 0, width, height);
     }
 
-    @Function
+    @Element
     public void draw(double x, double y, RectangularShape shape) {
         ColoredShape cs = new ColoredShape(shape, color);
         cs.setLocation(x, y);

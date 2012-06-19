@@ -11,27 +11,27 @@ import static xhl.modules.RelationsModule.RelationOperation.*;
 
 public class RelationsModule extends GenericModule {
 
-    @Function(name=">")
+    @Element(name=">")
     public Producer<Boolean> gt(Producer<Double> arg1, Producer<Double> arg2) {
         return new RelationProducer(GT, arg1, arg2);
     }
 
-    @Function(name="<")
+    @Element(name="<")
     public Producer<Boolean> lt(Producer<Double> arg1, Producer<Double> arg2) {
         return new RelationProducer(LT, arg1, arg2);
     }
 
-    @Function(name="=")
+    @Element(name="=")
     public Producer<Boolean> eq(Producer<Double> arg1, Producer<Double> arg2) {
         return new RelationProducer(EQ, arg1, arg2);
     }
 
-    @Function(name=">=")
+    @Element(name=">=")
     public Producer<Boolean> gteq(Producer<Double> arg1, Producer<Double> arg2) {
         return new RelationProducer(GTEQ, arg1, arg2);
     }
 
-    @Function(name="<=")
+    @Element(name="<=")
     public Producer<Boolean> lteq(Producer<Double> arg1, Producer<Double> arg2) {
         return new RelationProducer(LTEQ, arg1, arg2);
     }

@@ -22,7 +22,7 @@ public class StateMachineModule extends GenericModule {
 
     // DSL functions =========================================================
 
-    @Function(name = "!script")
+    @Element(name = "!script")
     public void script(@Symbolic Block exprs) {
         Map<Symbol, Type> defined =
                 Validator.backwardDefinitions(exprs, getSchema());
@@ -32,7 +32,7 @@ public class StateMachineModule extends GenericModule {
         evaluator.eval(exprs);
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public void events(Block blk) throws Exception {
         for (Expression stmt : blk) {
             try {
@@ -45,12 +45,12 @@ public class StateMachineModule extends GenericModule {
         }
     }
 
-    @Function
+    @Element
     public void resetEvents(List<Event> events) {
         resetEvents = events.toArray(new Event[0]);
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public void commands(Block blk) throws Exception {
         for (Expression expr : blk) {
             try {
@@ -63,12 +63,12 @@ public class StateMachineModule extends GenericModule {
         }
     }
 
-    @Function(name=":")
+    @Element(name=":")
     public Definition colon(@Symbolic Symbol name, String code) {
         return new Definition(name, code);
     }
 
-    @Function(evaluateArgs = false)
+    @Element(evaluateArgs = false)
     public void state(Symbol name, Block blk) throws Exception {
         currentState = (State) evaluator.getSymbol(name);
         evaluator.eval(blk);
@@ -77,7 +77,7 @@ public class StateMachineModule extends GenericModule {
         currentState = null;
     }
 
-    @Function
+    @Element
     public void actions(List<Command> args) throws Exception {
         if (currentState == null)
             throw new Exception("Actions must by defined inside state.");
@@ -86,7 +86,7 @@ public class StateMachineModule extends GenericModule {
         }
     }
 
-    @Function(name = "->")
+    @Element(name = "->")
     public void transition(Event trigger, State target) {
         currentState.addTransition(trigger, target);
     }

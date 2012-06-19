@@ -6,7 +6,7 @@ import xhl.core.elements.Symbol;
 
 public class DefineModule extends GenericModule {
 
-    @Function
+    @Element
     public void define(@Symbolic Symbol symbol, Object value)
             throws EvaluationException {
         if (evaluator.hasSymbol(symbol))

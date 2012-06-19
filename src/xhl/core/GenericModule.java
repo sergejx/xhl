@@ -28,7 +28,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * Base class for implementing new modules.
  *
  * Allows to implement module functions as Java methods marked with annotation
- * <code>&#64;Function</code>.
+ * <code>&#64;Element</code>.
  *
  * @author Sergej Chodarev
  */
@@ -123,21 +123,21 @@ public abstract class GenericModule implements Module {
     }
 
     /**
-     * If method has <code>&#64;Function</code> annotation, add it to symbols
+     * If method has <code>&#64;Element</code> annotation, add it to symbols
      * table.
      *
      * @param table
      * @param method
      */
     private void tryAddFunction(Environment<Object> table, Method method) {
-        Function fann = method.getAnnotation(Function.class);
-        if (fann != null) {
+        Element annotation = method.getAnnotation(Element.class);
+        if (annotation != null) {
             // Find function name
             String name;
-            if (fann.name().equals(""))
+            if (annotation.name().equals(""))
                 name = method.getName();
             else
-                name = fann.name();
+                name = annotation.name();
 
             // Check which parameters to evaluate
             Annotation[][] pann = method.getParameterAnnotations();
@@ -148,7 +148,7 @@ public abstract class GenericModule implements Module {
                 if (ann.isPresent())
                     evaluateArgs[i] = false;
                 else
-                    evaluateArgs[i] = fann.evaluateArgs();
+                    evaluateArgs[i] = annotation.evaluateArgs();
             }
 
             Executable exec = new GenericExecutable(method, evaluateArgs);
@@ -161,8 +161,8 @@ public abstract class GenericModule implements Module {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    protected @interface Function {
-        /** Function name. If not specified, method name is uses. */
+    protected @interface Element {
+        /** Element name. If not specified, method name is uses. */
         public String name() default "";
 
         public boolean evaluateArgs() default true;
