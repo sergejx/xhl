@@ -20,7 +20,7 @@ public class ElementSchema {
     }
 
     public ElementValidator getValidator() {
-        return new ElementValidator(this);
+        return new SchemaElementValidator(this);
     }
 
     /**
