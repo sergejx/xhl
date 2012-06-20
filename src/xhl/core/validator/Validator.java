@@ -105,7 +105,7 @@ public class Validator implements ElementVisitor<Type> {
 
     @Override
     public Type visit(Block blk) {
-        collectBackwardDefunitions(blk);
+        collectBackwardDefinitions(blk);
         for (Expression exp : blk)
             check(exp);
         return Type.Block;
@@ -131,7 +131,7 @@ public class Validator implements ElementVisitor<Type> {
         return table;
     }
 
-    private void collectBackwardDefunitions(Block blk) {
+    private void collectBackwardDefinitions(Block blk) {
         for (Expression exp : blk) {
             try {
                 Combination cmb = (Combination) exp;
