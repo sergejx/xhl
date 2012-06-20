@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ValidationResult {
+public class ValidationResult {
     private final Type type;
     private final List<Error> errors;
     private Map<Symbol, Type> defined;
