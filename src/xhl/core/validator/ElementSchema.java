@@ -14,13 +14,19 @@ public class ElementSchema {
     private List<ParamSpec> params = newArrayList();
     private Type type = Type.Null;
     private final List<DefSpec> defines = newArrayList();
+    private ElementValidator validator;
 
     public ElementSchema(Symbol sym) {
         this.symbol = sym;
+        validator = new SchemaElementValidator(this);
     }
 
     public ElementValidator getValidator() {
-        return new SchemaElementValidator(this);
+        return validator;
+    }
+
+    public void setValidator(ElementValidator validator) {
+        this.validator = validator;
     }
 
     /**

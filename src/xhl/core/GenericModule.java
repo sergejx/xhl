@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import xhl.core.elements.Block;
 import xhl.core.elements.SList;
@@ -18,6 +19,7 @@ import xhl.core.validator.ElementSchema.ParamSpec;
 
 import com.google.common.base.Optional;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 
 import static com.google.common.base.Predicates.instanceOf;
@@ -36,9 +38,11 @@ public abstract class GenericModule implements Module {
 
     protected Evaluator evaluator;
     private final Environment<Object> table = new Environment<Object>();
+    private final Map<Symbol, ElementValidator> validators = newHashMap();
 
     public GenericModule() {
         findEvalFunctions();
+        findCheckFunctions();
     }
 
     @Override
@@ -52,7 +56,7 @@ public abstract class GenericModule implements Module {
     }
 
     /**
-     * Return module schema
+     * Return module schema.
      *
      * Try to read module schema from a file with the same name as the class but
      * with extension ".schema". If it is not available, create generic schema,
@@ -61,6 +65,7 @@ public abstract class GenericModule implements Module {
      */
     @Override
     public Schema getSchema() {
+        Schema schema;
         InputStream in = findSchemaStream();
         if (in != null) {
             ValidatorLanguage lang = new ValidatorLanguage();
@@ -73,10 +78,12 @@ public abstract class GenericModule implements Module {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            return lang.getReadedSchema();
+            schema = lang.getReadedSchema();
         } else {
-            return makeGenericSchema();
+            schema = makeGenericSchema();
         }
+        addCustomValidators(schema);
+        return schema;
     }
 
     protected InputStream findSchemaStream() {
@@ -94,6 +101,13 @@ public abstract class GenericModule implements Module {
             schema.put(elem);
         }
         return schema;
+    }
+
+    private void addCustomValidators(Schema schema) {
+        for (ElementSchema element : schema) {
+            if (validators.containsKey(element.getSymbol()))
+                element.setValidator(validators.get(element.getSymbol()));
+        }
     }
 
     /**
@@ -119,6 +133,13 @@ public abstract class GenericModule implements Module {
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method method : methods) {
             tryAddFunction(table, method);
+        }
+    }
+
+    private void findCheckFunctions() {
+        Method[] methods = this.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            tryAddCheckFunction(method);
         }
     }
 
@@ -157,6 +178,19 @@ public abstract class GenericModule implements Module {
     }
 
     /**
+     * If a method has the <code>&#64;Check</code> annotation,
+     * register it as a check function for an element.
+     */
+    private void tryAddCheckFunction(Method method) {
+        Check annotation = method.getAnnotation(Check.class);
+        if (annotation != null) {
+            String name = annotation.name();
+            ElementValidator validator = new CustomValidator(method);
+            validators.put(new Symbol(name), validator);
+        }
+    }
+
+    /**
      * Indicates that a method is an evaluation function for a module element.
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -168,10 +202,21 @@ public abstract class GenericModule implements Module {
         public boolean evaluateArgs() default true;
     }
 
+    /**
+     * Mark for an element check function.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected @interface Check {
+        /** The name of checked method. */
+        public String name();
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.PARAMETER)
     protected @interface Symbolic {
     }
+
 
     private class GenericExecutable implements Executable {
         private final Method method;
@@ -247,6 +292,38 @@ public abstract class GenericModule implements Module {
             // Pack varargs
             evArgs.set(last, varArgsT);
             evArgs.subList(last + 1, evArgs.size()).clear();
+        }
+    }
+
+
+    private class CustomValidator implements ElementValidator {
+
+        private final Method method;
+
+        public CustomValidator(Method method) {
+            this.method = method;
+        }
+
+        @Override
+        public Map<Symbol, Type> forwardDefinitions(SList args) {
+            return newHashMap();
+        }
+
+        @Override
+        public ValidationResult check(Validator validator, SList tail) {
+            Object[] args = new Object[tail.size() + 1];
+            args[0] = validator;
+            for (int i = 0; i < tail.size(); i++) {
+                args[i+1] = tail.get(i);
+            }
+            try {
+                return (ValidationResult) method.invoke(GenericModule.this,
+                        args);
+            } catch (InvocationTargetException e) {
+                throw new EvaluationException(e.getCause());
+            } catch (Exception e) {
+                throw new EvaluationException(e);
+            }
         }
     }
 }
