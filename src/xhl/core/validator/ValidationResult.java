@@ -3,7 +3,7 @@ package xhl.core.validator;
 import xhl.core.Error;
 import xhl.core.elements.Symbol;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +13,13 @@ public class ValidationResult {
     private Map<Symbol, Type> defined;
 
     public ValidationResult(Type type, List<Error> errors) {
-        this(type, errors, new HashMap<Symbol, Type>());
+        this(type, errors, Collections.<Symbol, Type>emptyMap());
     }
 
     public ValidationResult(Type type, List<Error> errors, Map<Symbol,
             Type> defined) {
         this.type = type;
-        this.errors = errors;
+        this.errors = errors != null ? errors : Collections.<Error>emptyList();
         this.defined = defined;
     }
 
