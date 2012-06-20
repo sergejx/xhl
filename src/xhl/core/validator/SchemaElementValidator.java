@@ -16,7 +16,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * Validator for an element that checks the validity according to rules
  * specified in the language schema.
  */
-public class SchemaElementValidator implements ElementValidator {
+class SchemaElementValidator implements ElementValidator {
     private final ElementSchema schema;
 
     public SchemaElementValidator(ElementSchema schema) {
