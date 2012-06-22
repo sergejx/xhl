@@ -1,5 +1,6 @@
 package xhl.core.validator;
 
+import com.google.common.collect.ImmutableList;
 import xhl.core.elements.*;
 
 public class Type {
@@ -14,6 +15,10 @@ public class Type {
     public static final Type Map = new Type("Map");
     public static final Type Block = new Type("Block");
     public static final Type Combination = new Type("Combination");
+
+    public static final ImmutableList<Type> defaultTypes = ImmutableList.of
+            (AnyType, Null, Element, Boolean, Number, String, Symbol, List,
+                    Map, Block, Combination);
 
     private final Symbol name;
 
