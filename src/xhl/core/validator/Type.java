@@ -27,10 +27,7 @@ public class Type {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Type)
-            return name.equals(((Type) obj).name);
-        else
-            return false;
+        return obj instanceof Type && name.equals(((Type) obj).name);
     }
 
     @Override
@@ -44,10 +41,8 @@ public class Type {
      * @return
      */
     public boolean is(Type that) {
-        if (this.equals(AnyType) || that.equals(AnyType))
-            return true;
-        else
-            return this.equals(that);
+        return this.equals(AnyType) || that.equals(AnyType) || this.equals
+                (that);
     }
 
     public boolean isNamed(String n) {
