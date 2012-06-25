@@ -108,7 +108,7 @@ class Lexer {
                 line = input.readLine();
                 continue;
             }
-            // Add INDEND or DEDENT tokens
+            // Add INDENT or DEDENT tokens
             if (braceLevel == 0)
                 processIndentation(indentation);
             // Read tokens on the line
