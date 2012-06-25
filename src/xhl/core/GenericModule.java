@@ -78,7 +78,7 @@ public abstract class GenericModule implements Module {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            schema = lang.getReadedSchema();
+            schema = lang.getReadSchema();
         } else {
             schema = makeGenericSchema();
         }

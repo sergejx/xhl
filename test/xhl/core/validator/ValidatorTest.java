@@ -49,7 +49,7 @@ public class ValidatorTest {
 //        List<Error> errors = proc.validate(Reader.read(code));
 //        assertTrue(errors.isEmpty());
         proc.execute(Reader.read(code));
-        Schema schema = lang.getReadedSchema();
+        Schema schema = lang.getReadSchema();
         Symbol plus = new Symbol("+");
         assertTrue(schema.containsKey(plus));
         ElementSchema elem = schema.get(plus);

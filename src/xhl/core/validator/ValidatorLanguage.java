@@ -83,7 +83,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
         return new Module[] { this };
     }
 
-    public Schema getReadedSchema() {
+    public Schema getReadSchema() {
         return schema;
     }
 }
