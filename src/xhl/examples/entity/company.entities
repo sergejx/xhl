@@ -5,10 +5,11 @@ module company:
         role : string
         worksAt : Department
         freelancer : boolean
-        
+
         validate:
             (length name < 20) & (length name > 0)
-            
+            # elementof role ["designer", "programmer", "manager"]
+
     entity Department:
         id : int
         description : string
