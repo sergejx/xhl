@@ -34,8 +34,8 @@ public class ArithmeticsModule extends GenericModule {
     }
 
     public static class ArithmeticsProducer implements Producer<Double> {
-        public List<Producer<Double>> operands = newArrayList();
-        public ArithmOperation operation;
+        public final List<Producer<Double>> operands = newArrayList();
+        public final ArithmOperation operation;
 
 
         public ArithmeticsProducer(ArithmOperation operation,

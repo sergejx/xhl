@@ -41,9 +41,9 @@ public class RelationsModule extends GenericModule {
     }
 
     public static class RelationProducer implements Producer<Boolean> {
-        public Producer<Double> operand1;
-        public Producer<Double> operand2;
-        public RelationOperation operation;
+        public final Producer<Double> operand1;
+        public final Producer<Double> operand2;
+        public final RelationOperation operation;
 
         private static final Map<RelationOperation, String> opcodes =
             ImmutableMap.of(GT, ">", LT, "<", EQ, "==", GTEQ, ">=", LTEQ, "<=");

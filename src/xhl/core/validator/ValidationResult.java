@@ -10,7 +10,7 @@ import java.util.Map;
 public class ValidationResult {
     private final Type type;
     private final List<Error> errors;
-    private Map<Symbol, Type> defined;
+    private final Map<Symbol, Type> defined;
 
     public ValidationResult(Type type, List<Error> errors) {
         this(type, errors, Collections.<Symbol, Type>emptyMap());

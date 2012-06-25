@@ -29,9 +29,9 @@ public class LogicsModule extends GenericModule {
     }
 
     public static class LogicsProducer implements Producer<Boolean> {
-        public Producer<Boolean> operand1;
-        public Producer<Boolean> operand2;
-        public LogicsOperation operation;
+        public final Producer<Boolean> operand1;
+        public final Producer<Boolean> operand2;
+        public final LogicsOperation operation;
 
         private static final Map<LogicsOperation, String> opcodes =
                 ImmutableMap.of(AND, "&&", OR, "||", NOT, "!");
