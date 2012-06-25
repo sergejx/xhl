@@ -9,10 +9,6 @@ import xhl.core.validator.Type;
 import xhl.core.validator.ValidationResult;
 import xhl.core.validator.Validator;
 
-import java.util.ArrayList;
-
-import static com.google.common.collect.Lists.newArrayList;
-
 public class DefineModule extends GenericModule {
 
     @Element
