@@ -2,6 +2,7 @@ package xhl.examples.statemachine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,24 +31,16 @@ public class StateMachine {
     }
 
     private void gatherForwards(Collection<State> result, State start) {
-        if (start == null) {
-            return;
-        }
-        if (result.contains(start)) {
-            return;
-        } else {
+        if (start != null && !result.contains(start)) {
             result.add(start);
             for (State next : start.getAllTargets()) {
                 gatherForwards(result, next);
             }
-            return;
         }
     }
 
     public void addResetEvents(Event... events) {
-        for (Event e : events) {
-            resetEvents.add(e);
-        }
+        Collections.addAll(resetEvents, events);
     }
 
     public boolean isResetEvent(String eventCode) {
