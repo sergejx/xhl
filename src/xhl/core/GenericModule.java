@@ -39,6 +39,7 @@ public abstract class GenericModule implements Module {
     protected Evaluator evaluator;
     private final Environment<Object> table = new Environment<Object>();
     private final Map<Symbol, ElementValidator> validators = newHashMap();
+    private final Map<String, Executable> localElements = newHashMap();
 
     public GenericModule() {
         findEvalFunctions();
@@ -124,6 +125,16 @@ public abstract class GenericModule implements Module {
         table.put(symbol, symbol);
     }
 
+    /**
+     * Get an element that is not defined globally.
+     *
+     * @param name Element name
+     * @return Element evaluation function.
+     */
+    protected Executable getLocalElement(String name) {
+        return localElements.get(name);
+    }
+
     private void findEvalFunctions() {
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method method : methods) {
@@ -165,7 +176,10 @@ public abstract class GenericModule implements Module {
             }
 
             Executable exec = new GenericExecutable(method, evaluateArgs);
-            table.put(new Symbol(name), exec);
+            if (annotation.local())
+                localElements.put(name, exec);
+            else
+                table.put(new Symbol(name), exec);
         }
     }
 
@@ -191,6 +205,14 @@ public abstract class GenericModule implements Module {
         /** Element name. If not specified, method name is uses. */
         public String name() default "";
 
+        /**
+         * Local element is not registered in global module namespace.
+         * Instead it should be bound by corresponding block evaluation
+         * function.
+         */
+        public boolean local() default false;
+
+        @Deprecated
         public boolean evaluateArgs() default true;
     }
 

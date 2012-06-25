@@ -76,6 +76,18 @@ public class Evaluator implements ElementVisitor<Object>{
         return environment.containsKey(symbol);
     }
 
+    public void pushEnvironment() {
+        environment.push();
+    }
+
+    public void popEnvironment() {
+        environment.pop();
+    }
+
+    public Object putGlobalSymbol(Symbol sym, Object value) {
+        return environment.putGlobal(sym, value);
+    }
+
     @Override
     public Object visit(SNumber num) {
         return num.getValue();

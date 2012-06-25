@@ -34,15 +34,10 @@ public class StateMachineModule extends GenericModule {
 
     @Element(evaluateArgs = false)
     public void events(Block blk) throws Exception {
-        for (Expression stmt : blk) {
-            try {
-                Definition def = (Definition) evaluator.eval(stmt);
-                Event event = new Event(def.symbol.getName(), def.value);
-                evaluator.putSymbol(def.symbol, event);
-            } catch (ClassCastException e) {
-                throw new Exception("Wrong type of argument.");
-            }
-        }
+        evaluator.pushEnvironment();
+        evaluator.putSymbol(new Symbol(":"), getLocalElement("colonEvent"));
+        evaluator.eval(blk);
+        evaluator.popEnvironment();
     }
 
     @Element
@@ -52,20 +47,22 @@ public class StateMachineModule extends GenericModule {
 
     @Element(evaluateArgs = false)
     public void commands(Block blk) throws Exception {
-        for (Expression expr : blk) {
-            try {
-                Definition def = (Definition) evaluator.eval(expr);
-                Command cmd = new Command(def.symbol.getName(), def.value);
-                evaluator.putSymbol(def.symbol, cmd);
-            } catch (ClassCastException e) {
-                throw new Exception("Wrong type of argument.");
-            }
-        }
+        evaluator.pushEnvironment();
+        evaluator.putSymbol(new Symbol(":"), getLocalElement("colonCommand"));
+        evaluator.eval(blk);
+        evaluator.popEnvironment();
     }
 
-    @Element(name=":")
-    public Definition colon(@Symbolic Symbol name, String code) {
-        return new Definition(name, code);
+    @Element(local=true)
+    public void colonEvent(@Symbolic Symbol name, String code) {
+        Event event = new Event(name.getName(), code);
+        evaluator.putGlobalSymbol(name, event);
+    }
+
+    @Element(local=true)
+    public void colonCommand(@Symbolic Symbol name, String code) {
+        Command cmd = new Command(name.getName(), code);
+        evaluator.putGlobalSymbol(name, cmd);
     }
 
     @Element(evaluateArgs = false)
@@ -97,15 +94,5 @@ public class StateMachineModule extends GenericModule {
         StateMachine machine = new StateMachine(startState);
         machine.addResetEvents(resetEvents);
         return machine;
-    }
-
-    private static class Definition {
-        public final Symbol symbol;
-        public final String value;
-
-        public Definition(Symbol name, String value) {
-            this.symbol = name;
-            this.value = value;
-        }
     }
 }
