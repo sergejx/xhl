@@ -1,3 +1,6 @@
+newtype Entity
+newtype Property
+
 element module:
     params [sym Symbol, block(val Block)]
 

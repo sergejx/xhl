@@ -1,3 +1,6 @@
+newtype Color
+newtype Shape
+
 element rgb:
     params [val Number, val Number, val Number]
     type Color

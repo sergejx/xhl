@@ -17,6 +17,12 @@ public class ValidatorLanguage extends GenericModule implements Language {
     private ElementSchema currentElement;
     private final Schema schema = new Schema();
 
+    public ValidatorLanguage() {
+        for (Type type : Type.defaultTypes) {
+            addSymbol(type.getName(), type);
+        }
+    }
+
     @Element(evaluateArgs = false)
     public void element(Symbol name, Block blk) {
         currentElement = new ElementSchema(name);
@@ -29,14 +35,14 @@ public class ValidatorLanguage extends GenericModule implements Language {
         currentElement.setParams(args);
     }
 
-    @Element(evaluateArgs = false)
-    public ParamSpec val(Symbol type) {
-        return ParamSpec.val(new Type(type));
+    @Element
+    public ParamSpec val(Type type) {
+        return ParamSpec.val(type);
     }
 
-    @Element(evaluateArgs = false)
-    public ParamSpec sym(Symbol type) {
-        return ParamSpec.sym(new Type(type));
+    @Element
+    public ParamSpec sym(Type type) {
+        return ParamSpec.sym(type);
     }
 
     @Element
@@ -48,23 +54,28 @@ public class ValidatorLanguage extends GenericModule implements Language {
         return ParamSpec.block(param);
     }
 
-    @Element(evaluateArgs = false)
-    public void type(Symbol type) {
-        currentElement.setType(new Type(type));
+    @Element
+    public void type(Type type) {
+        currentElement.setType(type);
     }
 
     @Element
-    public void defines(double arg, @Symbolic Symbol type) {
+    public void defines(double arg, Type type) {
         checkArgument(arg % 1 == 0);
-        DefSpec def = new DefSpec((int) arg, new Type(type));
+        DefSpec def = new DefSpec((int) arg, type);
         currentElement.addDefine(def);
     }
 
     @Element
-    public void defines_backward(double arg, @Symbolic Symbol type) {
+    public void defines_backward(double arg, Type type) {
         checkArgument(arg % 1 == 0);
-        DefSpec def = new DefSpec((int) arg, new Type(type), true);
+        DefSpec def = new DefSpec((int) arg, type, true);
         currentElement.addDefine(def);
+    }
+
+    @Element
+    public void newtype(@Symbolic Symbol name) {
+        evaluator.putSymbol(name, new Type(name));
     }
 
     @Override

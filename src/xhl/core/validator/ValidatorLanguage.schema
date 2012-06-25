@@ -1,17 +1,43 @@
+newtype Type
+newtype Parameter
+newtype Property
+
+element AnyType:
+    type Type
+element Null:
+    type Type
+element Element:
+    type Type
+element Boolean:
+    type Type
+element Number:
+    type Type
+element String:
+    type Type
+element Symbol:
+    type Type
+element List:
+    type Type
+element Map:
+    type Type
+element Block:
+    type Type
+element Combination:
+    type Type
+
 element element:
     params [sym Symbol, block(val Block)]
-    type Symbol
 
 element params:
     params [val List]
-    type Parameters
+    type Property
 
 element val:
     params [sym Symbol]
     type Parameter
 
 element sym:
-    params [sym Symbol]
+    params [val Type]
     type Parameter
 
 element variadic:
@@ -23,13 +49,17 @@ element block:
     type Parameter
 
 element type:
-    params [sym Symbol]
-    type Type
+    params [val Type]
+    type Property
 
 element defines:
-    params [val Number, sym Symbol]
-    type Define
+    params [val Number, val Type]
+    type Property
 
 element defines_backward:
-    params [val Number, sym Symbol]
-    type Define
+    params [val Number, val Type]
+    type Property
+
+element newtype:
+    params [sym Symbol]
+    defines 1 Type

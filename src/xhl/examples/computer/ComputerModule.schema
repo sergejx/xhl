@@ -1,3 +1,6 @@
+newtype Processor
+newtype Disk
+
 element computer:
     params [block(val Block)]
 

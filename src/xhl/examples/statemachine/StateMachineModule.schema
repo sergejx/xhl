@@ -1,3 +1,6 @@
+newtype State
+newtype EventCommand
+
 element events:
     params [val Block]
 
