@@ -46,8 +46,6 @@ public class Type {
 
     /**
      * Check is a type is compatible with <code>that</code> type.
-     * @param that
-     * @return
      */
     public boolean is(Type that) {
         return this.equals(AnyType) || that.equals(AnyType) || this.equals

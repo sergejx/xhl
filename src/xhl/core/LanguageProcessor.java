@@ -31,11 +31,6 @@ public class LanguageProcessor {
 
     /**
      * Execute code from the file
-     *
-     * @param file
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws EvaluationException
      */
     public void execute(File file) throws FileNotFoundException, IOException,
             EvaluationException {
@@ -44,10 +39,6 @@ public class LanguageProcessor {
 
     /**
      * Execute code from the input reader
-     *
-     * @param reader
-     * @throws IOException
-     * @throws EvaluationException
      */
     public void execute(java.io.Reader reader) throws IOException,
             EvaluationException {

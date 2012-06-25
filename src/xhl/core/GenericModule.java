@@ -112,9 +112,6 @@ public abstract class GenericModule implements Module {
 
     /**
      * Export symbol from module
-     *
-     * @param symbol
-     * @param value
      */
     protected void addSymbol(Symbol symbol, Object value) {
         table.put(symbol, value);
@@ -122,8 +119,6 @@ public abstract class GenericModule implements Module {
 
     /**
      * Export self-referencing symbol
-     *
-     * @param symbol
      */
     protected void addKeyword(Symbol symbol) {
         table.put(symbol, symbol);
@@ -146,9 +141,6 @@ public abstract class GenericModule implements Module {
     /**
      * If method has <code>&#64;Element</code> annotation, add it to symbols
      * table.
-     *
-     * @param table
-     * @param method
      */
     private void tryAddFunction(Environment<Object> table, Method method) {
         Element annotation = method.getAnnotation(Element.class);
@@ -274,8 +266,6 @@ public abstract class GenericModule implements Module {
 
         /**
          * Pack arguments to array for method with variable number of arguments.
-         *
-         * @param evArgs
          */
         private void packVarArgs(List<Object> evArgs) {
             Class<?>[] params = method.getParameterTypes();

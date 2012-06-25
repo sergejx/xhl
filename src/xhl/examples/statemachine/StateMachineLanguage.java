@@ -40,9 +40,6 @@ public class StateMachineLanguage implements Language {
 
     /**
      * Run state machine interactively on the console.
-     *
-     * @param machine
-     * @throws IOException
      */
     private static void runStateMachine(StateMachine machine)
             throws IOException {

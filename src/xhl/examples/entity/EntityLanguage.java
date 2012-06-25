@@ -21,9 +21,6 @@ public class EntityLanguage implements Language {
         return langModule.getModule();
     }
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         if (args.length >= 1) {
             String filename = args[0];

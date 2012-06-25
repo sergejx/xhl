@@ -53,9 +53,6 @@ public class Evaluator implements ElementVisitor<Object>{
 
     /**
      * Put symbol into symbol table.
-     *
-     * @param symbol
-     * @param value
      */
     public void putSymbol(Symbol symbol, Object value) {
         environment.put(symbol, value);
@@ -64,8 +61,7 @@ public class Evaluator implements ElementVisitor<Object>{
     /**
      * Get value of symbol from symbol table.
      *
-     * @param symbol
-     * @return value associated with symbol
+     * @return value associated with a symbol
      */
     public Object getSymbol(Symbol symbol) {
         return environment.get(symbol);
@@ -74,7 +70,6 @@ public class Evaluator implements ElementVisitor<Object>{
     /**
      * Does symbol table contain specified symbol?
      *
-     * @param symbol
      * @return <code>true</code> if symbol is defined in symbol table
      */
     public boolean hasSymbol(Symbol symbol) {
