@@ -20,6 +20,7 @@ public class LogicsModule extends GenericModule {
         return new LogicsProducer(OR, arg1, arg2);
     }
 
+    @Element
     public Producer<Boolean> not(Producer<Boolean> arg1, Producer<Boolean> arg2) {
         return new LogicsProducer(NOT, arg1, arg2);
     }
