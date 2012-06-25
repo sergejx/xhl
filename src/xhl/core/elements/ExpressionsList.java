@@ -9,7 +9,8 @@ import java.util.List;
  *
  * @author Sergej Chodarev
  */
-public abstract class ExpressionsList extends Expression {
+public abstract class ExpressionsList extends Expression implements
+        Iterable<Expression> {
 
     protected final List<Expression> list = new LinkedList<Expression>();
 
