@@ -32,8 +32,7 @@ public class LanguageProcessor {
     /**
      * Execute code from the file
      */
-    public void execute(File file) throws FileNotFoundException, IOException,
-            EvaluationException {
+    public void execute(File file) throws IOException, EvaluationException {
         execute(new FileReader(file));
     }
 

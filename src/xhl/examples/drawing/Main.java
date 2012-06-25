@@ -19,13 +19,12 @@ public class Main extends JFrame {
         add(language.getCanvas());
     }
 
-    private void run(String filename) throws IOException, FileNotFoundException {
+    private void run(String filename) {
         LanguageProcessor.execute(language, filename);
         setVisible(true);
     }
 
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length >= 1)
             new Main().run(args[0]);
         else

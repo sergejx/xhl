@@ -26,8 +26,7 @@ public class StateMachineLanguage implements Language {
         return module.getStateMachine();
     }
 
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length >= 1) {
             String filename = args[0];
             StateMachineLanguage lang = new StateMachineLanguage();
