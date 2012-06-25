@@ -26,8 +26,12 @@ public class Type {
         this.name = name;
     }
 
-    public Type(String name) {
+    private Type(String name) {
         this(new Symbol(name));
+    }
+
+    public Symbol getName() {
+        return name;
     }
 
     @Override
