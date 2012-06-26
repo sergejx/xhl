@@ -29,8 +29,12 @@ public class ValidatorLanguage extends GenericModule implements Language {
 
     @Element(evaluateArgs = false)
     public void element(Symbol name, Block blk) {
-        currentElement.push(new ElementSchema(name));
-        schema.put(currentElement.peek());
+        final ElementSchema element = new ElementSchema(name);
+        if (currentElement.isEmpty())
+            schema.put(element);
+        else
+            currentElement.peek().addLocalElement(name, element);
+        currentElement.push(element);
         evaluator.eval(blk);
         currentElement.remove();
     }
