@@ -3,8 +3,10 @@ package xhl.core.validator;
 import xhl.core.elements.Symbol;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Element declaration.
@@ -15,6 +17,7 @@ public class ElementSchema {
     private Type type = Type.Null;
     private final List<DefSpec> defines = newArrayList();
     private ElementValidator validator;
+    private Map<Symbol, ElementSchema> localElements = newHashMap();
 
     public ElementSchema(Symbol sym) {
         this.symbol = sym;
@@ -31,6 +34,7 @@ public class ElementSchema {
 
     /**
      * Get symbol representing the element.
+     *
      * @return Element symbol
      */
     public Symbol getSymbol() {
@@ -39,6 +43,7 @@ public class ElementSchema {
 
     /**
      * Get properties of the element parameters.
+     *
      * @return List of parameter specifications
      */
     public List<ParamSpec> getParams() {
@@ -51,6 +56,7 @@ public class ElementSchema {
 
     /**
      * Get type of the result of element application.
+     *
      * @return Element type
      */
     public Type getType() {
@@ -63,6 +69,7 @@ public class ElementSchema {
 
     /**
      * Get a list of
+     *
      * @return Definition specifications
      */
     public List<DefSpec> getDefines() {
@@ -73,15 +80,24 @@ public class ElementSchema {
         defines.add(spec);
     }
 
+    public void addLocalElement(Symbol name, ElementSchema element) {
+        localElements.put(name, element);
+    }
+
+    public Map<Symbol, ElementSchema> getLocalElements() {
+        return localElements;
+    }
+
     /**
      * Check if the element has variable parameters list.
+     *
      * @return <code>true</code> if the element is variadic
      */
     public boolean isVariadic() {
-        return params.get(params.size()-1).isVariadic();
+        return params.get(params.size() - 1).isVariadic();
     }
 
-    public static enum PassingMethod { VAL, SYM }
+    public static enum PassingMethod {VAL, SYM}
 
     /**
      * Element parameter specification
@@ -92,24 +108,32 @@ public class ElementSchema {
         private final boolean variadic;
         private final boolean block;
 
-        /** Declare parameter received by value. */
+        /**
+         * Declare parameter received by value.
+         */
         public static ParamSpec val(Type type) {
             return new ParamSpec(PassingMethod.VAL, type, false, false);
         }
 
-        /** Declare parameter received symbolically. */
+        /**
+         * Declare parameter received symbolically.
+         */
         public static ParamSpec sym(Type type) {
             return new ParamSpec(PassingMethod.SYM, type, false, false);
         }
 
-        /** Mark the parameter as variadic.
+        /**
+         * Mark the parameter as variadic.
+         *
          * @return A new parameter specification with the same type
          */
         public static ParamSpec variadic(ParamSpec spec) {
             return new ParamSpec(spec.getMethod(), spec.getType(), true, false);
         }
 
-        /** Mark the parameter as a block parameter.
+        /**
+         * Mark the parameter as a block parameter.
+         *
          * @return A new parameter specification with the same type
          */
         public static ParamSpec block(ParamSpec spec) {
@@ -117,29 +141,37 @@ public class ElementSchema {
         }
 
         private ParamSpec(PassingMethod method, Type type, boolean variadic,
-                boolean block) {
+                          boolean block) {
             this.method = method;
             this.type = type;
             this.variadic = variadic;
             this.block = block;
         }
 
-        /** Get parameter passing method */
+        /**
+         * Get parameter passing method
+         */
         public PassingMethod getMethod() {
             return method;
         }
 
-        /** Get a type of the parameter */
+        /**
+         * Get a type of the parameter
+         */
         public Type getType() {
             return type;
         }
 
-        /** Is the parameter variadic? */
+        /**
+         * Is the parameter variadic?
+         */
         public boolean isVariadic() {
             return variadic;
         }
 
-        /** Does the parameter expect a block */
+        /**
+         * Does the parameter expect a block
+         */
         public boolean isBlock() {
             return block;
         }
@@ -172,17 +204,23 @@ public class ElementSchema {
             this.backward = forward;
         }
 
-        /** Symbol type */
+        /**
+         * Symbol type
+         */
         public Type getType() {
             return type;
         }
 
-        /** Index of an element argument that contains defined symbol. */
+        /**
+         * Index of an element argument that contains defined symbol.
+         */
         public int getArg() {
             return arg;
         }
 
-        /** Is the symbol defined backwards? */
+        /**
+         * Is the symbol defined backwards?
+         */
         public boolean isBackward() {
             return backward;
         }
