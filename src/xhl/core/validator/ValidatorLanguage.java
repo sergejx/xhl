@@ -1,7 +1,5 @@
 package xhl.core.validator;
 
-import java.util.List;
-
 import xhl.core.GenericModule;
 import xhl.core.Language;
 import xhl.core.Module;
@@ -10,11 +8,17 @@ import xhl.core.elements.Symbol;
 import xhl.core.validator.ElementSchema.DefSpec;
 import xhl.core.validator.ElementSchema.ParamSpec;
 
+import java.util.Deque;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newLinkedList;
 
 public class ValidatorLanguage extends GenericModule implements Language {
-
-    private ElementSchema currentElement;
+    /**
+     * A stack representing currently processed elements.
+     */
+    private Deque<ElementSchema> currentElement = newLinkedList();
     private final Schema schema = new Schema();
 
     public ValidatorLanguage() {
@@ -25,14 +29,15 @@ public class ValidatorLanguage extends GenericModule implements Language {
 
     @Element(evaluateArgs = false)
     public void element(Symbol name, Block blk) {
-        currentElement = new ElementSchema(name);
-        schema.put(currentElement);
+        currentElement.push(new ElementSchema(name));
+        schema.put(currentElement.peek());
         evaluator.eval(blk);
+        currentElement.remove();
     }
 
     @Element
     public void params(List<ParamSpec> args) {
-        currentElement.setParams(args);
+        currentElement.peek().setParams(args);
     }
 
     @Element
@@ -49,6 +54,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
     public ParamSpec variadic(ParamSpec param) {
         return ParamSpec.variadic(param);
     }
+
     @Element
     public ParamSpec block(ParamSpec param) {
         return ParamSpec.block(param);
@@ -56,21 +62,21 @@ public class ValidatorLanguage extends GenericModule implements Language {
 
     @Element
     public void type(Type type) {
-        currentElement.setType(type);
+        currentElement.peek().setType(type);
     }
 
     @Element
     public void defines(double arg, Type type) {
         checkArgument(arg % 1 == 0);
         DefSpec def = new DefSpec((int) arg, type);
-        currentElement.addDefine(def);
+        currentElement.peek().addDefine(def);
     }
 
     @Element
     public void defines_backward(double arg, Type type) {
         checkArgument(arg % 1 == 0);
         DefSpec def = new DefSpec((int) arg, type, true);
-        currentElement.addDefine(def);
+        currentElement.peek().addDefine(def);
     }
 
     @Element
@@ -80,7 +86,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
 
     @Override
     public Module[] getModules() {
-        return new Module[] { this };
+        return new Module[]{this};
     }
 
     public Schema getReadSchema() {
