@@ -1,10 +1,7 @@
 package xhl.core.validator;
 
 import xhl.core.Error;
-import xhl.core.elements.Expression;
-import xhl.core.elements.SList;
-import xhl.core.elements.SMap;
-import xhl.core.elements.Symbol;
+import xhl.core.elements.*;
 
 import java.util.List;
 import java.util.Map;
@@ -117,8 +114,13 @@ class SchemaElementValidator implements ElementValidator {
         Type argtype;
         if (spec.getMethod() == ElementSchema.PassingMethod.SYM)
             argtype = Type.typeOfElement(arg);
-        else
-            argtype = validator.check(arg);
+        else {
+            if (arg instanceof Block)
+                argtype = validator.checkWithLocalScope(arg, newArrayList
+                        (schema.getLocalElements().values()));
+            else
+                argtype = validator.check(arg);
+        }
         if (!argtype.is(spec.getType()))
             errors.add(new Error(arg.getPosition(),
                     "Wrong type of an argument (expected " + spec.getType()

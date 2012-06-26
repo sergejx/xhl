@@ -12,11 +12,12 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class Validator implements ElementVisitor<Type> {
     private final Environment<Type> table = new Environment<Type>();
-    private final Map<Symbol, ElementValidator> elements = newHashMap();
+    private final Environment<ElementValidator> elements =
+            new Environment<ElementValidator>();
     private final List<Error> errors = newArrayList();
 
-    public void addElements(Schema schema) {
-        for (ElementSchema element : schema) {
+    public void addElements(Iterable<ElementSchema> elements) {
+        for (ElementSchema element : elements) {
             this.elements.put(element.getSymbol(), element.getValidator());
             if (element.getParams().size() == 0)
                 table.put(element.getSymbol(), element.getType());
@@ -31,6 +32,25 @@ public class Validator implements ElementVisitor<Type> {
 
     public Type check(Expression expression) {
         return expression.accept(this);
+    }
+
+    /**
+     * Check expression inside a local scope.
+     *
+     * @param expression    Expression to check
+     * @param localElements A collection of local elements available in the
+     *                      scope
+     * @return Type of the expression
+     */
+    public Type checkWithLocalScope(Expression expression,
+                                    Iterable<ElementSchema> localElements) {
+        table.push();
+        elements.push();
+        addElements(localElements);
+        Type type = expression.accept(this);
+        elements.pop();
+        table.pop();
+        return type;
     }
 
     @Override
