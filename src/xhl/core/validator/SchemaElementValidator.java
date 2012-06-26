@@ -28,7 +28,7 @@ class SchemaElementValidator implements ElementValidator {
      */
     @Override
     public Map<Symbol, Type> forwardDefinitions(SList args) {
-        return definedSymbols(args, true);
+        return definedSymbols(args, true).local;
     }
 
     /**
@@ -38,9 +38,10 @@ class SchemaElementValidator implements ElementValidator {
      * @param onlyBackward Get only backward defined symbols
      * @return A map from defined symbols to their types
      */
-    private Map<Symbol, Type> definedSymbols(SList args,
-                                             boolean onlyBackward) {
+    private DefinedSymbols definedSymbols(SList args,
+                                          boolean onlyBackward) {
         Map<Symbol, Type> symbols = newHashMap();
+        Map<Symbol, Type> globalSymbols = newHashMap();
         for (ElementSchema.DefSpec def : schema.getDefines()) {
             if (onlyBackward && !def.isBackward())
                 continue;
@@ -53,9 +54,14 @@ class SchemaElementValidator implements ElementValidator {
                     continue;
                 Symbol name = (Symbol) arg;
                 Type type = def.getType();
-                symbols.put(name, type);
+                if (def.isGlobal())
+                    globalSymbols.put(name, type);
+                else
+                    symbols.put(name, type);
             } else if (argspec.getMethod() == ElementSchema.PassingMethod.SYM
                     && argspec.getType().equals(Type.Map)) {
+                // If an element representing defined name is not a symbol,
+                // but a map, then every key of the map defines a new name.
                 Expression arg = args.get(def.getArg() - 1);
                 if (!(arg instanceof SMap))
                     continue;
@@ -63,11 +69,14 @@ class SchemaElementValidator implements ElementValidator {
                 Type type = def.getType();
                 for (Expression key : map.keySet()) {
                     Symbol sym = (Symbol) key;
-                    symbols.put(sym, type);
+                    if (def.isGlobal())
+                        globalSymbols.put(sym, type);
+                    else
+                        symbols.put(sym, type);
                 }
             }
         }
-        return symbols;
+        return new DefinedSymbols(symbols, globalSymbols);
     }
 
     /**
@@ -103,8 +112,9 @@ class SchemaElementValidator implements ElementValidator {
             for (Expression arg : varargs)
                 errors.addAll(checkArgument(validator, spec, arg));
         }
+        DefinedSymbols definedSymbols = definedSymbols(tail, false);
         return new ValidationResult(schema.getType(), errors,
-                definedSymbols(tail, false));
+                definedSymbols.local, definedSymbols.global);
     }
 
     private List<Error> checkArgument(Validator validator,
@@ -126,5 +136,16 @@ class SchemaElementValidator implements ElementValidator {
                     "Wrong type of an argument (expected " + spec.getType()
                             + ", found " + argtype + ")"));
         return errors;
+    }
+
+    private class DefinedSymbols {
+        public final Map<Symbol, Type> local;
+        public final Map<Symbol, Type> global;
+
+        private DefinedSymbols(Map<Symbol, Type> local,
+                               Map<Symbol, Type> global) {
+            this.local = local;
+            this.global = global;
+        }
     }
 }

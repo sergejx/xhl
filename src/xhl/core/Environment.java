@@ -1,10 +1,10 @@
 package xhl.core;
 
+import xhl.core.elements.Symbol;
+
 import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
-
-import xhl.core.elements.Symbol;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -51,6 +51,13 @@ public class Environment<T> {
             put(key, t.get(key));
         }
     }
+
+    public void putAllGlobal(Map<Symbol, T> t) {
+        for (Symbol key : t.keySet()) {
+            putGlobal(key, t.get(key));
+        }
+    }
+
 
     public Set<Symbol> keySet() {
         Set<Symbol> keys = newHashSet();

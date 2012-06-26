@@ -13,6 +13,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newLinkedList;
+import static xhl.core.validator.ElementSchema.DefSpec.global;
 
 public class ValidatorLanguage extends GenericModule implements Language {
     /**
@@ -81,6 +82,13 @@ public class ValidatorLanguage extends GenericModule implements Language {
         checkArgument(arg % 1 == 0);
         DefSpec def = new DefSpec((int) arg, type, true);
         currentElement.peek().addDefine(def);
+    }
+
+    @Element
+    public void defines_global(double arg, Type type) {
+        checkArgument(arg % 1 == 0);
+        DefSpec def = new DefSpec((int) arg, type, true);
+        currentElement.peek().addDefine(global(def));
     }
 
     @Element

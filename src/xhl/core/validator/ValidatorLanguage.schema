@@ -60,6 +60,10 @@ element defines_backward:
     params [val Number, val Type]
     type Property
 
+element defines_global:
+    params [val Number, val Type]
+    type Property
+
 element newtype:
     params [sym Symbol]
     defines 1 Type

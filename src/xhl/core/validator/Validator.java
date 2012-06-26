@@ -119,6 +119,7 @@ public class Validator implements ElementVisitor<Type> {
         ElementValidator elValidator = elements.get(head);
         ValidationResult result = elValidator.check(this, cmb.tail());
         table.putAll(result.getDefined());
+        table.putAllGlobal(result.getDefinedGlobal());
         errors.addAll(result.getErrors());
         return result.getType();
     }

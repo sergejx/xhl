@@ -191,15 +191,25 @@ public class ElementSchema {
         private final Type type;
         private final int arg;
         private final boolean backward;
+        private final boolean global;
 
         public DefSpec(int arg, Type type) {
-            this(arg, type, false);
+            this(arg, type, false, false);
         }
 
         public DefSpec(int arg, Type type, boolean forward) {
-            this.arg = arg;
+            this(arg, type, true, false);
+        }
+
+        private DefSpec(int arg, Type type, boolean backward, boolean global) {
             this.type = type;
-            this.backward = forward;
+            this.arg = arg;
+            this.backward = backward;
+            this.global = global;
+        }
+
+        public static DefSpec global(DefSpec spec) {
+            return new DefSpec(spec.arg, spec.type, false, true);
         }
 
         /**
@@ -221,6 +231,10 @@ public class ElementSchema {
          */
         public boolean isBackward() {
             return backward;
+        }
+
+        public boolean isGlobal() {
+            return global;
         }
     }
 }
