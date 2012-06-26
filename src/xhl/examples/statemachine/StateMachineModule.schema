@@ -1,15 +1,20 @@
 newtype State
-newtype EventCommand
+newtype Event
+newtype Command
 
 element events:
     params [val Block]
 
+    element (:):
+        params [sym Symbol, val String]
+        defines_global 1 Event
+
 element commands:
     params [val Block]
 
-element (:):
-    params [sym Symbol, val String]
-    defines 1 EventCommand
+    element (:):
+        params [sym Symbol, val String]
+        defines_global 1 Command
 
 element resetEvents:
     params [val List]
@@ -22,4 +27,4 @@ element actions:
     params [val List]
 
 element (->):
-    params [val EventCommand, val State]
+    params [val Event, val State]
