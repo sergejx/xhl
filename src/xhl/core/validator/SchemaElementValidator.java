@@ -116,8 +116,8 @@ class SchemaElementValidator implements ElementValidator {
             argtype = Type.typeOfElement(arg);
         else {
             if (arg instanceof Block)
-                argtype = validator.checkWithLocalScope(arg, newArrayList
-                        (schema.getLocalElements().values()));
+                argtype = validator.checkWithLocalScope(arg,
+                        schema.getLocalElements());
             else
                 argtype = validator.check(arg);
         }

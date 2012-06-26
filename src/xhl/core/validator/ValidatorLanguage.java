@@ -33,7 +33,7 @@ public class ValidatorLanguage extends GenericModule implements Language {
         if (currentElement.isEmpty())
             schema.put(element);
         else
-            currentElement.peek().addLocalElement(name, element);
+            currentElement.peek().addLocalElement(element);
         currentElement.push(element);
         evaluator.eval(blk);
         currentElement.remove();

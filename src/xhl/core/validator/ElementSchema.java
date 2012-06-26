@@ -3,10 +3,8 @@ package xhl.core.validator;
 import xhl.core.elements.Symbol;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Element declaration.
@@ -17,7 +15,7 @@ public class ElementSchema {
     private Type type = Type.Null;
     private final List<DefSpec> defines = newArrayList();
     private ElementValidator validator;
-    private Map<Symbol, ElementSchema> localElements = newHashMap();
+    private List<ElementSchema> localElements = newArrayList();
 
     public ElementSchema(Symbol sym) {
         this.symbol = sym;
@@ -80,11 +78,11 @@ public class ElementSchema {
         defines.add(spec);
     }
 
-    public void addLocalElement(Symbol name, ElementSchema element) {
-        localElements.put(name, element);
+    public void addLocalElement(ElementSchema element) {
+        localElements.add(element);
     }
 
-    public Map<Symbol, ElementSchema> getLocalElements() {
+    public List<ElementSchema> getLocalElements() {
         return localElements;
     }
 
