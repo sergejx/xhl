@@ -1,18 +1,21 @@
 package xhl.core;
 
-import java.io.*;
-import java.util.List;
-
 import xhl.core.elements.Block;
 import xhl.core.validator.ValidationException;
 import xhl.core.validator.Validator;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * LanguageProcessor is responsible for executing language code.
  *
  * @author Sergej Chodarev
- *
- * FIXME: Needs major rethinking
+ *         <p/>
+ *         FIXME: Needs major rethinking
  */
 public class LanguageProcessor {
     private final Language language;
@@ -48,18 +51,13 @@ public class LanguageProcessor {
     /**
      * Validate already parsed code
      *
-     * @param program
-     *            code to execute
+     * @param program code to execute
      * @throws EvaluationException
      */
     public List<xhl.core.Error> validate(Block program)
             throws EvaluationException {
-        if (validator == null) {
-            validator = new Validator();
-            for (Module module : modules) {
-                validator.addElements(module.getSchema());
-            }
-        }
+        if (validator == null)
+            validator = new Validator(modules[0].getSchema());
         validator.check(program);
         return validator.getErrors();
     }
@@ -67,8 +65,7 @@ public class LanguageProcessor {
     /**
      * Execute already parsed code
      *
-     * @param program
-     *            code to execute
+     * @param program code to execute
      * @throws EvaluationException
      */
     public void execute(Block program) throws EvaluationException {
@@ -86,13 +83,11 @@ public class LanguageProcessor {
 
     /**
      * Execute code from file and output error messages to standard error output
-     *
+     * <p/>
      * This is a simplified interface for this class.
      *
-     * @param lang
-     *            language of the code
-     * @param filename
-     *            name of the file to execute
+     * @param lang     language of the code
+     * @param filename name of the file to execute
      */
     public static void execute(Language lang, String filename) {
         LanguageProcessor processor = new LanguageProcessor(lang);
@@ -110,13 +105,11 @@ public class LanguageProcessor {
     /**
      * Execute code from input reader and output error messages to standard
      * error output
-     *
+     * <p/>
      * This is a simplified interface for this class.
      *
-     * @param lang
-     *            language of the code
-     * @param reader
-     *            input reader
+     * @param lang   language of the code
+     * @param reader input reader
      */
     public static void execute(Language lang, java.io.Reader reader) {
         LanguageProcessor processor = new LanguageProcessor(lang);

@@ -1,10 +1,7 @@
 package xhl.core.validator;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import xhl.core.EvaluationException;
 import xhl.core.LanguageProcessor;
 import xhl.core.Reader;
@@ -12,11 +9,12 @@ import xhl.core.elements.Block;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.ElementSchema.DefSpec;
 
-import static org.junit.Assert.*;
-
-import static xhl.core.validator.ElementSchema.ParamSpec.*;
+import java.io.IOException;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.*;
+import static xhl.core.validator.ElementSchema.ParamSpec.sym;
+import static xhl.core.validator.ElementSchema.ParamSpec.val;
 
 public class ValidatorTest {
 
@@ -39,11 +37,11 @@ public class ValidatorTest {
     @Test
     public void validatorLanguage() throws EvaluationException, IOException {
         String code = "element (+):\n"
-                    + "  params [val Number, val Number]\n"
-                    + "  type Number\n"
-                    + "element const:\n"
-                    + "  params [sym Symbol, val Number]\n"
-                    + "  defines 1 Number\n";
+                + "  params [val Number, val Number]\n"
+                + "  type Number\n"
+                + "element const:\n"
+                + "  params [sym Symbol, val Number]\n"
+                + "  defines 1 Number\n";
         ValidatorLanguage lang = new ValidatorLanguage();
         LanguageProcessor proc = new LanguageProcessor(lang);
 //        List<Error> errors = proc.validate(Reader.read(code));
@@ -67,8 +65,7 @@ public class ValidatorTest {
     @Test
     public void simpleLanguageValid() throws IOException {
         Block code = Reader.read("1+(2+3)");
-        Validator v = new Validator();
-        v.addElements(schema);
+        Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code)); // FIXME Number?
         assertTrue(v.getErrors().isEmpty());
     }
@@ -76,8 +73,7 @@ public class ValidatorTest {
     @Test
     public void simpleLanguageInvalid() throws IOException {
         Block code = Reader.read("1+(2+\"String\")");
-        Validator v = new Validator();
-        v.addElements(schema);
+        Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code));
         assertFalse(v.getErrors().isEmpty());
     }
@@ -85,8 +81,7 @@ public class ValidatorTest {
     @Test
     public void definitionValid() throws IOException {
         Block code = Reader.read("const pi 3.14\n1+(2+pi)");
-        Validator v = new Validator();
-        v.addElements(schema);
+        Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code)); // FIXME Number?
         assertTrue(v.getErrors().isEmpty());
     }

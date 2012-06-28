@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static xhl.core.ModulesProvider.ModulesLoader;
 
 public class Validator implements ElementVisitor<Type> {
     private final Environment<Type> table = new Environment<Type>();
@@ -16,7 +17,16 @@ public class Validator implements ElementVisitor<Type> {
             new Environment<ElementValidator>();
     private final List<Error> errors = newArrayList();
 
-    public void addElements(Iterable<ElementSchema> elements) {
+    public Validator(Schema mainSchema) {
+        addElements(mainSchema);
+
+        ModulesLoader loader = new ModulesLoader();
+        for (String name : mainSchema.getImports()) {
+            addElements(loader.loadModule(name).getSchema());
+        }
+    }
+
+    private void addElements(Iterable<ElementSchema> elements) {
         for (ElementSchema element : elements) {
             this.elements.put(element.getSymbol(), element.getValidator());
             if (element.getParams().size() == 0)

@@ -25,6 +25,9 @@ element Block:
 element Combination:
     type Type
 
+element import:
+    params [sym Symbol]
+
 element element:
     params [sym Symbol, block(val Block)]
 

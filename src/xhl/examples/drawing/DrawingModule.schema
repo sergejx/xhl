@@ -1,3 +1,6 @@
+import define
+import arithmetic
+
 newtype Color
 newtype Shape
 

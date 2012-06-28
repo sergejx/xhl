@@ -18,6 +18,6 @@ public class DrawingLanguage implements Language {
         Module arithm = new ArithmeticsModule();
         Module def = new DefineModule();
         Module draw = new DrawingModule(canvas);
-        return new Module[] { arithm, def, draw };
+        return new Module[]{draw, arithm, def};
     }
 }

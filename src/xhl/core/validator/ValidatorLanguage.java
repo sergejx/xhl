@@ -28,6 +28,11 @@ public class ValidatorLanguage extends GenericModule implements Language {
         }
     }
 
+    @Element(name = "import")
+    public void importElement(@Symbolic Symbol name) {
+        schema.addImport(name.getName());
+    }
+
     @Element(evaluateArgs = false)
     public void element(Symbol name, Block blk) {
         final ElementSchema element = new ElementSchema(name);
