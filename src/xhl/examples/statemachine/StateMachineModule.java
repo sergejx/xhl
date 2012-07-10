@@ -1,14 +1,13 @@
 package xhl.examples.statemachine;
 
-import java.util.List;
-import java.util.Map;
-
 import xhl.core.GenericModule;
 import xhl.core.elements.Block;
-import xhl.core.elements.Expression;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.Type;
 import xhl.core.validator.Validator;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * XHL module for configuring state machine
@@ -32,8 +31,8 @@ public class StateMachineModule extends GenericModule {
         evaluator.eval(exprs);
     }
 
-    @Element(evaluateArgs = false)
-    public void events(Block blk) throws Exception {
+    @Element
+    public void events(@Symbolic Block blk) {
         evaluator.pushEnvironment();
         evaluator.putSymbol(new Symbol(":"), getLocalElement("colonEvent"));
         evaluator.eval(blk);
@@ -42,31 +41,31 @@ public class StateMachineModule extends GenericModule {
 
     @Element
     public void resetEvents(List<Event> events) {
-        resetEvents = events.toArray(new Event[0]);
+        resetEvents = events.toArray(new Event[events.size()]);
     }
 
-    @Element(evaluateArgs = false)
-    public void commands(Block blk) throws Exception {
+    @Element
+    public void commands(@Symbolic Block blk) {
         evaluator.pushEnvironment();
         evaluator.putSymbol(new Symbol(":"), getLocalElement("colonCommand"));
         evaluator.eval(blk);
         evaluator.popEnvironment();
     }
 
-    @Element(local=true)
+    @Element(local = true)
     public void colonEvent(@Symbolic Symbol name, String code) {
         Event event = new Event(name.getName(), code);
         evaluator.putGlobalSymbol(name, event);
     }
 
-    @Element(local=true)
+    @Element(local = true)
     public void colonCommand(@Symbolic Symbol name, String code) {
         Command cmd = new Command(name.getName(), code);
         evaluator.putGlobalSymbol(name, cmd);
     }
 
-    @Element(evaluateArgs = false)
-    public void state(Symbol name, Block blk) throws Exception {
+    @Element
+    public void state(@Symbolic Symbol name, @Symbolic Block blk) {
         currentState = (State) evaluator.getSymbol(name);
         evaluator.eval(blk);
         if (startState == null)
