@@ -31,6 +31,10 @@ element import:
 element element:
     params [sym Symbol, block(val Block)]
 
+element doc:
+    params [val String]
+    type Property
+
 element params:
     params [val List]
     type Property

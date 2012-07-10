@@ -46,6 +46,11 @@ public class ValidatorLanguage extends GenericModule implements Language {
     }
 
     @Element
+    public void doc(String doc) {
+        currentElement.peek().setDoc(doc);
+    }
+
+    @Element
     public void params(List<ParamSpec> args) {
         currentElement.peek().setParams(args);
     }

@@ -23,6 +23,7 @@ public class ValidatorTest {
     @Before
     public void setUp() {
         ElementSchema plus = new ElementSchema(new Symbol("+"));
+        plus.setDoc("Add two numbers");
         plus.setParams(newArrayList(val(Type.Number), val(Type.Number)));
         plus.setType(Type.Number);
         ElementSchema const_ = new ElementSchema(new Symbol("const"));
@@ -37,6 +38,7 @@ public class ValidatorTest {
     @Test
     public void validatorLanguage() throws EvaluationException, IOException {
         String code = "element (+):\n"
+                + "  doc \"Add two numbers\"\n"
                 + "  params [val Number, val Number]\n"
                 + "  type Number\n"
                 + "element const:\n"
@@ -52,6 +54,7 @@ public class ValidatorTest {
         assertTrue(schema.containsKey(plus));
         ElementSchema elem = schema.get(plus);
         assertEquals(plus, elem.getSymbol());
+        assertEquals(this.schema.get(plus).getDoc(), elem.getDoc());
         assertEquals(this.schema.get(plus).getParams(), elem.getParams());
         assertEquals(this.schema.get(plus).getType(), elem.getType());
         Symbol const_ = new Symbol("const");

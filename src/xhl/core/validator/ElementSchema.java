@@ -11,6 +11,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class ElementSchema {
     private final Symbol symbol;
+    private String doc;
     private List<ParamSpec> params = newArrayList();
     private Type type = Type.Null;
     private final List<DefSpec> defines = newArrayList();
@@ -37,6 +38,17 @@ public class ElementSchema {
      */
     public Symbol getSymbol() {
         return symbol;
+    }
+
+    /**
+     * Get element documentation
+     */
+    public String getDoc() {
+        return doc;
+    }
+
+    public void setDoc(String doc) {
+        this.doc = doc;
     }
 
     /**
