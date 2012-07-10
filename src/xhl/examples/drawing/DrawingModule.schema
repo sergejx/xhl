@@ -4,6 +4,12 @@ import arithmetic
 newtype Color
 newtype Shape
 
+# These types are defined only to test subtype declaration
+newtype Ellipse
+newtype Rectangle
+Rectangle <: Shape
+Ellipse <: Shape
+
 element rgb:
     params [val Number, val Number, val Number]
     type Color
@@ -13,11 +19,11 @@ element setcolor:
 
 element rectangle:
     params [val Number, val Number]
-    type Shape
+    type Rectangle
 
 element ellipse:
     params [val Number, val Number]
-    type Shape
+    type Ellipse
 
 element draw:
     params [val Number, val Number, val Shape]

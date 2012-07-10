@@ -106,6 +106,11 @@ public class ValidatorLanguage extends GenericModule implements Language {
         evaluator.putSymbol(name, new Type(name));
     }
 
+    @Element(name = "<:")
+    public void subtype(Type subtype, Type supertype) {
+        subtype.addSupertype(supertype);
+    }
+
     @Override
     public Module[] getModules() {
         return new Module[]{this};

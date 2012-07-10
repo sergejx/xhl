@@ -74,3 +74,6 @@ element defines_global:
 element newtype:
     params [sym Symbol]
     defines 1 Type
+
+element (<:):
+    params [val Type, val Type]
