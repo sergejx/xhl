@@ -1,6 +1,8 @@
 newtype Type
 newtype Parameter
 newtype Property
+newtype Names
+List <: Names
 
 element AnyType:
     type Type
@@ -25,8 +27,11 @@ element Block:
 element Combination:
     type Type
 
+element all:
+    type Names
+
 element import:
-    params [sym Symbol]
+    params [sym Symbol, val Names]
 
 element element:
     params [sym Symbol, block(val Block)]

@@ -21,19 +21,29 @@ public class Validator implements ElementVisitor<Type> {
         addElements(mainSchema);
 
         ModulesLoader loader = new ModulesLoader();
-        for (String name : mainSchema.getImports()) {
-            addElements(loader.loadModule(name).getSchema());
+        for (Schema.Import imp : mainSchema.getImports()) {
+            Schema impSchema = loader.loadModule(imp.getModule()).getSchema();
+            if (imp.allElements())
+                addElements(impSchema);
+            else {
+                for (String name : imp)
+                    addElement(impSchema.get(new Symbol(name)));
+            }
         }
     }
 
     private void addElements(Iterable<ElementSchema> elements) {
         for (ElementSchema element : elements) {
-            this.elements.put(element.getSymbol(), element.getValidator());
-            if (element.getParams().size() == 0)
-                table.put(element.getSymbol(), element.getType());
-            else
-                table.put(element.getSymbol(), Type.Element);
+            addElement(element);
         }
+    }
+
+    private void addElement(ElementSchema element) {
+        this.elements.put(element.getSymbol(), element.getValidator());
+        if (element.getParams().size() == 0)
+            table.put(element.getSymbol(), element.getType());
+        else
+            table.put(element.getSymbol(), Type.Element);
     }
 
     public List<Error> getErrors() {

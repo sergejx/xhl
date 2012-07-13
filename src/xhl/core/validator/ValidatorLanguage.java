@@ -1,9 +1,12 @@
 package xhl.core.validator;
 
+import xhl.core.EvaluationException;
 import xhl.core.GenericModule;
 import xhl.core.Language;
 import xhl.core.Module;
 import xhl.core.elements.Block;
+import xhl.core.elements.Expression;
+import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.ElementSchema.DefSpec;
 import xhl.core.validator.ElementSchema.ParamSpec;
@@ -12,6 +15,7 @@ import java.util.Deque;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static xhl.core.validator.ElementSchema.DefSpec.global;
 
@@ -29,8 +33,25 @@ public class ValidatorLanguage extends GenericModule implements Language {
     }
 
     @Element(name = "import")
-    public void importElement(@Symbolic Symbol name) {
-        schema.addImport(name.getName());
+    public void importElement(@Symbolic Symbol name,
+                              @Symbolic Expression names) {
+        if (names instanceof Symbol && ((Symbol) names).isNamed("all")) {
+            schema.addImport(new Schema.Import(name.getName()));
+        } else if (names instanceof SList) {
+            List<String> elements = newArrayList();
+            for (Expression el : (SList) names) {
+                if (el instanceof Symbol)
+                    elements.add(((Symbol) el).getName());
+                else
+                    throw new EvaluationException(
+                            "Incompatible type of the arguments");
+            }
+            schema.addImport(new Schema.Import(name.getName(), elements));
+        } else {
+            throw new EvaluationException(
+                    "Incompatible type of the arguments");
+        }
+
     }
 
     @Element(evaluateArgs = false)

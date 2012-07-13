@@ -1,5 +1,5 @@
-import define
-import arithmetic
+import define all
+import arithmetic all
 
 newtype Color
 newtype Shape
