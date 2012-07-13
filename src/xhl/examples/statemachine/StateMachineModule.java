@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * XHL module for configuring state machine
+ * Language for configuring state machine.
+ * Based on examples from http://martinfowler.com/dsl.html
  *
  * @author Sergej Chodarev
  */
@@ -88,6 +89,11 @@ public class StateMachineModule extends GenericModule {
     }
 
     // End of DSL functions ==================================================
+
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
 
     public StateMachine getStateMachine() {
         StateMachine machine = new StateMachine(startState);

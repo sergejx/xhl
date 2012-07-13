@@ -17,6 +17,11 @@ public class EntityModule extends GenericModule {
     private Module module;
     private Entity currentEntity;
 
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
+
     public Module getModule() {
         return module;
     }

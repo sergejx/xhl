@@ -1,5 +1,12 @@
 package xhl.core;
 
+import com.google.common.base.Optional;
+import xhl.core.elements.Block;
+import xhl.core.elements.SList;
+import xhl.core.elements.Symbol;
+import xhl.core.validator.*;
+import xhl.core.validator.ElementSchema.ParamSpec;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,20 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import xhl.core.elements.Block;
-import xhl.core.elements.SList;
-import xhl.core.elements.Symbol;
-import xhl.core.validator.*;
-import xhl.core.validator.ElementSchema.ParamSpec;
-
-import com.google.common.base.Optional;
-
-import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Arrays.asList;
-
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.tryFind;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Arrays.asList;
+import static xhl.core.ModulesProvider.ModulesLoader;
+
 
 /**
  * Base class for implementing new modules.
@@ -40,10 +40,20 @@ public abstract class GenericModule implements Module {
     private final Environment<Object> table = new Environment<Object>();
     private final Map<Symbol, ElementValidator> validators = newHashMap();
     private final Map<String, Executable> localElements = newHashMap();
+    private Schema schema;
+    /** Imported modules */
+    private final List<Module> modules = newArrayList();
 
     public GenericModule() {
         findEvalFunctions();
         findCheckFunctions();
+        if (canHaveModules())
+            loadModules();
+    }
+
+    @Override
+    public boolean isLanguage() {
+        return false; // By default modules are not languages
     }
 
     @Override
@@ -54,19 +64,48 @@ public abstract class GenericModule implements Module {
     @Override
     public void setEvaluator(Evaluator evaluator) {
         this.evaluator = evaluator;
+        // Set evaluators for imported modules
+        for (Module module : modules) {
+            module.setEvaluator(evaluator);
+        }
     }
 
     /**
      * Return module schema.
+     */
+    @Override
+    public Schema getSchema() {
+        if (schema == null)  // Read schema when it is needed
+            schema = readSchema();
+        return schema;
+    }
+
+    protected InputStream findSchemaStream() {
+        Class<? extends GenericModule> clazz = this.getClass();
+        return clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
+    }
+
+    /**
+     * Is it needed to load imported modules?
+     * This method can be used to suppress loading of language schema -- if
+     * program is evaluated without validation and can not have modules,
+     * its schema would not be read.
      *
+     * @return <code>false</code> if imported modules should not be loaded.
+     */
+    protected boolean canHaveModules() {
+        return true;
+    }
+
+    /**
+     * Read or create module schema.
      * Try to read module schema from a file with the same name as the class but
      * with extension ".schema". If it is not available, create generic schema,
      * that contains all elements defined in the module with the most generic
      * properties allowing to pass the validation.
      */
-    @Override
-    public Schema getSchema() {
-        Schema schema;
+    private Schema readSchema() {
+        Schema sch;
         InputStream in = findSchemaStream();
         if (in != null) {
             ValidatorLanguage lang = new ValidatorLanguage();
@@ -79,19 +118,17 @@ public abstract class GenericModule implements Module {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            schema = lang.getReadSchema();
+            sch = lang.getReadSchema();
         } else {
-            schema = makeGenericSchema();
+            sch = makeGenericSchema();
         }
-        addCustomValidators(schema);
-        return schema;
+        addCustomValidators(sch);
+        return sch;
     }
 
-    protected InputStream findSchemaStream() {
-        Class<? extends GenericModule> clazz = this.getClass();
-        return clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
-    }
-
+    /**
+     * Make a generic schema based in evaluation functions.
+     */
     private Schema makeGenericSchema() {
         Schema schema = new Schema();
         for (Symbol symbol : table.keySet()) {
@@ -193,6 +230,22 @@ public abstract class GenericModule implements Module {
             String name = annotation.name();
             ElementValidator validator = new CustomValidator(method);
             validators.put(new Symbol(name), validator);
+        }
+    }
+
+    private void loadModules() {
+        for (Schema.Import imp: getSchema().getImports()) {
+            ModulesLoader loader = new ModulesLoader();
+            Module mod = loader.loadModule(imp.getModule());
+            modules.add(mod);
+            if (imp.allElements()) {
+                table.putAll(mod.getSymbols());
+            } else {
+                for (String element : imp) {
+                    table.put(new Symbol(element), mod.getSymbols().get(new
+                            Symbol(element)));
+                }
+            }
         }
     }
 

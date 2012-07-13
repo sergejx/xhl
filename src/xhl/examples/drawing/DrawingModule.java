@@ -9,11 +9,16 @@ import xhl.core.GenericModule;
 
 public class DrawingModule extends GenericModule {
 
-    private final Canvas canvas;
+    private final Canvas canvas = new Canvas();
     private Color color = Color.BLACK;
 
-    public DrawingModule(Canvas canvas) {
-        this.canvas = canvas;
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 
     @Element

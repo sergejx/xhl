@@ -1,37 +1,24 @@
 package xhl.examples.statemachine;
 
-import java.io.*;
-
-import xhl.core.Language;
 import xhl.core.LanguageProcessor;
-import xhl.core.Module;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
- * Language for configuring state machine.
- *
- * Based on examples from http://martinfowler.com/dsl.html
+ * An executor for state machine language.
  *
  * @author Sergej Chodarev
  */
-public class StateMachineLanguage implements Language {
-
-    private final StateMachineModule module = new StateMachineModule();
-
-    @Override
-    public Module[] getModules() {
-        return new Module[] { module };
-    }
-
-    public StateMachine getStateMachine() {
-        return module.getStateMachine();
-    }
+public class StateMachineExecutor {
 
     public static void main(String[] args) throws IOException {
         if (args.length >= 1) {
             String filename = args[0];
-            StateMachineLanguage lang = new StateMachineLanguage();
-            LanguageProcessor.execute(lang, filename);
-            StateMachine machine = lang.getStateMachine();
+            StateMachineModule module = new StateMachineModule();
+            LanguageProcessor.execute(module, filename);
+            StateMachine machine = module.getStateMachine();
             runStateMachine(machine);
         } else
             System.out.println("Give file name as program argument!");

@@ -5,7 +5,6 @@ import xhl.core.validator.ValidationException;
 import xhl.core.validator.Validator;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -14,22 +13,18 @@ import java.util.List;
  * LanguageProcessor is responsible for executing language code.
  *
  * @author Sergej Chodarev
- *         <p/>
- *         FIXME: Needs major rethinking
  */
 public class LanguageProcessor {
-    private final Language language;
-    private final Module[] modules;
+    private final Module module;
     private final Evaluator evaluator;
     private Validator validator;
 
-    public LanguageProcessor(Language lang) {
-        language = lang;
-        modules = language.getModules();
+    public LanguageProcessor(Module module) {
+        if (!module.isLanguage())
+            throw new EvaluationException("Executed module is not a language.");
+        this.module = module;
         evaluator = new Evaluator();
-        for (Module module : modules) {
-            evaluator.loadModule(module);
-        }
+        evaluator.loadModule(module);
     }
 
     /**
@@ -57,7 +52,7 @@ public class LanguageProcessor {
     public List<xhl.core.Error> validate(Block program)
             throws EvaluationException {
         if (validator == null)
-            validator = new Validator(modules[0].getSchema());
+            validator = new Validator(module.getSchema());
         validator.check(program);
         return validator.getErrors();
     }
@@ -82,43 +77,19 @@ public class LanguageProcessor {
     }
 
     /**
-     * Execute code from file and output error messages to standard error output
-     * <p/>
+     * Execute code from file and output error messages to standard error
+     * output.
      * This is a simplified interface for this class.
      *
-     * @param lang     language of the code
+     * @param module   module of the code
      * @param filename name of the file to execute
      */
-    public static void execute(Language lang, String filename) {
-        LanguageProcessor processor = new LanguageProcessor(lang);
+    public static void execute(Module module, String filename) {
+        LanguageProcessor processor = new LanguageProcessor(module);
         try {
             processor.execute(new File(filename));
         } catch (EvaluationException e) {
             System.err.printf("%s: %s\n", e.getPosition(), e);
-        } catch (FileNotFoundException e) {
-            System.err.println(e);
-        } catch (IOException e) {
-            System.err.println(e);
-        }
-    }
-
-    /**
-     * Execute code from input reader and output error messages to standard
-     * error output
-     * <p/>
-     * This is a simplified interface for this class.
-     *
-     * @param lang   language of the code
-     * @param reader input reader
-     */
-    public static void execute(Language lang, java.io.Reader reader) {
-        LanguageProcessor processor = new LanguageProcessor(lang);
-        try {
-            processor.execute(reader);
-        } catch (EvaluationException e) {
-            System.err.printf("%s: %s\n", e.getPosition(), e);
-        } catch (FileNotFoundException e) {
-            System.err.println(e);
         } catch (IOException e) {
             System.err.println(e);
         }

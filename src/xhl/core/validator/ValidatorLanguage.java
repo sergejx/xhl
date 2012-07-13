@@ -2,8 +2,6 @@ package xhl.core.validator;
 
 import xhl.core.EvaluationException;
 import xhl.core.GenericModule;
-import xhl.core.Language;
-import xhl.core.Module;
 import xhl.core.elements.Block;
 import xhl.core.elements.Expression;
 import xhl.core.elements.SList;
@@ -19,7 +17,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static xhl.core.validator.ElementSchema.DefSpec.global;
 
-public class ValidatorLanguage extends GenericModule implements Language {
+public class ValidatorLanguage extends GenericModule {
     /**
      * A stack representing currently processed elements.
      */
@@ -30,6 +28,16 @@ public class ValidatorLanguage extends GenericModule implements Language {
         for (Type type : Type.defaultTypes) {
             addSymbol(type.getName(), type);
         }
+    }
+
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
+
+    @Override
+    protected boolean canHaveModules() {
+        return false;
     }
 
     @Element(name = "import")
@@ -130,11 +138,6 @@ public class ValidatorLanguage extends GenericModule implements Language {
     @Element(name = "<:")
     public void subtype(Type subtype, Type supertype) {
         subtype.addSupertype(supertype);
-    }
-
-    @Override
-    public Module[] getModules() {
-        return new Module[]{this};
     }
 
     public Schema getReadSchema() {

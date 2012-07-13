@@ -9,6 +9,13 @@ import xhl.core.elements.Block;
 import xhl.core.elements.Expression;
 import xhl.core.elements.Symbol;
 
+/**
+ * Simple computer configuration language.
+ *
+ * Inspired by examples from http://martinfowler.com/dslwip/
+ *
+ * @author Sergej Chodarev
+ */
 public class ComputerModule extends GenericModule {
 
     private Computer computer = null;
@@ -32,10 +39,15 @@ public class ComputerModule extends GenericModule {
         return computer;
     }
 
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
+
     @Element(evaluateArgs = false)
     public void computer(Block components) {
         Processor processor = null;
-        List<Disk> disks = new ArrayList<Disk>();
+        List<Disk> disks = new ArrayList<>();
         for (Expression expr : components) {
             Object comp = evaluator.eval(expr);
             if (comp instanceof Processor) {
