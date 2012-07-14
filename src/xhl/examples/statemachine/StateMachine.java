@@ -14,7 +14,7 @@ public class StateMachine {
 
     private final State start;
 
-    private final List<Event> resetEvents = new ArrayList<Event>();
+    private final List<Event> resetEvents = new ArrayList<>();
 
     public StateMachine(State start) {
         this.start = start;
@@ -25,7 +25,7 @@ public class StateMachine {
     }
 
     public Collection<State> getStates() {
-        List<State> result = new ArrayList<State>();
+        List<State> result = new ArrayList<>();
         gatherForwards(result, start);
         return result;
     }
@@ -48,7 +48,7 @@ public class StateMachine {
     }
 
     private List<String> resetEventCodes() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (Event e : resetEvents) {
             result.add(e.getCode());
         }

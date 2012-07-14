@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Module {
     private final String name;
-    private final List<Entity> entities = new ArrayList<Entity>();
+    private final List<Entity> entities = new ArrayList<>();
 
     public Module(String name) {
         this.name = name;

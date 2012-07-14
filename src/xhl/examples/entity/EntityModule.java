@@ -26,8 +26,8 @@ public class EntityModule extends GenericModule {
         return module;
     }
 
-    @Element(evaluateArgs = false)
-    public void module(Symbol name, Block body) {
+    @Element
+    public void module(@Symbolic Symbol name, @Symbolic Block body) {
         module = new Module(name.getName());
 
         // Initialize all defined entities
@@ -44,8 +44,8 @@ public class EntityModule extends GenericModule {
         evaluator.eval(body);
     }
 
-    @Element(evaluateArgs = false)
-    public Entity entity(Symbol name, Block attrs) {
+    @Element
+    public Entity entity(@Symbolic Symbol name, @Symbolic Block attrs) {
         currentEntity = (Entity) evaluator.getSymbol(name);
         evaluator.eval(attrs);
         return currentEntity;

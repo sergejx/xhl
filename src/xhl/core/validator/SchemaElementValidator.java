@@ -3,11 +3,10 @@ package xhl.core.validator;
 import xhl.core.Error;
 import xhl.core.elements.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Validator for an element that checks the validity according to rules
@@ -40,8 +39,8 @@ class SchemaElementValidator implements ElementValidator {
      */
     private DefinedSymbols definedSymbols(SList args,
                                           boolean onlyBackward) {
-        Map<Symbol, Type> symbols = newHashMap();
-        Map<Symbol, Type> globalSymbols = newHashMap();
+        Map<Symbol, Type> symbols = new HashMap<>();
+        Map<Symbol, Type> globalSymbols = new HashMap<>();
         for (ElementSchema.DefSpec def : schema.getDefines()) {
             if (onlyBackward && !def.isBackward())
                 continue;
@@ -88,7 +87,7 @@ class SchemaElementValidator implements ElementValidator {
      */
     @Override
     public ValidationResult check(Validator validator, SList tail) {
-        List<Error> errors = newArrayList();
+        List<Error> errors = new ArrayList<>();
         // Check number of arguments
         int minArgsSize = schema.isVariadic() ? schema
                 .getParams().size() - 1 : schema.getParams().size();
@@ -120,7 +119,7 @@ class SchemaElementValidator implements ElementValidator {
     private List<Error> checkArgument(Validator validator,
                                       ElementSchema.ParamSpec spec,
                                       Expression arg) {
-        List<Error> errors = newArrayList();
+        List<Error> errors = new ArrayList<>();
         Type argtype;
         if (spec.getMethod() == ElementSchema.PassingMethod.SYM)
             argtype = Type.typeOfElement(arg);

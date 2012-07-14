@@ -3,9 +3,8 @@ package xhl.core.validator;
 import com.google.common.collect.ImmutableList;
 import xhl.core.elements.*;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
 
 public class Type {
     public static final Type AnyType = new Type("AnyType");
@@ -25,7 +24,7 @@ public class Type {
                     Map, Block, Combination);
 
     private final Symbol name;
-    private final Set<Type> supertypes = newHashSet();
+    private final Set<Type> supertypes = new HashSet<>();
 
     public Type(Symbol name) {
         this.name = name;

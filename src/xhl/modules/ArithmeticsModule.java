@@ -1,11 +1,10 @@
 package xhl.modules;
 
-import java.util.List;
-
-import xhl.core.Producer;
 import xhl.core.GenericModule;
+import xhl.core.Producer;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArithmeticsModule extends GenericModule {
 
@@ -34,7 +33,7 @@ public class ArithmeticsModule extends GenericModule {
     }
 
     public static class ArithmeticsProducer implements Producer<Double> {
-        public final List<Producer<Double>> operands = newArrayList();
+        public final List<Producer<Double>> operands = new ArrayList<>();
         public final ArithmOperation operation;
 
 

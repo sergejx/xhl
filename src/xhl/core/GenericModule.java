@@ -1,11 +1,11 @@
 package xhl.core;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import xhl.core.elements.Block;
 import xhl.core.elements.SList;
 import xhl.core.elements.Symbol;
 import xhl.core.validator.*;
-import xhl.core.validator.ElementSchema.ParamSpec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +15,16 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.tryFind;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static xhl.core.ModulesProvider.ModulesLoader;
+import static xhl.core.validator.ElementSchema.ParamSpec.val;
+import static xhl.core.validator.ElementSchema.ParamSpec.variadic;
 
 
 /**
@@ -37,12 +38,12 @@ import static xhl.core.ModulesProvider.ModulesLoader;
 public abstract class GenericModule implements Module {
 
     protected Evaluator evaluator;
-    private final Environment<Object> table = new Environment<Object>();
-    private final Map<Symbol, ElementValidator> validators = newHashMap();
-    private final Map<String, Executable> localElements = newHashMap();
+    private final Environment<Object> table = new Environment<>();
+    private final Map<Symbol, ElementValidator> validators = new HashMap<>();
+    private final Map<String, Executable> localElements = new HashMap<>();
     private Schema schema;
     /** Imported modules */
-    private final List<Module> modules = newArrayList();
+    private final List<Module> modules = new ArrayList<>();
 
     public GenericModule() {
         findEvalFunctions();
@@ -134,8 +135,7 @@ public abstract class GenericModule implements Module {
         for (Symbol symbol : table.keySet()) {
             ElementSchema elem = new ElementSchema(symbol);
             elem.setType(Type.AnyType);
-            elem.setParams(newArrayList(ParamSpec.variadic(ParamSpec
-                    .val(Type.AnyType))));
+            elem.setParams(ImmutableList.of(variadic(val(Type.AnyType))));
             schema.put(elem);
         }
         return schema;
@@ -206,10 +206,7 @@ public abstract class GenericModule implements Module {
             for (int i = 0; i < pann.length; i++) {
                 Optional<Annotation> ann =
                         tryFind(asList(pann[i]), instanceOf(Symbolic.class));
-                if (ann.isPresent())
-                    evaluateArgs[i] = false;
-                else
-                    evaluateArgs[i] = annotation.evaluateArgs();
+                evaluateArgs[i] = !ann.isPresent();
             }
 
             Executable exec = new GenericExecutable(method, evaluateArgs);
@@ -263,9 +260,6 @@ public abstract class GenericModule implements Module {
          * function.
          */
         public boolean local() default false;
-
-        @Deprecated
-        public boolean evaluateArgs() default true;
     }
 
     /**
@@ -296,7 +290,7 @@ public abstract class GenericModule implements Module {
         @Override
         public Object exec(SList args) throws EvaluationException {
             // Prepare arguments
-            List<Object> evArgs = new ArrayList<Object>(args.size());
+            List<Object> evArgs = new ArrayList<>(args.size());
             for (int i = 0; i < args.size(); i++) {
                 if (i >= evaluateArgs.length // for varargs
                         || evaluateArgs[i])
@@ -332,7 +326,7 @@ public abstract class GenericModule implements Module {
                 if (!pb && ab) {
                     evArgs.set(i, ((Producer<?>) arg).toValue());
                 } else if (pb && !ab) {
-                    ConstProducer<?> b = new ConstProducer<Object>(arg);
+                    ConstProducer<?> b = new ConstProducer<>(arg);
                     evArgs.set(i, b);
                 }
             }
@@ -370,7 +364,7 @@ public abstract class GenericModule implements Module {
 
         @Override
         public Map<Symbol, Type> forwardDefinitions(SList args) {
-            return newHashMap();
+            return new HashMap<>();
         }
 
         @Override

@@ -4,18 +4,17 @@ import xhl.core.Environment;
 import xhl.core.Error;
 import xhl.core.elements.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static xhl.core.ModulesProvider.ModulesLoader;
 
 public class Validator implements ElementVisitor<Type> {
-    private final Environment<Type> table = new Environment<Type>();
-    private final Environment<ElementValidator> elements =
-            new Environment<ElementValidator>();
-    private final List<Error> errors = newArrayList();
+    private final Environment<Type> table = new Environment<>();
+    private final Environment<ElementValidator> elements = new Environment<>();
+    private final List<Error> errors = new ArrayList<>();
 
     public Validator(Schema mainSchema) {
         addElements(mainSchema);
@@ -155,7 +154,7 @@ public class Validator implements ElementVisitor<Type> {
     public static Map<Symbol, Type> backwardDefinitions(Block blk,
                                                         Schema schema) {
         // FIXME: Remove duplication!
-        Map<Symbol, Type> table = newHashMap();
+        Map<Symbol, Type> table = new HashMap<>();
         for (Expression exp : blk) {
             try {
                 Combination cmb = (Combination) exp;

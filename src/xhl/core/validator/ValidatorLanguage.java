@@ -11,17 +11,17 @@ import xhl.core.validator.ElementSchema.ParamSpec;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newLinkedList;
 import static xhl.core.validator.ElementSchema.DefSpec.global;
 
 public class ValidatorLanguage extends GenericModule {
     /**
      * A stack representing currently processed elements.
      */
-    private Deque<ElementSchema> currentElement = newLinkedList();
+    private Deque<ElementSchema> currentElement = new LinkedList<>();
     private final Schema schema = new Schema();
 
     public ValidatorLanguage() {
@@ -62,8 +62,8 @@ public class ValidatorLanguage extends GenericModule {
 
     }
 
-    @Element(evaluateArgs = false)
-    public void element(Symbol name, Block blk) {
+    @Element
+    public void element(@Symbolic Symbol name, @Symbolic Block blk) {
         final ElementSchema element = new ElementSchema(name);
         if (currentElement.isEmpty())
             schema.put(element);

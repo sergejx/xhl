@@ -10,8 +10,8 @@ import java.util.*;
 public class State {
 
     private final String name;
-    private final List<Command> actions = new ArrayList<Command>();
-    private final Map<String, Transition> transitions = new HashMap<String, Transition>();
+    private final List<Command> actions = new ArrayList<>();
+    private final Map<String, Transition> transitions = new HashMap<>();
 
     public State(String name) {
         this.name = name;
@@ -31,7 +31,7 @@ public class State {
     }
 
     public Collection<State> getAllTargets() {
-        List<State> result = new ArrayList<State>();
+        List<State> result = new ArrayList<>();
         for (Transition t : transitions.values()) {
             result.add(t.getTarget());
         }

@@ -204,7 +204,7 @@ public class Reader {
             name.add(token.stringValue);
             lexer.nextToken();
         }
-        return new Symbol(name.toArray(new String[0]), position);
+        return new Symbol(name.toArray(new String[name.size()]), position);
     }
 
     private boolean isColon() {

@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class ExpressionsList extends Expression implements
         Iterable<Expression> {
 
-    protected final List<Expression> list = new LinkedList<Expression>();
+    protected final List<Expression> list = new LinkedList<>();
 
     protected ExpressionsList() {
     }

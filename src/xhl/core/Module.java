@@ -27,8 +27,6 @@ public interface Module {
      * Module can use it to evaluate expressions and to manipulate
      * the evaluation environment. If module imports other modules,
      * it should pass the evaluator to them too.
-     *
-     * @param evaluator
      */
     public void setEvaluator(Evaluator evaluator);
 

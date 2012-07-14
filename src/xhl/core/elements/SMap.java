@@ -7,7 +7,7 @@ import java.util.Set;
  * @author Sergej Chodarev
  */
 public class SMap extends Expression {
-    private final HashMap<Expression, Expression> map = new HashMap<Expression, Expression>();
+    private final HashMap<Expression, Expression> map = new HashMap<>();
 
     public SMap(Position position) {
         super(position);

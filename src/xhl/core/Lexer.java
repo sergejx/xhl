@@ -1,22 +1,20 @@
 package xhl.core;
 
+import com.google.common.collect.ImmutableMap;
+import xhl.core.Token.TokenType;
+import xhl.core.elements.Position;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import xhl.core.Token.TokenType;
-import xhl.core.elements.Position;
-
-import com.google.common.collect.ImmutableMap;
-
 import static xhl.core.Token.TokenType.*;
-
-import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 
 /**
  * Lexical analyzer for XHL
@@ -51,11 +49,11 @@ class Lexer {
     private int columnN = 0;
 
     // Lexer state
-    private final Stack<Integer> indent = new Stack<Integer>();
+    private final Stack<Integer> indent = new Stack<>();
     private int braceLevel = 0;
 
     // List of tokens
-    private final List<Token> tokens = newArrayListWithExpectedSize(120);
+    private final List<Token> tokens = new ArrayList<>(120);
     private final ListIterator<Token> tokensIterator;
 
     /**

@@ -2,18 +2,11 @@ package xhl.core.validator;
 
 import xhl.core.elements.Symbol;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import java.util.*;
 
 public class Schema implements Iterable<ElementSchema> {
-    private final Map<Symbol, ElementSchema> elements =
-            newHashMap();
-    private List<Import> imports = newArrayList();
+    private final Map<Symbol, ElementSchema> elements = new HashMap<>();
+    private List<Import> imports = new ArrayList<>();
 
     public boolean containsKey(Symbol sym) {
         return elements.containsKey(sym);

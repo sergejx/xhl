@@ -2,17 +2,11 @@ package xhl.core;
 
 import xhl.core.elements.Symbol;
 
-import java.util.Deque;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
+import java.util.*;
 
 public class Environment<T> {
     private Map<Symbol, T> table;
-    private final Deque<Map<Symbol, T>> stack = newLinkedList();
+    private final Deque<Map<Symbol, T>> stack = new LinkedList<>();
 
     public Environment() {
         push(); // Global namespace
@@ -60,7 +54,7 @@ public class Environment<T> {
 
 
     public Set<Symbol> keySet() {
-        Set<Symbol> keys = newHashSet();
+        Set<Symbol> keys = new HashSet<>();
         for (Map<Symbol, T> tbl : stack)
             keys.addAll(tbl.keySet());
         return keys;
@@ -70,7 +64,7 @@ public class Environment<T> {
      * Push a new local environment on the stack.
      */
     public void push() {
-        table = newHashMap();
+        table = new HashMap<>();
         stack.push(table);
     }
 

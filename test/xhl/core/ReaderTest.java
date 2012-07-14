@@ -26,7 +26,7 @@ public class ReaderTest {
     public void list() throws IOException {
         Block prg = Reader.read("[1, 2, 3]");
         SList list = (SList) prg.get(0);
-        assertEquals(1, ((SNumber) list.get(0)).getValue(), 0);
+        assertEquals(1.0, ((SNumber) list.get(0)).getValue(), 0);
         assertEquals(3, list.size());
     }
 

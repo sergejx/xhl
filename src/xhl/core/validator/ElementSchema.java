@@ -2,9 +2,8 @@ package xhl.core.validator;
 
 import xhl.core.elements.Symbol;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Element declaration.
@@ -12,11 +11,11 @@ import static com.google.common.collect.Lists.newArrayList;
 public class ElementSchema {
     private final Symbol symbol;
     private String doc;
-    private List<ParamSpec> params = newArrayList();
+    private List<ParamSpec> params = new ArrayList<>();
     private Type type = Type.Null;
-    private final List<DefSpec> defines = newArrayList();
+    private final List<DefSpec> defines = new ArrayList<>();
     private ElementValidator validator;
-    private List<ElementSchema> localElements = newArrayList();
+    private List<ElementSchema> localElements = new ArrayList<>();
 
     public ElementSchema(Symbol sym) {
         this.symbol = sym;
@@ -209,8 +208,8 @@ public class ElementSchema {
             this(arg, type, false, false);
         }
 
-        public DefSpec(int arg, Type type, boolean forward) {
-            this(arg, type, true, false);
+        public DefSpec(int arg, Type type, boolean backward) {
+            this(arg, type, backward, false);
         }
 
         private DefSpec(int arg, Type type, boolean backward, boolean global) {

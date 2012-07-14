@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 
 public class Canvas extends JPanel {
-    private final List<ColoredShape> shapes = new LinkedList<ColoredShape>();
+    private final List<ColoredShape> shapes = new LinkedList<>();
 
     public Canvas() {
         super();

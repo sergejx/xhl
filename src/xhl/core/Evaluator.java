@@ -10,7 +10,7 @@ import xhl.core.elements.*;
  * @author Sergej Chodarev
  */
 public class Evaluator implements ElementVisitor<Object>{
-    private final Environment<Object> environment = new Environment<Object>();
+    private final Environment<Object> environment = new Environment<>();
 
     public void loadModule(Module module) {
         module.setEvaluator(this);
@@ -105,7 +105,7 @@ public class Evaluator implements ElementVisitor<Object>{
 
     @Override
     public Object visit(SList lst) {
-        List<Object> list = new LinkedList<Object>();
+        List<Object> list = new LinkedList<>();
         for (Expression item: lst) {
             Object value = item.accept(this);
             list.add(value);
@@ -115,7 +115,7 @@ public class Evaluator implements ElementVisitor<Object>{
 
     @Override
     public Object visit(SMap map) {
-        Map<Object, Object> vmap = new HashMap<Object, Object>();
+        Map<Object, Object> vmap = new HashMap<>();
         for (Expression key: map.keySet()) {
             Object vkey = key.accept(this);
             Object vvalue = map.get(key).accept(this);

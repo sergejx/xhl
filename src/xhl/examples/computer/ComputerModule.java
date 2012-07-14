@@ -44,8 +44,8 @@ public class ComputerModule extends GenericModule {
         return true;
     }
 
-    @Element(evaluateArgs = false)
-    public void computer(Block components) {
+    @Element
+    public void computer(@Symbolic Block components) {
         Processor processor = null;
         List<Disk> disks = new ArrayList<>();
         for (Expression expr : components) {

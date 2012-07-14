@@ -1,21 +1,19 @@
 package xhl.examples.entity;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-
 import xhl.core.Producer;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Entity {
     private final String name;
-    private final List<Attribute> attributes = newArrayList();
-    private final List<Producer<Boolean>> validation = newArrayList();
+    private final List<Attribute> attributes = new ArrayList<>();
+    private final List<Producer<Boolean>> validation = new ArrayList<>();
 
     public Entity(String name) {
         this.name = name;
