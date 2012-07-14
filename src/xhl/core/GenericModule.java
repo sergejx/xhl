@@ -241,9 +241,8 @@ public abstract class GenericModule implements Module {
             if (imp.allElements()) {
                 table.putAll(mod.getSymbols());
             } else {
-                for (String element : imp) {
-                    table.put(new Symbol(element), mod.getSymbols().get(new
-                            Symbol(element)));
+                for (Symbol element : imp) {
+                    table.put(element, mod.getSymbols().get(element));
                 }
             }
         }

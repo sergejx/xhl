@@ -26,8 +26,8 @@ public class Validator implements ElementVisitor<Type> {
             if (imp.allElements())
                 addElements(impSchema);
             else {
-                for (String name : imp)
-                    addElement(impSchema.get(new Symbol(name)));
+                for (Symbol element : imp)
+                    addElement(impSchema.get(element));
             }
         }
     }

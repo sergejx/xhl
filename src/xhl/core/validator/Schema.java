@@ -40,9 +40,9 @@ public class Schema implements Iterable<ElementSchema> {
         imports.add(moduleName);
     }
 
-    public static class Import implements Iterable<String> {
+    public static class Import implements Iterable<Symbol> {
         private final String module;
-        private final List<String> elements;
+        private final List<Symbol> elements;
         private final boolean allElements;
 
         /**
@@ -52,15 +52,15 @@ public class Schema implements Iterable<ElementSchema> {
          * @param module   A name of the module.
          * @param elements A list of imported elements.
          */
-        public Import(String module, List<String> elements) {
+        public Import(String module, List<Symbol> elements) {
             this.module = module;
             this.elements = elements;
             allElements = false;
         }
 
         /**
-         * Define new import declaration selecting <strong>all
-         * elements</strong> from the module.
+         * Define new import declaration selecting <strong>all elements</strong>
+         * from the module.
          *
          * @param module A name of the module.
          */
@@ -88,7 +88,7 @@ public class Schema implements Iterable<ElementSchema> {
          * @return Iterator over the names of elements.
          */
         @Override
-        public Iterator<String> iterator() {
+        public Iterator<Symbol> iterator() {
             return elements.iterator();
         }
     }

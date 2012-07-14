@@ -9,11 +9,11 @@ import xhl.core.elements.Symbol;
 import xhl.core.validator.ElementSchema.DefSpec;
 import xhl.core.validator.ElementSchema.ParamSpec;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static xhl.core.validator.ElementSchema.DefSpec.global;
 
@@ -46,10 +46,10 @@ public class ValidatorLanguage extends GenericModule {
         if (names instanceof Symbol && ((Symbol) names).isNamed("all")) {
             schema.addImport(new Schema.Import(name.getName()));
         } else if (names instanceof SList) {
-            List<String> elements = newArrayList();
+            List<Symbol> elements = new ArrayList<>();
             for (Expression el : (SList) names) {
                 if (el instanceof Symbol)
-                    elements.add(((Symbol) el).getName());
+                    elements.add((Symbol) el);
                 else
                     throw new EvaluationException(
                             "Incompatible type of the arguments");
