@@ -9,8 +9,8 @@ import static com.google.common.collect.Sets.newHashSet;
 
 public class StandardModules implements ModulesProvider {
 
-    Set<String> modules = newHashSet("arithmetic", "logic", "relations",
-            "define");
+    private final Set<String> modules = newHashSet(
+            "arithmetic", "logic", "relations", "define");
 
     @Override
     public boolean hasModule(String name) {

@@ -26,7 +26,7 @@ public interface ModulesProvider {
      * Helper class that allows to load modules from all available providers.
      */
     public static class ModulesLoader {
-        private ServiceLoader<ModulesProvider> loader;
+        private final ServiceLoader<ModulesProvider> loader;
 
         /**
          * Make a new loader.

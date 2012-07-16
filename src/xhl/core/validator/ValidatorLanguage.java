@@ -21,7 +21,7 @@ public class ValidatorLanguage extends GenericModule {
     /**
      * A stack representing currently processed elements.
      */
-    private Deque<ElementSchema> currentElement = new LinkedList<>();
+    private final Deque<ElementSchema> currentElement = new LinkedList<>();
     private final Schema schema = new Schema();
 
     public ValidatorLanguage() {

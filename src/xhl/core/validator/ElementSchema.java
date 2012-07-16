@@ -15,7 +15,7 @@ public class ElementSchema {
     private Type type = Type.Null;
     private final List<DefSpec> defines = new ArrayList<>();
     private ElementValidator validator;
-    private List<ElementSchema> localElements = new ArrayList<>();
+    private final List<ElementSchema> localElements = new ArrayList<>();
 
     public ElementSchema(Symbol sym) {
         this.symbol = sym;

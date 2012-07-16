@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Schema implements Iterable<ElementSchema> {
     private final Map<Symbol, ElementSchema> elements = new HashMap<>();
-    private List<Import> imports = new ArrayList<>();
+    private final List<Import> imports = new ArrayList<>();
 
     public boolean containsKey(Symbol sym) {
         return elements.containsKey(sym);
