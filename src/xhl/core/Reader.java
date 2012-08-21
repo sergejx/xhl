@@ -42,18 +42,23 @@ public class Reader {
             SYMBOL, STRING, NUMBER, TRUE, FALSE, NONE, BRACKET_OPEN,
             BRACE_OPEN, PAR_OPEN);
 
-    public static Block read(java.io.Reader input) throws IOException {
-        return new Reader().parse(input);
+    private String filename;
+
+    public static Block read(java.io.Reader input, String filename) throws
+            IOException {
+        return new Reader(filename).parse(input);
     }
 
     public static Block read(String code) throws IOException {
-        return read(new StringReader(code));
+        return read(new StringReader(code), "<input>");
     }
 
-    private Reader() {}
+    private Reader(String filename) {
+        this.filename = filename;
+    }
 
     private Block parse(java.io.Reader input) throws IOException {
-        lexer = new Lexer(input);
+        lexer = new Lexer(input, filename);
         token = lexer.nextToken();
         return block();
     }

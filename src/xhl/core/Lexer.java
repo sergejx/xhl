@@ -40,6 +40,8 @@ class Lexer {
     private static final String OPEN = "([{";
     private static final String CLOSE = "}])";
 
+    // Name of the processed file (for nice error messages)
+    private String filename;
     // Input stream
     private final BufferedReader input;
     // Currently processed line
@@ -56,14 +58,16 @@ class Lexer {
     private final List<Token> tokens = new ArrayList<>(120);
     private final ListIterator<Token> tokensIterator;
 
+
     /**
      * Initialize lexical analyzer and analyze text in input stream.
      *
-     * @param input
-     *            Input stream.
-     * @throws IOException
+     * @param input    Input stream.
+     * @param filename Name of the read file (will be include in the position
+     *                 of tokens).
      */
-    public Lexer(Reader input) throws IOException {
+    public Lexer(Reader input, String filename) throws IOException {
+        this.filename = filename;
         this.input = new BufferedReader(input);
         indent.push(0);
         readTokens();
@@ -263,7 +267,7 @@ class Lexer {
     }
 
     private Position getPosition() {
-        return new Position("input", lineN, columnN); // FIXME filename
+        return new Position(filename, lineN, columnN);
     }
 
 }

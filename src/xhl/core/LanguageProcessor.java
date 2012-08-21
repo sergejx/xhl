@@ -31,15 +31,16 @@ public class LanguageProcessor {
      * Execute code from the file
      */
     public void execute(File file) throws IOException, EvaluationException {
-        execute(new FileReader(file));
+        execute(new FileReader(file), file.toString());
     }
 
     /**
      * Execute code from the input reader
      */
-    public void execute(java.io.Reader reader) throws IOException,
+    public void execute(java.io.Reader reader, String filename) throws
+            IOException,
             EvaluationException {
-        Block program = Reader.read(reader);
+        Block program = Reader.read(reader, filename);
         execute(program);
     }
 

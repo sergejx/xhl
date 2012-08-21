@@ -83,7 +83,11 @@ public abstract class GenericModule implements Module {
 
     protected InputStream findSchemaStream() {
         Class<? extends GenericModule> clazz = this.getClass();
-        return clazz.getResourceAsStream(clazz.getSimpleName() + ".schema");
+        return clazz.getResourceAsStream(schemaFileName());
+    }
+
+    private String schemaFileName() {
+        return this.getClass().getSimpleName() + ".schema";
     }
 
     /**
@@ -113,7 +117,8 @@ public abstract class GenericModule implements Module {
             LanguageProcessor schemaProcessor = new LanguageProcessor(lang);
             Block program;
             try {
-                program = Reader.read(new InputStreamReader(in));
+                program = Reader.read(new InputStreamReader(in),
+                        schemaFileName());
                 schemaProcessor.executeWithoutValidation(program);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
