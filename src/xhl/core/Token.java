@@ -15,7 +15,7 @@ public class Token {
         COMMA, DOT, LINEEND,
         SYMBOL, OPERATOR,
         STRING, NUMBER,
-        TRUE, FALSE, NONE,
+        TRUE, FALSE, NULL,
     }
 
     public final TokenType type;

@@ -241,8 +241,8 @@ class Lexer {
                 return new Token(TRUE, getPosition());
             if (text.equals("false"))
                 return new Token(FALSE, getPosition());
-            if (text.equals("none"))
-                return new Token(NONE, getPosition());
+            if (text.equals("null"))
+                return new Token(NULL, getPosition());
             else
                 return new Token(SYMBOL, text, getPosition());
         }

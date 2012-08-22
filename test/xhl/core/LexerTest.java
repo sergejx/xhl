@@ -85,11 +85,11 @@ public class LexerTest {
 
     @Test
     public void keywords() throws Exception {
-        String code = "true false none";
+        String code = "true false null";
         Lexer l = makeLexer(code);
         assertEquals(TRUE, l.nextToken().type);
         assertEquals(FALSE, l.nextToken().type);
-        assertEquals(NONE, l.nextToken().type);
+        assertEquals(NULL, l.nextToken().type);
     }
 
     @Test

@@ -6,13 +6,12 @@ XHL -- Extensible Host Language
     block of expressions:
         f 1 2 (g 3)
         a + b - (c >! f <= g)
-
     numbers 42 3.14 -1.234e56
     strings "hello world\n"
     booleans true false
     lists [1, 2, 3]
     maps {a: 1, b: 2}
-    none
+    null
 
 ## DESCRIPTION
 
@@ -24,6 +23,7 @@ XHL script is a sequence of expressions separated by a new line character. Expre
 
 *Literals* are of several types: *symbols* (unquoted words similar to identifiers in other languages), *strings* (enclosed in quotation marks), *numbers*, *boolean* values (`true` and `false`), *lists* (enclosed in square brackets), *maps* (enclosed in curly braces) and `none`.
 
+
 ## SYNTAX
 
 XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF it includes special symbols for repetition `{}` and optional elements `[]`.
@@ -33,12 +33,12 @@ XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF i
     expression-with-block ::= combination ':' NEWLINE INDENT block DEDENT
     combination ::= term { term }
     term        ::= literal | '(' expression ')'
-    literal     ::= symbol | string | number | boolean | list | map | 'none'
+    literal     ::= symbol | string | number | boolean | list | map | 'null'
     boolean     ::= 'true' | 'false'
     list        ::= '[]' | '[' expression { ',' expression } ']'
     map         ::= '{}' | '{' key-value { ',' key-value } '}'
     key-value   ::= expression ':' expression
-
+    symbol      ::= plain-symbol { '.' plain-symbol }
 
 
 ## LEXICAL SYNTAX

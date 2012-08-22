@@ -24,7 +24,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *   expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
  *   combination ::= term { term }
  *   term        ::= literal | '(' expression ')'
- *   literal     ::= symbol | string | number | boolean | list | map | 'none'
+ *   literal     ::= symbol | string | number | boolean | list | map | 'null'
  *   boolean     ::= 'true' | 'false'
  *   list        ::= '[]' | '[' expression { ',' expression } ']'
  *   map         ::= '{}' | '{' key-value { ',' key-value } '}'
@@ -39,7 +39,7 @@ public class Reader {
     private Token token;
 
     private static final ImmutableSet<TokenType> termH = ImmutableSet.of(
-            SYMBOL, STRING, NUMBER, TRUE, FALSE, NONE, BRACKET_OPEN,
+            SYMBOL, STRING, NUMBER, TRUE, FALSE, NULL, BRACKET_OPEN,
             BRACE_OPEN, PAR_OPEN);
 
     private String filename;
