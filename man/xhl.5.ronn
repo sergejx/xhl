@@ -3,10 +3,10 @@ XHL -- Extensible Host Language
 
 ## SYNOPSIS
 
-    block of expressions:
-        f 1 2 (g 3)
-        a + b - (c >! f <= g)
-    numbers 42 3.14 -1.234e56
+    block of expressions:     # block header itself is a combination
+        foo 1 2 (bar 3)       # combinations
+        a + b - (c >! f <= g) # operators
+    numbers 42 3.14
     strings "hello world\n"
     booleans true false
     lists [1, 2, 3]
@@ -19,9 +19,9 @@ Extensible Host Language is a generic syntax for domain-specific languages. Its 
 
 XHL script is a sequence of expressions separated by a new line character. Expressions that are not nested inside other expressions can introduce a block. *Blocks* allow to define structure of code. Block itself is an indented sequence of expressions. An expression, that introduces a block, must be followed by a semicolon.
 
-*Expression* can be an operation or data literal. *Operation* is either combination written as a simple sequence of other expressions, or application of infix operator.
+*Expression* can be an operation or data literal. *Operation* is either a *combination* written as a simple sequence of other expressions, or application of infix operator.
 
-*Literals* are of several types: *symbols* (unquoted words similar to identifiers in other languages), *strings* (enclosed in quotation marks), *numbers*, *boolean* values (`true` and `false`), *lists* (enclosed in square brackets), *maps* (enclosed in curly braces) and `none`.
+*Literals* are of several types: *symbols* (unquoted words similar to identifiers in other languages), *strings* (enclosed in quotation marks), *numbers*, *boolean* values (`true` and `false`), *lists* (enclosed in square brackets), *maps* (enclosed in curly braces) and `null`.
 
 
 ## SYNTAX
@@ -43,16 +43,20 @@ XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF i
 
 ## LEXICAL SYNTAX
 
-Lexical syntax for the tokens is written using regular expressions:
+Lexical syntax for some of the tokens written using regular expressions:
 
-    symbol      ::= [a-zA-Z][a-zA-Z0-9_]+
-    operator    ::= [-+*/<>=!?]+
-    number      ::= -? [0-9]* (\. [0-9]*)?
-    string      ::= " ([^"] | \\")* "
+    plain-symbol ::= [a-zA-Z][a-zA-Z0-9_]*
+    operator     ::= [-+*/_=<>?!:&|]+
+    number       ::= -? [0-9]+ (\. [0-9]*)?
 
-Comments are started with `#` and continue to the end of line.
+Strings are enclosed in quotation marks and can contain any char except of
+the quotation mark.
 
-To simplify parser, lexical analyser transforms physical lines into **logical lines**. Special *NEWLINE* token is generated at the end of every logical line. Transformation is based on following rules:
+Comments are started with `#` and continue to the end of the line.
+
+Special tokens are used to denote layout of a program. The first of them is a
+ *NEWLINE* token that denotes the end of **logical line**. Logical lines
+ differf from physical lines in these aspects:
 
 - Empty lines and lines only with comments are skipped
 - Line breaks inside of any type of brackets are ignored
