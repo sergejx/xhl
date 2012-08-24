@@ -1,0 +1,4 @@
+# manuals
+xhl(5)           xhl.5.ronn
+xhl-guide(7)     xhl-guide.7.ronn
+xhl-internals(7) xhl-internals.7.ronn

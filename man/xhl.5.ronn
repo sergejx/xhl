@@ -1,4 +1,4 @@
-XHL -- Extensible Host Language
+XHL(5) -- Extensible Host Language
 ===============================
 
 ## SYNOPSIS
@@ -33,7 +33,8 @@ XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF i
     expression-with-block ::= combination ':' NEWLINE INDENT block DEDENT
     combination ::= term { term }
     term        ::= literal | '(' expression ')'
-    literal     ::= symbol | string | number | boolean | list | map | 'null'
+    literal     ::= symbol | string | number | boolean | list | map
+                  | 'null'
     boolean     ::= 'true' | 'false'
     list        ::= '[]' | '[' expression { ',' expression } ']'
     map         ::= '{}' | '{' key-value { ',' key-value } '}'
@@ -49,16 +50,18 @@ Lexical syntax for some of the tokens written using regular expressions:
     operator     ::= [-+*/_=<>?!:&|]+
     number       ::= -? [0-9]+ (\. [0-9]*)?
 
-Strings are enclosed in quotation marks and can contain any char except of
-the quotation mark.
+Strings are enclosed in quotation marks and can contain any char except of the quotation mark.
 
 Comments are started with `#` and continue to the end of the line.
 
-Special tokens are used to denote layout of a program. The first of them is a
- *NEWLINE* token that denotes the end of **logical line**. Logical lines
- differf from physical lines in these aspects:
+Special tokens are used to denote layout of a program. The first of them is a *NEWLINE* token that denotes the end of **logical line**. Logical lines differ from physical lines in these aspects:
 
 - Empty lines and lines only with comments are skipped
 - Line breaks inside of any type of brackets are ignored
 
 **Indentation** is also part of the syntax. Special tokens are generated at the beginning of indented block and at its end: *INDENT* and *DEDENT*
+
+
+## SEE ALSO
+
+xhl-guide(7), xhl-internals(7)

@@ -1,0 +1,143 @@
+xhl-guide(7) -- A guide for developing languages based on XHL
+=============================================================
+
+## SYNOPSIS
+
+*MyModule.java*:
+
+    public class MyModule extends GenericModule {
+        @Override
+        public boolean isLanguage() {
+            return true;
+        }
+        @Element(name="?_")
+        public Answer answer(@Symbolic Combinaiton question,
+                             Double precision) {
+            return ...;
+        }
+    }
+
+*MyModule.schema*:
+
+    import define all
+    newtype Answer
+    element (?_):
+        doc "Gives the answer"
+        params [sym Combination, val Number]
+        type Answer
+
+Executing:
+
+    MyModule langModule = new MyModule();
+    LanguageProcessor.execute(langModule, filename);
+
+
+## DESCRIPTION
+
+Extensible Host Language is a framework for building domain-specific languages. All languages built using it share the same concrete syntax (for description of the syntax see xhl(5)) in a similar way as XML is used as a basis for different languages. Each language has defined language elements that can be used in programs. Elements are associated with symbols -- identifiers or infix operators.
+
+Language definition consists of one or more modules. Each module is defined by two main parts:
+
+1. Module implementation
+2. Module schema
+
+The module implementation is a Java class containing definition of evaluation functions --- methods that are responsible for evaluating instances of an element in program code. The module schema contains declarations of language elements and their properties that are used for static checking of programs.
+
+
+## MODULE IMPLEMENTATION
+
+Module class extends *GenericModule* class. The main module of the language needs to override the *isLanguage()* method to return *true*. The class also must include evaluation functions of the language elements. Besides that it can contain properties corresponding to internal evaluation environment, helper methods.
+
+## EVALUATION FUNCTIONS
+
+Evaluation functions are implemented as methods with annotation `@Element`. Evaluation function is automatically associated with a symbol with the same name. This can be overridden using the `name` parameter of the annotation. The use of the `name` parameter is required in cases of symbols that are not valid in Java, for example custom infix operators.
+
+The element can be used as a first symbol in combination, for example:
+
+    foo 1 "bar"
+
+In this case elements of the combination are passed to the evaluation function of the first element as its arguments.
+
+Parameters of the evaluation function are declared as usual in Java methods. Values of basic XHL types are automatically converted to corresponding Java types. Note that XHL uses only one type of numbers that corresponds to Double in Java. For example definition of evaluation function accepting two arguments may look like this:
+
+    @Element
+    public void foo(Double a, String b) {...}
+
+If argument of the language element is not a literal but symbol or combination, it is evaluated and the type of parameter needs to correspond to the type of return value of the evaluation function of the inner element. For example consider that we have two evaluation functions as follows:
+
+    public void foo(Eggs e) { ... }
+    public Eggs bar(Double a, Double b) { ... }
+
+They can be used to evaluate the following expression:
+
+    foo (bar 1 2)
+
+In a case that evaluation function need to process the code of its argument instead of its value or needs to suppress evaluation of arguments, it can use **symbolic passing of argument**. Symbolic parameters are marked with the `@Symbolic` annotation. Type of the parameter needs to be one of the types of XHL literals of structures. The most generic of them is an *Expression*. For more information on base language elements see xhl-internals(7).
+
+There is a special type of parameter -- **a block**. It is always passed symbolically and can only by the last parameter of an evaluation function. A block contains code of several expressions specified in a program as a block of code after the language element.
+
+Module class inherits protected attribute `evaluator` that contains a reference to the currently used evaluation object. It allows to evaluate arbitrary code in the current evaluation context using the methods `Object eval(Expression obj)` and `Object evalAll(Block exprs)`.
+
+
+## ENVIRONMENT
+
+Environment is a data structure that contains bindings of values to symbols. 
+Evaluation functions can read and write these bindings using the `evaluator` attribute. It provides methods `boolean hasSymbol(Symbol symbol)`, `Object getSymbol(Symbol symbol)` and `void putSymbol(Symbol symbol, Object value)` for this task.
+
+In the example below is defined element `define` that allows to define new symbols with specified value.
+
+    @Element
+    public void define(@Symbolic Symbol symbol, Object value)
+            throws EvaluationException {
+        if (evaluator.hasSymbol(symbol))
+            throw new EvaluationException(String.format(
+                    "Symbol '%s' is already defined", symbol));
+        evaluator.putSymbol(symbol, value);
+    }
+
+Environment can have several layers corresponding to visibility scopes of symbols. If requested symbol is not found in the current layer, it is searched in lower layers. This means that local bindings shadow global ones.
+
+The `putSymbol` method defines a new binding or updates existing one in the current scope. If a symbol needs to be defined globally, method `Object putGlobalSymbol(Symbol sym, Object value)` can be used.
+
+The introduction of local scopes is also handled by an evaluation function. Two methods of the evaluator exist for this reason: `void pushEnvironment()` and `void popEnvironment()`. They need to be called before and after the evaluation of code that needs to have own local scope. You can see and example evaluation function for an element that just executes received block in a local scope:
+
+    @Element
+    public void foo(@Symbolic Block blk) {
+        evaluator.pushEnvironment();
+        evaluator.eval(blk);
+        evaluator.popEnvironment();
+    }
+
+
+## EVALUATION ON REQUEST
+
+Evaluation on request allows to delay evaluation of an expression or replace it with code generation. Instead of actual values, special objects are passed between evaluation functions. These objects must implement interface *Producer* defined as follows.
+
+    public interface Producer<T> {
+        public T toValue();
+        public String toCode();
+    }
+
+
+
+
+## MODULE SCHEMA
+
+In addition to the implementation of evaluation functions, language module needs to declare properties of language elements for static checking. The schema contains simple declarative description of module properties, types and language elements.
+
+
+## CHECK FUNCTIONS
+
+    @Check(name="define")
+    public ValidationResult checkDefine(Validator validator,
+                                        Symbol symbol,
+                                        Expression value) {
+        Type type = validator.check(value);
+        return new ValidationResult(Type.Null, null,
+                ImmutableMap.of(symbol, type));
+    }
+
+
+## SEE ALSO
+
+xhl(5), xhl-internals(7)

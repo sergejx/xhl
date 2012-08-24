@@ -1,0 +1,27 @@
+xhl-internals - An overview of XHL internals
+============================================
+
+## SYNOPSIS
+
+Lexer -> Reader -> Evaluator
+
+xhl.core.elements:
+
+    - Expression:
+      - SBoolean
+      - SNumber
+      - SString
+      - Symbol
+      - SMap
+      - ExpressionsList
+        - SList
+        - Combination
+        - Block
+
+## DESCRIPTION
+
+This manual page would contain description of XHL internals
+
+## SEE ALSO
+
+xhl(5), xhl-guide(7)
