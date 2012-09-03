@@ -54,6 +54,12 @@ class Lexer {
                     .build();
     private static final String OPEN = "([{";
     private static final String CLOSE = "}])";
+    private static final ImmutableMap<Character, Character> escapes =
+            ImmutableMap.of('b', '\b',
+                            'f', '\f',
+                            'n', '\n',
+                            'r', '\r',
+                            't', '\t');
 
     // Name of the processed file (for nice error messages)
     private String filename;
@@ -273,6 +279,8 @@ class Lexer {
             ch = line.charAt(columnN);
             if (ch == '"')
                 break;
+            else if (ch == '\\')
+                ch = escapedChar();
             sb.append(ch);
             columnN++;
         }
@@ -281,8 +289,16 @@ class Lexer {
         return new Token(STRING, sb.toString(), getPosition());
     }
 
+    /** Read escape sequence and return escaped character */
+    private char escapedChar() {
+        columnN++;
+        char cc = line.charAt(columnN);
+        if (cc == '"' || cc == '\\') // self-escape
+            return cc;
+        return escapes.get(cc);
+    }
+
     private Position getPosition() {
         return new Position(filename, lineN, columnN);
     }
-
 }

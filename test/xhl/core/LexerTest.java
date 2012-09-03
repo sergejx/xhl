@@ -84,6 +84,15 @@ public class LexerTest {
     }
 
     @Test
+    public void escapes() throws Exception {
+        String code = "\"hello\\n\\t\\\"world\\\"\"";
+        Lexer l = makeLexer(code);
+        Token t = l.nextToken();
+        assertEquals(STRING, t.type);
+        assertEquals("hello\n\t\"world\"", t.stringValue);
+    }
+
+    @Test
     public void keywords() throws Exception {
         String code = "true false null";
         Lexer l = makeLexer(code);
