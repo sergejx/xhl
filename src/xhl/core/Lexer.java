@@ -79,6 +79,7 @@ class Lexer {
     private final List<Token> tokens = new ArrayList<>(120);
     private final ListIterator<Token> tokensIterator;
 
+    private final List<Error> errors = new ArrayList<>();
 
     /**
      * Initialize lexical analyzer and analyze text in input stream.
@@ -113,6 +114,11 @@ class Lexer {
             return tokens.get(tokensIterator.nextIndex());
         else
             return null;
+    }
+
+    /** Get list of lexical errors */
+    public List<Error> getErrors() {
+        return errors;
     }
 
     /**
@@ -167,7 +173,8 @@ class Lexer {
                 indent.pop();
                 tokens.add(new Token(DEDENT, getPosition()));
             }
-            // TODO indentation error if levels does not match
+            if (indentation != indent.peek())
+                errors.add(new Error(getPosition(), "Indentation error"));
         }
     }
 
@@ -273,7 +280,7 @@ class Lexer {
     /** Read string token. */
     private Token readString() {
         StringBuilder sb = new StringBuilder();
-        char ch;
+        char ch = 0;
         columnN++; // "
         while (columnN < line.length()) {
             ch = line.charAt(columnN);
@@ -284,8 +291,10 @@ class Lexer {
             sb.append(ch);
             columnN++;
         }
-        // TODO: Error on unclosed string
-        columnN++; // "
+        if (ch == '"')
+            columnN++; // "
+        else
+            errors.add(new Error(getPosition(), "Unclosed string"));
         return new Token(STRING, sb.toString(), getPosition());
     }
 

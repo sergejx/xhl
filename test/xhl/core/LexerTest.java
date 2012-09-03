@@ -186,4 +186,11 @@ public class LexerTest {
         assertEquals(LINEEND, l.nextToken().type);
         assertNull(l.nextToken());
     }
+
+    @Test
+    public void testErorrs() throws Exception {
+        String code = "\"hello";
+        Lexer l = makeLexer(code);
+        assertEquals(1, l.getErrors().size());
+    }
 }
