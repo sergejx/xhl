@@ -295,7 +295,12 @@ class Lexer {
         char cc = line.charAt(columnN);
         if (cc == '"' || cc == '\\') // self-escape
             return cc;
-        return escapes.get(cc);
+        else if (cc == 'u') {
+            String code = line.substring(columnN+1, columnN+5);
+            char[] chars = Character.toChars(Integer.parseInt(code, 16));
+            return chars[0]; // TODO: Can we be sure that second chad is not needed?
+        } else
+            return escapes.get(cc);
     }
 
     private Position getPosition() {
