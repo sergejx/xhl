@@ -38,7 +38,8 @@ import static xhl.core.Token.TokenType.*;
  */
 class Lexer {
     // Regular expressions and maps for tokens
-    private static final Pattern numberRx = Pattern.compile("-?\\d+(\\.\\d*)?");
+    private static final Pattern numberRx =
+            Pattern.compile("-?\\d+(\\.\\d*)?([eE]-?\\d+)?");
     private static final Pattern operatorRx = Pattern.compile("[-+*/_=<>?!:&|]+");
     private static final Pattern symbolRx = Pattern.compile("[a-zA-Z]\\w*");
     private static final ImmutableMap<Character, TokenType> simpleTokens =

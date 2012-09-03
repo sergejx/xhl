@@ -75,6 +75,18 @@ public class LexerTest {
     }
 
     @Test
+    public void scientificNumbers() throws Exception {
+        String code = "-4.2e15 3.14e-2";
+        Lexer l = makeLexer(code);
+        Token t = l.nextToken();
+        assertEquals(NUMBER, t.type);
+        assertEquals(-4.2e15, t.doubleValue, 0);
+        t = l.nextToken();
+        assertEquals(NUMBER, t.type);
+        assertEquals(3.14e-2, t.doubleValue, 0);
+    }
+
+    @Test
     public void strings() throws Exception {
         String code = "\"hello\"";
         Lexer l = makeLexer(code);
