@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>xhl-guide(7) - A guide for developing languages based on XHL</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+  <style type='text/css' media='all'>
+  /* style: toc */
+  .man-navigation {display:block !important;position:fixed;top:0;left:113ex;height:100%;width:100%;padding:48px 0 0 0;border-left:1px solid #dbdbdb;background:#eee}
+  .man-navigation a,.man-navigation a:hover,.man-navigation a:link,.man-navigation a:visited {display:block;margin:0;padding:5px 2px 5px 30px;color:#999;text-decoration:none}
+  .man-navigation a:hover {color:#111;text-decoration:underline}
+  </style>
+  <style type='text/css' media='all'>
+  /* style: 80c */
+  .mp {max-width:86ex}
+   
+  .man-navigation {left:101ex}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#MODULE-IMPLEMENTATION">MODULE IMPLEMENTATION</a>
+    <a href="#EVALUATION-FUNCTIONS">EVALUATION FUNCTIONS</a>
+    <a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <a href="#EVALUATION-ON-REQUEST">EVALUATION ON REQUEST</a>
+    <a href="#MODULE-SCHEMA">MODULE SCHEMA</a>
+    <a href="#CHECK-FUNCTIONS">CHECK FUNCTIONS</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>xhl-guide(7)</li>
+    <li class='tc'>XHL manual</li>
+    <li class='tr'>xhl-guide(7)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>xhl-guide</code> - <span class="man-whatis">A guide for developing languages based on XHL</span>
+</p>
+
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
+
+<p><em>MyModule.java</em>:</p>
+
+<pre><code>public class MyModule extends GenericModule {
+    @Override
+    public boolean isLanguage() {
+        return true;
+    }
+    @Element(name="?_")
+    public Answer answer(@Symbolic Combination question,
+                         Double precision) {
+        return ...;
+    }
+}
+</code></pre>
+
+<p><em>MyModule.schema</em>:</p>
+
+<pre><code>import define all
+newtype Answer
+element (?_):
+    doc "Gives the answer"
+    params [sym Combination, val Number]
+    type Answer
+</code></pre>
+
+<p>Executing:</p>
+
+<pre><code>MyModule langModule = new MyModule();
+LanguageProcessor.execute(langModule, filename);
+</code></pre>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p>Extensible Host Language is a framework for building domain-specific languages. All languages built using it share the same concrete syntax (for description of the syntax see <a class="man-ref" href="xhl.5.html">xhl<span class="s">(5)</span></a>) in a similar way as XML is used as a basis for different languages. Each language has defined language elements that can be used in programs. Elements are associated with symbols -- identifiers or infix operators.</p>
+
+<p>Language definition consists of one or more modules. Each module is defined by two main parts:</p>
+
+<ol>
+<li>Module implementation</li>
+<li>Module schema</li>
+</ol>
+
+
+<p>The module implementation is a Java class containing definition of evaluation functions --- methods that are responsible for evaluating instances of an element in program code. The module schema contains declarations of language elements and their properties that are used for static checking of programs.</p>
+
+<h2 id="MODULE-IMPLEMENTATION">MODULE IMPLEMENTATION</h2>
+
+<p>Module class extends <em>GenericModule</em> class. The main module of the language needs to override the <em>isLanguage()</em> method to return <em>true</em>. The class also must include evaluation functions of the language elements. Besides that it can contain properties corresponding to internal evaluation environment, helper methods.</p>
+
+<h2 id="EVALUATION-FUNCTIONS">EVALUATION FUNCTIONS</h2>
+
+<p>Evaluation functions are implemented as methods with annotation <code>@Element</code>. Evaluation function is automatically associated with a symbol with the same name. This can be overridden using the <code>name</code> parameter of the annotation. The use of the <code>name</code> parameter is required in cases of symbols that are not valid in Java, for example custom infix operators.</p>
+
+<p>The element can be used as a first symbol in combination, for example:</p>
+
+<pre><code>foo 1 "bar"
+</code></pre>
+
+<p>In this case elements of the combination are passed to the evaluation function of the first element as its arguments.</p>
+
+<p>Parameters of the evaluation function are declared as usual in Java methods. Values of basic XHL types are automatically converted to corresponding Java types. Note that XHL uses only one type of numbers that corresponds to Double in Java. For example definition of evaluation function accepting two arguments may look like this:</p>
+
+<pre><code>@Element
+public void foo(Double a, String b) {...}
+</code></pre>
+
+<p>If argument of the language element is not a literal but symbol or combination, it is evaluated and the type of parameter needs to correspond to the type of return value of the evaluation function of the inner element. For example consider that we have two evaluation functions as follows:</p>
+
+<pre><code>public void foo(Eggs e) { ... }
+public Eggs bar(Double a, Double b) { ... }
+</code></pre>
+
+<p>They can be used to evaluate the following expression:</p>
+
+<pre><code>foo (bar 1 2)
+</code></pre>
+
+<p>In a case that evaluation function needs to process the code of its argument instead of its value or needs to suppress evaluation of arguments, it can use <strong>symbolic passing of argument</strong>. Symbolic parameters are marked with the <code>@Symbolic</code> annotation. Type of the parameter needs to be one of the types of XHL literals of structures. The most generic of them is an <em>Expression</em>. For more information on base language elements see <a class="man-ref" href="xhl-internals.7.html">xhl-internals<span class="s">(7)</span></a>.</p>
+
+<p>There is a special type of parameter -- <strong>a block</strong>. It is always passed symbolically and can only by the last parameter of an evaluation function. A block contains code of several expressions specified in a program as a block of code after the language element.</p>
+
+<p>Module class inherits protected attribute <code>evaluator</code> that contains a reference to the currently used evaluation object. It allows to evaluate arbitrary code in the current evaluation context using the methods <code>Object eval(Expression obj)</code> and <code>Object evalAll(Block exprs)</code>.</p>
+
+<h2 id="ENVIRONMENT">ENVIRONMENT</h2>
+
+<p>Environment is a data structure that contains bindings of values to symbols.
+Evaluation functions can read and write these bindings using the <code>evaluator</code> attribute. It provides methods <code>boolean hasSymbol(Symbol symbol)</code>, <code>Object getSymbol(Symbol symbol)</code> and <code>void putSymbol(Symbol symbol, Object value)</code> for this task.</p>
+
+<p>In the example below is defined element <code>define</code> that allows to define new symbols with specified value.</p>
+
+<pre><code>@Element
+public void define(@Symbolic Symbol symbol, Object value)
+        throws EvaluationException {
+    if (evaluator.hasSymbol(symbol))
+        throw new EvaluationException(String.format(
+                "Symbol '%s' is already defined", symbol));
+    evaluator.putSymbol(symbol, value);
+}
+</code></pre>
+
+<p>Environment can have several layers corresponding to visibility scopes of symbols. If requested symbol is not found in the current layer, it is searched in lower layers. This means that local bindings shadow global ones.</p>
+
+<p>The <code>putSymbol</code> method defines a new binding or updates existing one in the current scope. If a symbol needs to be defined globally, method <code>Object putGlobalSymbol(Symbol sym, Object value)</code> can be used.</p>
+
+<p>The introduction of local scopes is also handled by an evaluation function. Two methods of the evaluator exist for this reason: <code>void pushEnvironment()</code> and <code>void popEnvironment()</code>. They need to be called before and after the evaluation of code that needs to have own local scope. You can see and example evaluation function for an element that just executes received block in a local scope:</p>
+
+<pre><code>@Element
+public void foo(@Symbolic Block blk) {
+    evaluator.pushEnvironment();
+    evaluator.eval(blk);
+    evaluator.popEnvironment();
+}
+</code></pre>
+
+<h2 id="EVALUATION-ON-REQUEST">EVALUATION ON REQUEST</h2>
+
+<p>Evaluation on request allows to delay evaluation of an expression or replace it with code generation. Instead of actual values, special objects are passed between evaluation functions. These objects must implement interface <em>Producer</em> defined as follows.</p>
+
+<pre><code>public interface Producer&lt;T> {
+    public T toValue();
+    public String toCode();
+}
+</code></pre>
+
+<p>Evaluation functions can define their parameters to have type <em>Producer</em>. However, if actual parameter does not implement <em>Producer</em> interface, it will be wrapper in the <em>ConstProducer</em> object. On the other hand, if an evaluation function that does not expect to receive <em>Producer</em> will receive it, <em>Producer</em> will be evaluated using its <code>toValue</code> method. In this way, usage of producers is completely transparent for evaluation functions, that does not use them.</p>
+
+<p>In the most of the built-in modules, elements provide producers as their output. This allows to use these modules not only for interpretation, but also for code generation.</p>
+
+<h2 id="MODULE-SCHEMA">MODULE SCHEMA</h2>
+
+<p>In addition to the implementation of evaluation functions, language module needs to declare properties of language elements for static checking. The schema contains simple declarative description of module properties, types and language elements.</p>
+
+<h2 id="CHECK-FUNCTIONS">CHECK FUNCTIONS</h2>
+
+<p>For cases where more complex static checking is needed, <em>check functions</em> can be defined. Check functions are implemented as methods of a module class marked with annotation <code>@Check</code>. Check function is called on each usage of specified element in a program. It receives all arguments of the element as symbolic parameters and in addition a <em>Validator</em> object that can be used to validate subexpressions.</p>
+
+<pre><code>@Check(name="define")
+public ValidationResult checkDefine(Validator validator,
+                                    Symbol symbol,
+                                    Expression value) {
+    Type type = validator.check(value);
+    return new ValidationResult(Type.Null, null,
+            ImmutableMap.of(symbol, type));
+}
+</code></pre>
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><a class="man-ref" href="xhl.5.html">xhl<span class="s">(5)</span></a>, <a class="man-ref" href="xhl-internals.7.html">xhl-internals<span class="s">(7)</span></a></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>November 2012</li>
+    <li class='tr'>xhl-guide(7)</li>
+  </ol>
+
+  </div>
+</body>
+</html>

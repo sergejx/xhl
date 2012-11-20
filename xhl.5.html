@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>XHL(5) - Extensible Host Language</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+  <style type='text/css' media='all'>
+  /* style: toc */
+  .man-navigation {display:block !important;position:fixed;top:0;left:113ex;height:100%;width:100%;padding:48px 0 0 0;border-left:1px solid #dbdbdb;background:#eee}
+  .man-navigation a,.man-navigation a:hover,.man-navigation a:link,.man-navigation a:visited {display:block;margin:0;padding:5px 2px 5px 30px;color:#999;text-decoration:none}
+  .man-navigation a:hover {color:#111;text-decoration:underline}
+  </style>
+  <style type='text/css' media='all'>
+  /* style: 80c */
+  .mp {max-width:86ex}
+   
+  .man-navigation {left:101ex}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#SYNTAX">SYNTAX</a>
+    <a href="#LEXICAL-SYNTAX">LEXICAL SYNTAX</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>XHL(5)</li>
+    <li class='tc'>XHL manual</li>
+    <li class='tr'>XHL(5)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>XHL</code> - <span class="man-whatis">Extensible Host Language</span>
+</p>
+
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
+
+<pre><code>block of expressions:     # block header itself is a combination
+    foo 1 2 (bar 3)       # combinations
+    a + b - (c &gt;! f &lt;= g) # operators
+numbers 42 3.14
+strings "hello world\n"
+booleans true false
+lists [1, 2, 3]
+maps {a: 1, b: 2}
+null
+</code></pre>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p>Extensible Host Language is a generic syntax for domain-specific languages. Its goal is to provide generic syntax and tools for building DSLs in a similar way as XML provides generic syntax for data formats. It uses JSON-based notation for data structures and adds Python/Haskel-inspired notation for control structures.</p>
+
+<p>XHL script is a sequence of expressions separated by a new line character. Expressions that are not nested inside other expressions can introduce a block. <em>Blocks</em> allow to define structure of code. Block itself is an indented sequence of expressions. An expression, that introduces a block, must be followed by a semicolon.</p>
+
+<p><em>Expression</em> can be an operation or data literal. <em>Operation</em> is either a <em>combination</em> written as a simple sequence of other expressions, or application of infix operator.</p>
+
+<p><em>Literals</em> are of several types: <em>symbols</em> (unquoted words similar to identifiers in other languages), <em>strings</em> (enclosed in quotation marks), <em>numbers</em>, <em>boolean</em> values (<code>true</code> and <code>false</code>), <em>lists</em> (enclosed in square brackets), <em>maps</em> (enclosed in curly braces) and <code>null</code>.</p>
+
+<h2 id="SYNTAX">SYNTAX</h2>
+
+<p>XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF it includes special symbols for repetition <code>{}</code> and optional elements <code>[]</code>.</p>
+
+<pre><code>block       ::= { expression LINEEND | expression-with-block }
+expression  ::= combination {operator combination} | operator
+expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
+combination ::= term { term }
+term        ::= literal | '(' expression ')'
+literal     ::= symbol | string | number | boolean | list | map
+              | 'null'
+boolean     ::= 'true' | 'false'
+list        ::= '[]' | '[' expression { ',' expression } ']'
+map         ::= '{}' | '{' key-value { ',' key-value } '}'
+key-value   ::= expression ':' expression
+symbol      ::= plain-symbol { '.' plain-symbol }
+</code></pre>
+
+<h2 id="LEXICAL-SYNTAX">LEXICAL SYNTAX</h2>
+
+<p>Lexical syntax of the tokens is as follows:</p>
+
+<pre><code>letter       ::= 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+number       ::= '0' | '1' | ... | '9'
+plain-symbol ::= ( letter | '_' ) { letter | number | '_' }
+operator     ::= special { special }
+special      ::= '-' | '+' | '*' | '/' | '_' | '=' | '&lt;' | '>'
+               | '?' | '!' | ':' | '&amp;' | '|'
+string       ::= '"' { character } '"'
+character    ::= any character except of " and \
+               | '\b' | '\f' | '\n' | '\r | '\t' | '\"' | '\\'
+number       ::= int [ '.' { number} ] [ ( 'e' | 'E') int ]
+int          ::= [ '-' ] number {number}
+</code></pre>
+
+<p>Comments are started with <code>#</code> and continue to the end of the line.</p>
+
+<p>Special tokens are used to denote layout of a program. The first of them is a <em>LINEEND</em> token that denotes the end of <strong>logical line</strong>. Logical lines differ from physical lines in these aspects:</p>
+
+<ul>
+<li>Empty lines and lines only with comments are skipped</li>
+<li>Line breaks inside of any type of brackets are ignored</li>
+</ul>
+
+
+<p><strong>Indentation</strong> is also part of the syntax. Special tokens are generated at the beginning of indented block and at its end: <em>INDENT</em> and <em>DEDENT</em>.</p>
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><a class="man-ref" href="xhl-guide.7.html">xhl-guide<span class="s">(7)</span></a>, <a class="man-ref" href="xhl-internals.7.html">xhl-internals<span class="s">(7)</span></a></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>November 2012</li>
+    <li class='tr'>XHL(5)</li>
+  </ol>
+
+  </div>
+</body>
+</html>
