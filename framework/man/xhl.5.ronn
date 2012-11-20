@@ -28,9 +28,9 @@ XHL script is a sequence of expressions separated by a new line character. Expre
 
 XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF it includes special symbols for repetition `{}` and optional elements `[]`.
 
-    block       ::= { expression NEWLINE | expression-with-block }
+    block       ::= { expression LINEEND | expression-with-block }
     expression  ::= combination {operator combination} | operator
-    expression-with-block ::= combination ':' NEWLINE INDENT block DEDENT
+    expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
     combination ::= term { term }
     term        ::= literal | '(' expression ')'
     literal     ::= symbol | string | number | boolean | list | map
@@ -44,22 +44,28 @@ XHL syntax is expressed in Extended Backus-Naur Form. Compared to standard BNF i
 
 ## LEXICAL SYNTAX
 
-Lexical syntax for some of the tokens written using regular expressions:
+Lexical syntax of the tokens is as follows:
 
-    plain-symbol ::= [a-zA-Z][a-zA-Z0-9_]*
-    operator     ::= [-+*/_=<>?!:&|]+
-    number       ::= -? [0-9]+ (\. [0-9]*)?
-
-Strings are enclosed in quotation marks and can contain any char except of the quotation mark.
+    letter       ::= 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+    number       ::= '0' | '1' | ... | '9'
+    plain-symbol ::= ( letter | '_' ) { letter | number | '_' }
+    operator     ::= special { special }
+    special      ::= '-' | '+' | '*' | '/' | '_' | '=' | '<' | '>'
+                   | '?' | '!' | ':' | '&' | '|'
+    string       ::= '"' { character } '"'
+    character    ::= any character except of " and \
+                   | '\b' | '\f' | '\n' | '\r | '\t' | '\"' | '\\'
+    number       ::= int [ '.' { number} ] [ ( 'e' | 'E') int ]
+    int          ::= [ '-' ] number {number}
 
 Comments are started with `#` and continue to the end of the line.
 
-Special tokens are used to denote layout of a program. The first of them is a *NEWLINE* token that denotes the end of **logical line**. Logical lines differ from physical lines in these aspects:
+Special tokens are used to denote layout of a program. The first of them is a *LINEEND* token that denotes the end of **logical line**. Logical lines differ from physical lines in these aspects:
 
 - Empty lines and lines only with comments are skipped
 - Line breaks inside of any type of brackets are ignored
 
-**Indentation** is also part of the syntax. Special tokens are generated at the beginning of indented block and at its end: *INDENT* and *DEDENT*
+**Indentation** is also part of the syntax. Special tokens are generated at the beginning of indented block and at its end: *INDENT* and *DEDENT*.
 
 
 ## SEE ALSO

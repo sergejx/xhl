@@ -3,24 +3,53 @@ xhl-internals - An overview of XHL internals
 
 ## SYNOPSIS
 
-Lexer -> Reader -> Evaluator
+### Program Processing:
 
-xhl.core.elements:
+* Lexer:
+    Lexical analyzer generating a sequence of tokens for given input.
+* Reader:
+    Syntactic analyzer reading skeleton syntax tree for given input.
+* Validator:
+    Validates syntax tree based on the module schema.
+* Evaluator:
+    Evaluates syntax tree based using evaluation functions defined in the module.
+* Environment:
+    A table containing mapping of objects to symbols in the evaluated program.
+* Module:
+    An interface for language modules.
+* GenericModule:
+    A base class for user defined modules
 
-    - Expression:
-      - SBoolean
-      - SNumber
-      - SString
-      - Symbol
-      - SMap
-      - ExpressionsList
-        - SList
-        - Combination
-        - Block
+### Language Elements (`sk.tuke.xhl.core.elements`):
 
-## DESCRIPTION
+* Expression:
+    Base class for all language elements
+* SBoolean:
+    `true` or `false`
+* SNumber:
+    Integers or floating point numbers (evaluated to `Double`)
+* SString:
+    Quoted strings
+* Symbol:
+    Name, identifier
+* SMap:
+    Mapping of keys to values
+* SList:
+    List of expressions
+* Combination:
+    List of expressions interpreted as a function call
+* Block:
+    Block of expressions
 
-This manual page would contain description of XHL internals
+### Language Schema (`sk.tuke.xhl.core.validator`):
+
+* Schema:
+    Schema for a module listing elements, types and imports
+* ElementSchema:
+    Schema for an element
+* Type:
+    A type in the language type system
+
 
 ## SEE ALSO
 

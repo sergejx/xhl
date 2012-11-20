@@ -11,7 +11,7 @@ xhl-guide(7) -- A guide for developing languages based on XHL
             return true;
         }
         @Element(name="?_")
-        public Answer answer(@Symbolic Combinaiton question,
+        public Answer answer(@Symbolic Combination question,
                              Double precision) {
             return ...;
         }
@@ -72,7 +72,7 @@ They can be used to evaluate the following expression:
 
     foo (bar 1 2)
 
-In a case that evaluation function need to process the code of its argument instead of its value or needs to suppress evaluation of arguments, it can use **symbolic passing of argument**. Symbolic parameters are marked with the `@Symbolic` annotation. Type of the parameter needs to be one of the types of XHL literals of structures. The most generic of them is an *Expression*. For more information on base language elements see xhl-internals(7).
+In a case that evaluation function needs to process the code of its argument instead of its value or needs to suppress evaluation of arguments, it can use **symbolic passing of argument**. Symbolic parameters are marked with the `@Symbolic` annotation. Type of the parameter needs to be one of the types of XHL literals of structures. The most generic of them is an *Expression*. For more information on base language elements see xhl-internals(7).
 
 There is a special type of parameter -- **a block**. It is always passed symbolically and can only by the last parameter of an evaluation function. A block contains code of several expressions specified in a program as a block of code after the language element.
 
@@ -118,7 +118,9 @@ Evaluation on request allows to delay evaluation of an expression or replace it 
         public String toCode();
     }
 
+Evaluation functions can define their parameters to have type *Producer*. However, if actual parameter does not implement *Producer* interface, it will be wrapper in the *ConstProducer* object. On the other hand, if an evaluation function that does not expect to receive *Producer* will receive it, *Producer* will be evaluated using its `toValue` method. In this way, usage of producers is completely transparent for evaluation functions, that does not use them.
 
+In the most of the built-in modules, elements provide producers as their output. This allows to use these modules not only for interpretation, but also for code generation.
 
 
 ## MODULE SCHEMA
@@ -127,6 +129,8 @@ In addition to the implementation of evaluation functions, language module needs
 
 
 ## CHECK FUNCTIONS
+
+For cases where more complex static checking is needed, *check functions* can be defined. Check functions are implemented as methods of a module class marked with annotation `@Check`. Check function is called on each usage of specified element in a program. It receives all arguments of the element as symbolic parameters and in addition a *Validator* object that can be used to validate subexpressions.
 
     @Check(name="define")
     public ValidationResult checkDefine(Validator validator,

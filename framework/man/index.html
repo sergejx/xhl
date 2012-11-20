@@ -2,28 +2,45 @@
 <html>
 <head>
   <meta charset="utf8">
-  <title>manuals</title>
+  <title>Extensible Host Language</title>
   <style>
     body {
         margin: 2em auto; width: 40em;
         font: 112.5%/1.5 Georgia,"DejaVu Serif",serif;
         color: #333; background-color: #fff;
     }
+
     h1, h2 { font-weight: normal; color: #000 }
-    h1 { font-size: 2.25em }
+    hgroup { text-align: center; margin-bottom: 2em; }
+    hgroup h1 { margin-bottom: 0; color: #C03632 }
+    hgroup h2 { font-size: 1.2em; margin-top: 0; }
+    h1 { font-size: 2.33em }
     h2 { font-size: 1.5em }
+
     dl { margin: 0 0 1em 2em }
     dd { margin: 0 0 0 2em }
-    
+    div.footer { font-size: 0.8em; text-align: center; }
   </style>
 </head>
 <body>
 
-  <h1>Extensible Host Language (XHL)</h1>
+  <hgroup>
+    <h1>Extensible Host Language</h1>
+    <h2>A Base for Your <abbr title="Domain-Specific Language">DSL</abbr></h2>
+  </hgroup>
+
+  <p>Extensible Host Language (XHL) is a generic syntax and a framework for building domain-specific languages. Its goal is to provide a foundation and an infrastructure for DSLs in a similar way as XML provides it for data formats and markup languages.</p>
+
+  <p><em>The syntax</em> provides basic elements like numbers, strings, lists and maps to represent data literals in programs. It also provides shapes for your language constructs &mdash; combinations and blocks and symbols for expressing names.</p>
+
+  <p><em>The framework</em> provides an extensible interpreter, that allow to define meaning of language elements. It also allows to express properties of language using langage schema.</p>
+
+  <h2>Source codes</h2>
+  <p>Source codes of XHL framework are available at <a href="https://github.com/sergejx/xhl">GitHub</a> under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License Version 2.0</a>. Note that the implementation is in early states of development and is not ready for production usage.</p>
 
   <h2>Manuals</h2>
   <dl>
-    <dt><a href="xhl.5.html">xhl(5)</span></a></dt>
+    <dt><a href="xhl.5.html">xhl(5)</a></dt>
     <dd>XHL syntax</dd>
     <dt><a href="xhl-guide.7.html">xhl-guide(7)</a></dt>
     <dd>A guide for developing languages based on XHL</dd>
@@ -31,5 +48,6 @@
     <dd>An overview of XHL internals</dd>
   </dl>
 
+  <div class="footer">Copyright &copy; 2010-2012 Sergej Chodarev</div>
 </body>
 </html>
