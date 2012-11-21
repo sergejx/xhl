@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: xhl.jar guava.jar apache-commons-collections.jar apache-commons-lang.jar velocity.jar junit.jar
+
