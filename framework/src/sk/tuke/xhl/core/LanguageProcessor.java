@@ -22,6 +22,7 @@ import sk.tuke.xhl.core.validator.Validator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class LanguageProcessor {
     private final Module module;
     private final Evaluator evaluator;
     private Validator validator;
+    private final List<Error> errors = new ArrayList<>();
 
     public LanguageProcessor(Module module) {
         if (!module.isLanguage())
@@ -55,8 +57,12 @@ public class LanguageProcessor {
     public void execute(java.io.Reader reader, String filename) throws
             IOException,
             EvaluationException {
-        Block program = Reader.read(reader, filename);
-        execute(program);
+        MaybeError<Block> result = Reader.read(reader, filename);
+        if (result.succeed()) {
+            Block program = result.get();
+            execute(program);
+        } else
+            errors.addAll(result.getErrors()); // TODO: What to do with the errors?
     }
 
     /**
@@ -70,7 +76,8 @@ public class LanguageProcessor {
         if (validator == null)
             validator = new Validator(module.getSchema());
         validator.check(program);
-        return validator.getErrors();
+        errors.addAll(validator.getErrors());
+        return errors;
     }
 
     /**

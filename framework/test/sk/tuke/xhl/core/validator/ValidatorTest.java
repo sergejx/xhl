@@ -48,7 +48,7 @@ public class ValidatorTest {
         LanguageProcessor proc = new LanguageProcessor(lang);
 //        List<Error> errors = proc.validate(Reader.read(code));
 //        assertTrue(errors.isEmpty());
-        proc.execute(Reader.read(code));
+        proc.execute(Reader.read(code).get());
         Schema schema = lang.getReadSchema();
         Symbol plus = new Symbol("+");
         assertTrue(schema.containsKey(plus));
@@ -67,7 +67,7 @@ public class ValidatorTest {
 
     @Test
     public void simpleLanguageValid() throws IOException {
-        Block code = Reader.read("1+(2+3)");
+        Block code = Reader.read("1+(2+3)").get();
         Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code)); // FIXME Number?
         assertTrue(v.getErrors().isEmpty());
@@ -75,7 +75,7 @@ public class ValidatorTest {
 
     @Test
     public void simpleLanguageInvalid() throws IOException {
-        Block code = Reader.read("1+(2+\"String\")");
+        Block code = Reader.read("1+(2+\"String\")").get();
         Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code));
         assertFalse(v.getErrors().isEmpty());
@@ -83,7 +83,7 @@ public class ValidatorTest {
 
     @Test
     public void definitionValid() throws IOException {
-        Block code = Reader.read("const pi 3.14\n1+(2+pi)");
+        Block code = Reader.read("const pi 3.14\n1+(2+pi)").get();
         Validator v = new Validator(schema);
         assertEquals(Type.Block, v.check(code)); // FIXME Number?
         assertTrue(v.getErrors().isEmpty());

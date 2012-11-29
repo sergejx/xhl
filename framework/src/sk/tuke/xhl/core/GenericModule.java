@@ -133,7 +133,7 @@ public abstract class GenericModule implements Module {
             Block program;
             try {
                 program = Reader.read(new InputStreamReader(in),
-                        schemaFileName());
+                        schemaFileName()).get();
                 schemaProcessor.executeWithoutValidation(program);
             } catch (IOException e) {
                 // TODO Auto-generated catch block

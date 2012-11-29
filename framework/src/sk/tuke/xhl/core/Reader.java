@@ -15,18 +15,19 @@
  */
 package sk.tuke.xhl.core;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-
+import com.google.common.collect.ImmutableSet;
 import sk.tuke.xhl.core.Token.TokenType;
 import sk.tuke.xhl.core.elements.*;
 
-import com.google.common.collect.ImmutableSet;
-
-import static sk.tuke.xhl.core.Token.TokenType.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static sk.tuke.xhl.core.MaybeError.fail;
+import static sk.tuke.xhl.core.MaybeError.succeed;
+import static sk.tuke.xhl.core.Token.TokenType.*;
 
 /**
  * XHL parser
@@ -58,13 +59,14 @@ public class Reader {
             BRACE_OPEN, PAR_OPEN);
 
     private String filename;
+    private final List<Error> errors = new ArrayList<>();
 
-    public static Block read(java.io.Reader input, String filename) throws
+    public static MaybeError<Block> read(java.io.Reader input, String filename) throws
             IOException {
         return new Reader(filename).parse(input);
     }
 
-    public static Block read(String code) throws IOException {
+    public static MaybeError<Block> read(String code) throws IOException {
         return read(new StringReader(code), "<input>");
     }
 
@@ -72,10 +74,13 @@ public class Reader {
         this.filename = filename;
     }
 
-    private Block parse(java.io.Reader input) throws IOException {
+    private MaybeError<Block> parse(java.io.Reader input) throws IOException {
         lexer = new Lexer(input, filename);
         token = lexer.nextToken();
-        return block();
+        if (errors.isEmpty())
+            return succeed(block());
+        else
+            return fail(errors);
     }
 
     private Block block() throws IOException {
