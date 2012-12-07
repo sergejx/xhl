@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,11 +31,11 @@ import java.util.regex.Pattern;
 import static sk.tuke.xhl.core.Token.TokenType.*;
 
 /**
- * Lexical analyzer for XHL
+ * Lexical analyzer for XHL -- makes a list of tokens from input stream.
  *
  * @author Sergej Chodarev
  */
-class Lexer {
+public class Lexer {
     // Regular expressions and maps for tokens
     private static final Pattern numberRx =
             Pattern.compile("-?\\d+(\\.\\d*)?([eE]-?\\d+)?");
@@ -63,7 +62,7 @@ class Lexer {
                             't', '\t');
 
     // Name of the processed file (for nice error messages)
-    private String filename;
+    private final String filename;
     // Input stream
     private final BufferedReader input;
     // Currently processed line
@@ -78,48 +77,38 @@ class Lexer {
 
     // List of tokens
     private final List<Token> tokens = new ArrayList<>(120);
-    private final ListIterator<Token> tokensIterator;
-
+    // List of errors
     private final List<Error> errors = new ArrayList<>();
 
+
     /**
-     * Initialize lexical analyzer and analyze text in input stream.
+     * Get list of tokens read from the input stream.
+     *
+     * @param input    Input stream to read from
+     * @param filename Name of the file (used in token position info)
+     * @return Read tokens
+     */
+    public static MaybeError<List<Token>> readTokens(
+            Reader input, String filename) throws IOException {
+        Lexer lexer = new Lexer(input, filename);
+        lexer.readTokens();
+        if (lexer.errors.isEmpty())
+            return MaybeError.succeed(lexer.tokens);
+        else
+            return MaybeError.fail(lexer.errors);
+    }
+
+    /**
+     * Initialize lexical analyzer.
      *
      * @param input    Input stream.
      * @param filename Name of the read file (will be include in the position
      *                 of tokens).
      */
-    public Lexer(Reader input, String filename) throws IOException {
+    private Lexer(Reader input, String filename) {
         this.filename = filename;
         this.input = new BufferedReader(input);
         indent.push(0);
-        readTokens();
-        tokensIterator = tokens.listIterator();
-    }
-
-    /**
-     * Get next token.
-     *
-     * @return Next token or <code>null</code> if end of file was reached.
-     */
-    public Token nextToken() {
-        if (tokensIterator.hasNext())
-            return tokensIterator.next();
-        else
-            return null;
-    }
-
-    /** Get next token without removing it from the list. */
-    public Token checkNextToken() {
-        if (tokensIterator.hasNext())
-            return tokens.get(tokensIterator.nextIndex());
-        else
-            return null;
-    }
-
-    /** Get list of lexical errors */
-    public List<Error> getErrors() {
-        return errors;
     }
 
     /**
@@ -157,6 +146,8 @@ class Lexer {
             indent.pop();
             tokens.add(new Token(DEDENT, getPosition()));
         }
+        // Add EOF
+        tokens.add(new Token(EOF, getPosition()));
     }
 
     /**
@@ -275,6 +266,7 @@ class Lexer {
             else
                 return new Token(SYMBOL, text, getPosition());
         }
+        errors.add(new Error(getPosition(), "Unexpected character '"+ ch +"'"));
         return null;
     }
 
@@ -308,7 +300,7 @@ class Lexer {
         else if (cc == 'u') {
             String code = line.substring(columnN+1, columnN+5);
             char[] chars = Character.toChars(Integer.parseInt(code, 16));
-            return chars[0]; // TODO: Can we be sure that second chad is not needed?
+            return chars[0]; // TODO: Can we be sure that second char is not needed?
         } else
             return escapes.get(cc);
     }

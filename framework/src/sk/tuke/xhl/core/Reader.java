@@ -16,6 +16,8 @@
 package sk.tuke.xhl.core;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
 import sk.tuke.xhl.core.Token.TokenType;
 import sk.tuke.xhl.core.elements.*;
 
@@ -51,14 +53,14 @@ import static sk.tuke.xhl.core.Token.TokenType.*;
  * @author Sergej Chodarev
  */
 public class Reader {
-    private Lexer lexer;
+    private PeekingIterator<Token> tokens;
     private Token token;
 
     private static final ImmutableSet<TokenType> termH = ImmutableSet.of(
             SYMBOL, STRING, NUMBER, TRUE, FALSE, NULL, BRACKET_OPEN,
             BRACE_OPEN, PAR_OPEN);
 
-    private String filename;
+    private final String filename;
     private final List<Error> errors = new ArrayList<>();
 
     public static MaybeError<Block> read(java.io.Reader input, String filename) throws
@@ -75,8 +77,9 @@ public class Reader {
     }
 
     private MaybeError<Block> parse(java.io.Reader input) throws IOException {
-        lexer = new Lexer(input, filename);
-        token = lexer.nextToken();
+        MaybeError<List<Token>> tokensOrErrors = Lexer.readTokens(input, filename);
+        tokens = Iterators.peekingIterator(tokensOrErrors.get().iterator());
+        token = tokens.next();
         if (errors.isEmpty())
             return succeed(block());
         else
@@ -85,7 +88,7 @@ public class Reader {
 
     private Block block() throws IOException {
         Block block = new Block(token.position);
-        while (token != null && token.type != DEDENT) {
+        while (token.type != EOF && token.type != DEDENT) {
             block.add(expression(true, true));
         }
         return block;
@@ -95,17 +98,17 @@ public class Reader {
             throws IOException {
         if (token.type == OPERATOR) { // Single operator can be used as a symbol
             Symbol op = new Symbol(token.stringValue, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             return op;
         }
         Expression first = combination();
         while (token.type == OPERATOR) {
             if (isColon()
-                    && (lexer.checkNextToken().type == LINEEND || !colonAccepted))
+                    && (tokens.peek().type == LINEEND || !colonAccepted))
                 break;
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             Expression second = combination();
             exp.add(op);
             exp.add(first);
@@ -113,13 +116,13 @@ public class Reader {
             first = exp;
         }
         if (token.type == LINEEND)
-            token = lexer.nextToken();
+            token = tokens.next();
         else if (withBlock && isColon()) {
-            token = lexer.nextToken(); // :
-            token = lexer.nextToken(); // \n
-            token = lexer.nextToken(); // INDENT FIXME: Add checks
+            token = tokens.next(); // :
+            token = tokens.next(); // \n
+            token = tokens.next(); // INDENT FIXME: Add checks
             Block block = block();
-            token = lexer.nextToken(); // DEDENT FIXME: Add checks
+            token = tokens.next(); // DEDENT FIXME: Add checks
             // If block header is not a combination -- create combination
             if (!(first instanceof Combination)) {
                 Combination head = new Combination(first.getPosition());
@@ -144,41 +147,41 @@ public class Reader {
 
     private SList list() throws IOException {
         SList list = new SList(token.position);
-        token = lexer.nextToken(); // [
+        token = tokens.next(); // [
         if (token.type == BRACKET_CLOSE) { // Empty list
-            token = lexer.nextToken(); // ]
+            token = tokens.next(); // ]
             return list;
         }
         // Non-empty list
         list.add(expression(false, true));
         while (token.type != TokenType.BRACKET_CLOSE) {
-            token = lexer.nextToken(); // ,
+            token = tokens.next(); // ,
             list.add(expression(false, true));
         }
-        token = lexer.nextToken(); // ]
+        token = tokens.next(); // ]
         return list;
     }
 
     private SMap map() throws IOException {
         SMap map = new SMap(token.position);
-        token = lexer.nextToken(); // {
+        token = tokens.next(); // {
         if (token.type == BRACE_CLOSE) { // Empty map
-            token = lexer.nextToken(); // }
+            token = tokens.next(); // }
             return map;
         }
         // Non-empty map
         keyValue(map);
         while (token.type != TokenType.BRACE_CLOSE) {
-            token = lexer.nextToken(); // ,
+            token = tokens.next(); // ,
             keyValue(map);
         }
-        token = lexer.nextToken(); // }
+        token = tokens.next(); // }
         return map;
     }
 
     private void keyValue(SMap map) throws IOException {
         Expression key = expression(false, false);
-        token = lexer.nextToken(); // :
+        token = tokens.next(); // :
         Expression value = expression(false, false);
         map.put(key, value);
     }
@@ -191,24 +194,24 @@ public class Reader {
             break;
         case STRING:
             sexp = new SString(token.stringValue, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             break;
         case NUMBER:
             sexp = new SNumber(token.doubleValue, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             break;
         case TRUE:
             sexp = new SBoolean(true, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             break;
         case FALSE:
             sexp = new SBoolean(false, token.position);
-            token = lexer.nextToken();
+            token = tokens.next();
             break;
         case PAR_OPEN:
-            token = lexer.nextToken(); // (
+            token = tokens.next(); // (
             sexp = expression(false, true);
-            token = lexer.nextToken(); // )
+            token = tokens.next(); // )
             break;
         case BRACKET_OPEN:
             sexp = list();
@@ -223,11 +226,11 @@ public class Reader {
     private Expression symbol() {
         Position position = token.position;
         List<String> name = newArrayList(token.stringValue);
-        token = lexer.nextToken();
+        token = tokens.next();
         while (token.type == DOT) {
-            lexer.nextToken(); // .
+            tokens.next(); // .
             name.add(token.stringValue);
-            lexer.nextToken();
+            tokens.next();
         }
         return new Symbol(name.toArray(new String[name.size()]), position);
     }

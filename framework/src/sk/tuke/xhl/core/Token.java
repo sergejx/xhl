@@ -26,11 +26,9 @@ public class Token {
         PAR_OPEN, PAR_CLOSE,
         BRACKET_OPEN, BRACKET_CLOSE,
         BRACE_OPEN, BRACE_CLOSE,
-        INDENT, DEDENT,
-        COMMA, DOT, LINEEND,
-        SYMBOL, OPERATOR,
-        STRING, NUMBER,
-        TRUE, FALSE, NULL,
+        COMMA, DOT, TRUE, FALSE, NULL,
+        SYMBOL, OPERATOR, STRING, NUMBER,
+        INDENT, DEDENT, LINEEND, EOF
     }
 
     public final TokenType type;
