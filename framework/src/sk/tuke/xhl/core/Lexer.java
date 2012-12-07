@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -88,12 +89,12 @@ public class Lexer {
      * @param filename Name of the file (used in token position info)
      * @return Read tokens
      */
-    public static MaybeError<List<Token>> readTokens(
+    public static MaybeError<Iterator<Token>> readTokens(
             Reader input, String filename) throws IOException {
         Lexer lexer = new Lexer(input, filename);
         lexer.readTokens();
         if (lexer.errors.isEmpty())
-            return MaybeError.succeed(lexer.tokens);
+            return MaybeError.succeed(lexer.tokens.iterator());
         else
             return MaybeError.fail(lexer.errors);
     }

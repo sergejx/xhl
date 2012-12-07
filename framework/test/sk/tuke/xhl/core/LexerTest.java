@@ -1,14 +1,12 @@
 package sk.tuke.xhl.core;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
-import java.util.List;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
 import static sk.tuke.xhl.core.Token.TokenType.*;
 
 /**
@@ -18,9 +16,9 @@ import static sk.tuke.xhl.core.Token.TokenType.*;
  */
 public class LexerTest {
     private static Iterator<Token> makeLexer(String code) throws IOException {
-        MaybeError<List<Token>> tokens = Lexer.readTokens(
+        MaybeError<Iterator<Token>> tokens = Lexer.readTokens(
                 new StringReader(code), "<test>");
-        return tokens.get().iterator();
+        return tokens.get();
     }
 
     @Test
@@ -206,7 +204,7 @@ public class LexerTest {
     @Test
     public void testErrors() throws Exception {
         String code = "\"hello";
-        MaybeError<List<Token>> tokens = Lexer.readTokens(
+        MaybeError<Iterator<Token>> tokens = Lexer.readTokens(
                 new StringReader(code), "<test>");
         assertEquals(1, tokens.getErrors().size());
     }

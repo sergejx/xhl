@@ -24,6 +24,7 @@ import sk.tuke.xhl.core.elements.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -63,8 +64,8 @@ public class Reader {
     private final String filename;
     private final List<Error> errors = new ArrayList<>();
 
-    public static MaybeError<Block> read(java.io.Reader input, String filename) throws
-            IOException {
+    public static MaybeError<Block> read(java.io.Reader input, String filename)
+            throws IOException {
         return new Reader(filename).parse(input);
     }
 
@@ -77,8 +78,9 @@ public class Reader {
     }
 
     private MaybeError<Block> parse(java.io.Reader input) throws IOException {
-        MaybeError<List<Token>> tokensOrErrors = Lexer.readTokens(input, filename);
-        tokens = Iterators.peekingIterator(tokensOrErrors.get().iterator());
+        MaybeError<Iterator<Token>> tokensOrErrors =
+                Lexer.readTokens(input, filename);
+        tokens = Iterators.peekingIterator(tokensOrErrors.get());
         token = tokens.next();
         if (errors.isEmpty())
             return succeed(block());
