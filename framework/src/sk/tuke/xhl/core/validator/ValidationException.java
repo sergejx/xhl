@@ -14,7 +14,7 @@ public class ValidationException extends RuntimeException {
     @Override
     public String getMessage() {
         String message = "Validation Errors: \n";
-        for (Error  error: errors) {
+        for (Error error: errors) {
             message += error.position + " " + error.message + "\n";
         }
         return message;
