@@ -138,4 +138,15 @@ public class ReaderTest {
         Symbol after = (Symbol) prg.get(1);
         assertEquals("spam", after.getName());
     }
+
+    @Test
+    public void syntaxError() throws IOException {
+        MaybeError<Block> result = Reader.read("foo (bar 42");
+        assertFalse(result.succeed());
+        result = Reader.read("foo [1, 2");
+        assertFalse(result.succeed());
+        result = Reader.read("foo (bar [1, 2");
+        assertFalse(result.succeed());
+        assertEquals(2, result.getErrors().size());
+    }
 }

@@ -26,8 +26,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.union;
 import static sk.tuke.xhl.core.MaybeError.fail;
 import static sk.tuke.xhl.core.MaybeError.succeed;
 import static sk.tuke.xhl.core.Token.TokenType.*;
@@ -57,9 +59,12 @@ public class Reader {
     private PeekingIterator<Token> tokens;
     private Token token;
 
-    private static final ImmutableSet<TokenType> termH = ImmutableSet.of(
-            SYMBOL, STRING, NUMBER, TRUE, FALSE, NULL, BRACKET_OPEN,
-            BRACE_OPEN, PAR_OPEN);
+    private static final Set<TokenType> literalH = ImmutableSet.of(SYMBOL,
+            BRACKET_OPEN, BRACE_OPEN, STRING, NUMBER, TRUE, FALSE, NULL);
+    private static final Set<TokenType> termH = union(literalH,
+            ImmutableSet.of(PAR_CLOSE));
+    private static final Set<TokenType> expressionH = termH;
+    private static final Set<TokenType> blockH = expressionH;
 
     private final String filename;
     private final List<Error> errors = new ArrayList<>();
@@ -82,36 +87,54 @@ public class Reader {
                 Lexer.readTokens(input, filename);
         tokens = Iterators.peekingIterator(tokensOrErrors.get());
         token = tokens.next();
-        if (errors.isEmpty())
-            return succeed(block());
+        Block expressions = block(ImmutableSet.of(EOF));
+        if (errors.isEmpty()) {
+            return succeed(expressions);
+        }
         else
             return fail(errors);
     }
 
-    private Block block() throws IOException {
+    private Block block(Set<TokenType> keys) throws IOException {
         Block block = new Block(token.position);
         while (token.type != EOF && token.type != DEDENT) {
-            block.add(expression(true, true));
+            block.add(expression(true, true, keys));
         }
         return block;
     }
 
-    private Expression expression(boolean withBlock, boolean colonAccepted)
+    /**
+     * Syntax analyzer for expression
+     *
+     * @param withBlock     Can the expression introduce a block?
+     * @param colonAccepted Can the expression contain the colon operator
+     *                      directly? For example inside maps it can not.
+     * @param keys          Key symbols for error recovery.
+     * @return              Read expression.
+     */
+    private Expression expression(boolean withBlock, boolean colonAccepted,
+                                  Set<TokenType> keys)
             throws IOException {
         if (token.type == OPERATOR) { // Single operator can be used as a symbol
             Symbol op = new Symbol(token.stringValue, token.position);
             token = tokens.next();
             return op;
         }
-        Expression first = combination();
+        Set<TokenType> k = withBlock
+                ? union(ImmutableSet.of(SYMBOL, LINEEND, INDENT, DEDENT), blockH)
+                : ImmutableSet.of(OPERATOR, LINEEND);
+        Expression first = combination(union(k, keys));
         while (token.type == OPERATOR) {
             if (isColon()
-                    && (tokens.peek().type == LINEEND || !colonAccepted))
+                    && (tokens.peek().type == LINEEND || !colonAccepted)) {
+                // Colon is not an operator here, but introduces a block or
+                // value in a map
                 break;
+            }
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
             token = tokens.next();
-            Expression second = combination();
+            Expression second = combination(union(k, keys));
             exp.add(op);
             exp.add(first);
             exp.add(second);
@@ -120,11 +143,27 @@ public class Reader {
         if (token.type == LINEEND)
             token = tokens.next();
         else if (withBlock && isColon()) {
-            token = tokens.next(); // :
-            token = tokens.next(); // \n
-            token = tokens.next(); // INDENT FIXME: Add checks
-            Block block = block();
-            token = tokens.next(); // DEDENT FIXME: Add checks
+            if (isColon())
+                token = tokens.next(); // :
+            else
+                error("Colon before a block missing.", union(union(ImmutableSet.of(LINEEND, INDENT, DEDENT),
+                        blockH), keys));
+            if (token.type == LINEEND)
+                token = tokens.next(); // \n
+            else
+                error("Colon before a block missing.", union(union(ImmutableSet.of(INDENT, DEDENT), blockH),
+                        keys));
+
+            if (token.type == INDENT)
+                token = tokens.next();
+            else
+                error("Colon before a block missing.", union(union(blockH, ImmutableSet.of(DEDENT)), keys)
+                );
+            Block block = block(union(ImmutableSet.of(DEDENT), keys));
+            if (token.type == DEDENT)
+                token = tokens.next(); // DEDENT
+            else
+                error("End of block expected.", keys);
             // If block header is not a combination -- create combination
             if (!(first instanceof Combination)) {
                 Combination head = new Combination(first.getPosition());
@@ -136,10 +175,10 @@ public class Reader {
         return first;
     }
 
-    private Expression combination() throws IOException {
+    private Expression combination(Set<TokenType> keys) throws IOException {
         Combination list = new Combination(token.position);
         while (termH.contains(token.type)) {
-            list.add(term());
+            list.add(term(keys));
         }
         if (list.size() == 1)
             return list.head();
@@ -147,7 +186,7 @@ public class Reader {
             return list;
     }
 
-    private SList list() throws IOException {
+    private SList list(Set<TokenType> keys) throws IOException {
         SList list = new SList(token.position);
         token = tokens.next(); // [
         if (token.type == BRACKET_CLOSE) { // Empty list
@@ -155,44 +194,54 @@ public class Reader {
             return list;
         }
         // Non-empty list
-        list.add(expression(false, true));
-        while (token.type != TokenType.BRACKET_CLOSE) {
+        list.add(expression(false, true, union(keys, ImmutableSet.of(BRACKET_CLOSE))));
+        while (token.type == TokenType.COMMA) {
             token = tokens.next(); // ,
-            list.add(expression(false, true));
+            list.add(expression(false, true, union(ImmutableSet.of(COMMA, BRACKET_CLOSE), keys)));
         }
-        token = tokens.next(); // ]
+        if (token.type == BRACKET_CLOSE)
+            token = tokens.next(); // ]
+        else
+            error("Closing bracket missing.", keys);
         return list;
     }
 
-    private SMap map() throws IOException {
+    private SMap map(Set<TokenType> keys) throws IOException {
         SMap map = new SMap(token.position);
         token = tokens.next(); // {
         if (token.type == BRACE_CLOSE) { // Empty map
             token = tokens.next(); // }
             return map;
         }
+        Set<? extends TokenType> k = ImmutableSet.of(COMMA, BRACE_CLOSE);
         // Non-empty map
-        keyValue(map);
-        while (token.type != TokenType.BRACE_CLOSE) {
+        keyValue(map, union(k, keys));
+        while (token.type == TokenType.COMMA) {
             token = tokens.next(); // ,
-            keyValue(map);
+            keyValue(map, union(k, keys));
         }
-        token = tokens.next(); // }
+        if (token.type == BRACE_CLOSE)
+            token = tokens.next(); // }
+        else
+            error("Closing brace missing.", keys);
         return map;
     }
 
-    private void keyValue(SMap map) throws IOException {
-        Expression key = expression(false, false);
-        token = tokens.next(); // :
-        Expression value = expression(false, false);
+    private void keyValue(SMap map, Set<TokenType> keys) throws IOException {
+        Expression key = expression(false, false, union(keys, ImmutableSet.of(SYMBOL)));
+        if (isColon())
+            token = tokens.next(); // :
+        else
+            error("Expected colon ':'.", union(keys, expressionH));
+        Expression value = expression(false, false, keys);
         map.put(key, value);
     }
 
-    private Expression term() throws IOException {
+    private Expression term(Set<TokenType> keys) throws IOException {
         Expression sexp = null;
         switch (token.type) {
         case SYMBOL:
-            sexp = symbol();
+            sexp = symbol(keys);
             break;
         case STRING:
             sexp = new SString(token.stringValue, token.position);
@@ -212,32 +261,52 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = tokens.next(); // (
-            sexp = expression(false, true);
-            token = tokens.next(); // )
+            sexp = expression(false, true, union(keys, ImmutableSet.of(PAR_CLOSE)));
+            if (token.type == PAR_CLOSE)
+                token = tokens.next(); // )
+            else
+                error("Closing parenthesis expected.", keys);
             break;
         case BRACKET_OPEN:
-            sexp = list();
+            sexp = list(keys);
             break;
         case BRACE_OPEN:
-            sexp = map();
+            sexp = map(keys);
             break;
         }
         return sexp;
     }
 
-    private Expression symbol() {
+    private Expression symbol(Set<TokenType> keys) {
         Position position = token.position;
         List<String> name = newArrayList(token.stringValue);
         token = tokens.next();
         while (token.type == DOT) {
-            tokens.next(); // .
-            name.add(token.stringValue);
-            tokens.next();
+            token = tokens.next(); // .
+            String component = token.stringValue;
+            if (token.type == SYMBOL)
+                token = tokens.next();
+            else
+                error("Symbol expected", keys);
+            name.add(component);
         }
         return new Symbol(name.toArray(new String[name.size()]), position);
     }
 
     private boolean isColon() {
         return token.type == OPERATOR && token.stringValue.equals(":");
+    }
+
+    /**
+     * Report error end skip tokens while one of the key tokens is not found.
+     * @param msg  Error message.
+     * @param keys A set of recovery tokens. At these tokens it is possible
+ *             to recover syntax analysis process.
+     */
+    private void error(String msg, Set<TokenType> keys) {
+        errors.add(new Error(token.position, msg));
+        while (!keys.contains(token.type)) {
+            token = tokens.next();
+        }
     }
 }
