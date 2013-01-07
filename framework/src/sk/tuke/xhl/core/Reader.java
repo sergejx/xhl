@@ -62,7 +62,7 @@ public class Reader {
     private static final Set<TokenType> literalH = ImmutableSet.of(SYMBOL,
             BRACKET_OPEN, BRACE_OPEN, STRING, NUMBER, TRUE, FALSE, NULL);
     private static final Set<TokenType> termH = union(literalH,
-            ImmutableSet.of(PAR_CLOSE));
+            ImmutableSet.of(PAR_OPEN));
     private static final Set<TokenType> expressionH = termH;
     private static final Set<TokenType> blockH = expressionH;
 
