@@ -21,8 +21,7 @@ import com.google.common.collect.PeekingIterator;
 import sk.tuke.xhl.core.Token.TokenType;
 import sk.tuke.xhl.core.elements.*;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +67,12 @@ public class Reader {
 
     private final String filename;
     private final List<Error> errors = new ArrayList<>();
+
+    public static MaybeError<Block> read(File file) throws IOException {
+        InputStreamReader input = new InputStreamReader(
+                new FileInputStream(file));
+        return new Reader(file.getName()).parse(input);
+    }
 
     public static MaybeError<Block> read(java.io.Reader input, String filename)
             throws IOException {
