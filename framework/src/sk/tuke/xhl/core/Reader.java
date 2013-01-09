@@ -1,5 +1,6 @@
-/* XHL - Extensible Host Language
- * Copyright 2012 Sergej Chodarev
+/*
+ * XHL - Extensible Host Language
+ * Copyright 2013 Sergej Chodarev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,6 +122,10 @@ public class Reader {
                                   Set<TokenType> keys)
             throws IOException {
         if (token.type == OPERATOR) { // Single operator can be used as a symbol
+            if (isColon() && !colonAccepted) {
+                error("Colon operator is not allowed here.", keys);
+                return null;
+            }
             Symbol op = new Symbol(token.stringValue, token.position);
             token = tokens.next();
             return op;
@@ -218,11 +223,16 @@ public class Reader {
             token = tokens.next(); // }
             return map;
         }
-        Set<? extends TokenType> k = ImmutableSet.of(COMMA, BRACE_CLOSE);
+        Set<? extends TokenType> kc = union(expressionH,
+                ImmutableSet.of(COMMA, OPERATOR));
+        Set<? extends TokenType> k = union(kc, ImmutableSet.of(BRACE_CLOSE));
         // Non-empty map
         keyValue(map, union(k, keys));
-        while (token.type == TokenType.COMMA) {
-            token = tokens.next(); // ,
+        while (kc.contains(token.type)) {
+            if (token.type == COMMA)
+                token = tokens.next(); // ,
+            else
+                error("Comma missing", union(k, keys));
             keyValue(map, union(k, keys));
         }
         if (token.type == BRACE_CLOSE)
@@ -233,7 +243,8 @@ public class Reader {
     }
 
     private void keyValue(SMap map, Set<TokenType> keys) throws IOException {
-        Expression key = expression(false, false, union(keys, ImmutableSet.of(SYMBOL)));
+        Expression key = expression(false, false, union(keys, union(expressionH,
+                ImmutableSet.of(OPERATOR))));
         if (isColon())
             token = tokens.next(); // :
         else
