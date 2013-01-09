@@ -103,43 +103,29 @@ public class Reader {
     private Block block(Set<TokenType> keys) throws IOException {
         Block block = new Block(token.position);
         while (token.type != EOF && token.type != DEDENT) {
-            block.add(expression(true, true, keys));
+            block.add(topLevelExpression(keys));
         }
         return block;
     }
 
     /**
-     * Syntax analyzer for expression
+     * Syntax analyzer for expression at a top level of the block.
      *
-     * @param withBlock     Can the expression introduce a block?
-     * @param colonAccepted Can the expression contain the colon operator
-     *                      directly? For example inside maps it can not.
-     * @param keys          Key symbols for error recovery.
-     * @return              Read expression.
+     * @param keys Key symbols for error recovery.
+     * @return Read expression.
      */
-    private Expression expression(boolean withBlock, boolean colonAccepted,
-                                  Set<TokenType> keys)
+    private Expression topLevelExpression(Set<TokenType> keys)
             throws IOException {
         if (token.type == OPERATOR) { // Single operator can be used as a symbol
-            if (isColon() && !colonAccepted) {
-                error("Colon operator is not allowed here.", keys);
-                return null;
-            }
             Symbol op = new Symbol(token.stringValue, token.position);
             token = tokens.next();
             return op;
         }
-        Set<TokenType> k = withBlock
-                ? set(blockH, SYMBOL, LINEEND, INDENT, DEDENT)
-                : set(OPERATOR, LINEEND);
+        Set<TokenType> k = set(blockH, SYMBOL, LINEEND, INDENT, DEDENT);
         Expression first = combination(union(k, keys));
         while (token.type == OPERATOR) {
-            if (isColon()
-                    && (tokens.peek().type == LINEEND || !colonAccepted)) {
-                // Colon is not an operator here, but introduces a block or
-                // value in a map
-                break;
-            }
+            if (isColon() && (tokens.peek().type == LINEEND))
+                break; // Colon is not an operator here, but introduces a block
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
             token = tokens.next();
@@ -149,9 +135,8 @@ public class Reader {
             exp.add(second);
             first = exp;
         }
-        if (token.type == LINEEND)
-            token = tokens.next();
-        else if (withBlock && isColon()) {
+        if (isColon() // Check if next line is indented (colon may be missing)
+                || (token.type == LINEEND && tokens.peek().type == INDENT)) {
             if (isColon())
                 token = tokens.next(); // :
             else
@@ -160,13 +145,12 @@ public class Reader {
             if (token.type == LINEEND)
                 token = tokens.next(); // \n
             else
-                error("Colon before a block missing.", set(keys, blockH,
+                error("Line end before block missing.", set(keys, blockH,
                         INDENT, DEDENT));
-
             if (token.type == INDENT)
                 token = tokens.next();
             else
-                error("Colon before a block missing.", set(keys, blockH, DEDENT));
+                error("Block must be indented.", set(keys, blockH, DEDENT));
             Block block = block(set(keys, DEDENT));
             if (token.type == DEDENT)
                 token = tokens.next(); // DEDENT
@@ -179,6 +163,50 @@ public class Reader {
                 first = head;
             }
             ((Combination) first).add(block);
+        } else if (token.type == LINEEND) {
+            token = tokens.next();
+        } else {
+            error("Unexpected symbol at the end of line.", keys);
+        }
+        return first;
+    }
+
+    /**
+     * Syntax analyzer for expression
+     *
+     * @param colonAccepted Can the expression contain the colon operator
+     *                      directly? For example inside maps it can not.
+     * @param keys          Key symbols for error recovery.
+     * @return Read expression.
+     */
+    private Expression expression(boolean colonAccepted,
+                                  Set<TokenType> keys)
+            throws IOException {
+        if (token.type == OPERATOR) { // Single operator can be used as a symbol
+            if (isColon() && !colonAccepted) {
+                error("Colon operator is not allowed here.", keys);
+                return null;
+            }
+            Symbol op = new Symbol(token.stringValue, token.position);
+            token = tokens.next();
+            return op;
+        }
+        Set<TokenType> k = set(OPERATOR);
+        Expression first = combination(union(k, keys));
+        while (token.type == OPERATOR) {
+            if (isColon() && !colonAccepted) {
+                // Colon is not an operator here, but introduces a block or
+                // value in a map
+                break;
+            }
+            Combination exp = new Combination(token.position);
+            Symbol op = new Symbol(token.stringValue, token.position);
+            token = tokens.next();
+            Expression second = combination(union(k, keys));
+            exp.add(op);
+            exp.add(first);
+            exp.add(second);
+            first = exp;
         }
         return first;
     }
@@ -202,10 +230,10 @@ public class Reader {
             return list;
         }
         // Non-empty list
-        list.add(expression(false, true, set(keys, BRACKET_CLOSE)));
+        list.add(expression(true, set(keys, BRACKET_CLOSE)));
         while (token.type == TokenType.COMMA) {
             token = tokens.next(); // ,
-            list.add(expression(false, true, set(keys, COMMA, BRACKET_CLOSE)));
+            list.add(expression(true, set(keys, COMMA, BRACKET_CLOSE)));
         }
         if (token.type == BRACKET_CLOSE)
             token = tokens.next(); // ]
@@ -240,13 +268,12 @@ public class Reader {
     }
 
     private void keyValue(SMap map, Set<TokenType> keys) throws IOException {
-        Expression key = expression(false, false, set(keys, expressionH,
-                OPERATOR));
+        Expression key = expression(false, set(keys, expressionH, OPERATOR));
         if (isColon())
             token = tokens.next(); // :
         else
             error("Expected colon ':'.", union(keys, expressionH));
-        Expression value = expression(false, false, keys);
+        Expression value = expression(false, keys);
         map.put(key, value);
     }
 
@@ -274,7 +301,7 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = tokens.next(); // (
-            sexp = expression(false, true, set(keys, PAR_CLOSE));
+            sexp = expression(true, set(keys, PAR_CLOSE));
             if (token.type == PAR_CLOSE)
                 token = tokens.next(); // )
             else
