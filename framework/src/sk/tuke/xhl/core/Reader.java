@@ -142,20 +142,12 @@ public class Reader {
             else
                 error("Colon before a block missing.", set(keys, blockH,
                         LINEEND, INDENT, DEDENT));
-            if (token.type == LINEEND)
-                token = tokens.next(); // \n
-            else
-                error("Line end before block missing.", set(keys, blockH,
-                        INDENT, DEDENT));
-            if (token.type == INDENT)
-                token = tokens.next();
-            else
-                error("Block must be indented.", set(keys, blockH, DEDENT));
+            checkAndRead(LINEEND, "Line end before block missing.",
+                    set(keys, blockH, INDENT, DEDENT));
+            checkAndRead(INDENT, "Block must be indented.",
+                    set(keys, blockH, DEDENT));
             Block block = block(set(keys, DEDENT));
-            if (token.type == DEDENT)
-                token = tokens.next(); // DEDENT
-            else
-                error("End of block expected.", keys);
+            checkAndRead(DEDENT, "End of block expected.", keys);
             // If block header is not a combination -- create combination
             if (!(first instanceof Combination)) {
                 Combination head = new Combination(first.getPosition());
@@ -163,10 +155,9 @@ public class Reader {
                 first = head;
             }
             ((Combination) first).add(block);
-        } else if (token.type == LINEEND) {
-            token = tokens.next();
         } else {
-            error("Unexpected symbol at the end of line.", keys);
+            checkAndRead(LINEEND, "Unexpected symbol at the end of line.",
+                    keys);
         }
         return first;
     }
@@ -235,10 +226,7 @@ public class Reader {
             token = tokens.next(); // ,
             list.add(expression(true, set(keys, COMMA, BRACKET_CLOSE)));
         }
-        if (token.type == BRACKET_CLOSE)
-            token = tokens.next(); // ]
-        else
-            error("Closing bracket missing.", keys);
+        checkAndRead(BRACKET_CLOSE, "Closing bracket missing.", keys);
         return list;
     }
 
@@ -254,16 +242,10 @@ public class Reader {
         // Non-empty map
         keyValue(map, union(k, keys));
         while (kc.contains(token.type)) {
-            if (token.type == COMMA)
-                token = tokens.next(); // ,
-            else
-                error("Comma missing", union(k, keys));
+            checkAndRead(COMMA, "Comma missing", union(k, keys));
             keyValue(map, union(k, keys));
         }
-        if (token.type == BRACE_CLOSE)
-            token = tokens.next(); // }
-        else
-            error("Closing brace missing.", keys);
+        checkAndRead(BRACE_CLOSE, "Closing brace missing.", keys);
         return map;
     }
 
@@ -302,10 +284,7 @@ public class Reader {
         case PAR_OPEN:
             token = tokens.next(); // (
             sexp = expression(true, set(keys, PAR_CLOSE));
-            if (token.type == PAR_CLOSE)
-                token = tokens.next(); // )
-            else
-                error("Closing parenthesis expected.", keys);
+            checkAndRead(PAR_CLOSE, "Closing parenthesis expected.", keys);
             break;
         case BRACKET_OPEN:
             sexp = list(keys);
@@ -324,10 +303,7 @@ public class Reader {
         while (token.type == DOT) {
             token = tokens.next(); // .
             String component = token.stringValue;
-            if (token.type == SYMBOL)
-                token = tokens.next();
-            else
-                error("Symbol expected", keys);
+            checkAndRead(SYMBOL, "Symbol expected", keys);
             name.add(component);
         }
         return new Symbol(name.toArray(new String[name.size()]), position);
@@ -335,6 +311,13 @@ public class Reader {
 
     private boolean isColon() {
         return token.type == OPERATOR && token.stringValue.equals(":");
+    }
+
+    private void checkAndRead(TokenType type, String msg, Set<TokenType> keys) {
+        if (token.type == type)
+            token = tokens.next(); // \n
+        else
+            error(msg, keys);
     }
 
     /**
@@ -359,7 +342,7 @@ public class Reader {
     }
 
     private static Set<TokenType> set(Set<TokenType> s1, Set<TokenType> s2,
-                                        TokenType... types) {
+                                      TokenType... types) {
         return union(set(types), union(s1, s2));
     }
 }
