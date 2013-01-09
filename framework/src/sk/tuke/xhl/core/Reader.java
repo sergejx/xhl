@@ -1,6 +1,6 @@
 /*
  * XHL - Extensible Host Language
- * Copyright 2013 Sergej Chodarev
+ * Copyright 2012-2013 Sergej Chodarev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,10 +59,9 @@ public class Reader {
     private PeekingIterator<Token> tokens;
     private Token token;
 
-    private static final Set<TokenType> literalH = ImmutableSet.of(SYMBOL,
-            BRACKET_OPEN, BRACE_OPEN, STRING, NUMBER, TRUE, FALSE, NULL);
-    private static final Set<TokenType> termH = union(literalH,
-            ImmutableSet.of(PAR_OPEN));
+    private static final Set<TokenType> literalH = set(SYMBOL, BRACKET_OPEN,
+            BRACE_OPEN, STRING, NUMBER, TRUE, FALSE, NULL);
+    private static final Set<TokenType> termH = set(literalH, PAR_OPEN);
     private static final Set<TokenType> expressionH = termH;
     private static final Set<TokenType> blockH = expressionH;
 
@@ -93,7 +92,7 @@ public class Reader {
                 Lexer.readTokens(input, filename);
         tokens = Iterators.peekingIterator(tokensOrErrors.get());
         token = tokens.next();
-        Block expressions = block(ImmutableSet.of(EOF));
+        Block expressions = block(set(EOF));
         if (errors.isEmpty()) {
             return succeed(expressions);
         }
@@ -131,8 +130,8 @@ public class Reader {
             return op;
         }
         Set<TokenType> k = withBlock
-                ? union(ImmutableSet.of(SYMBOL, LINEEND, INDENT, DEDENT), blockH)
-                : ImmutableSet.of(OPERATOR, LINEEND);
+                ? set(blockH, SYMBOL, LINEEND, INDENT, DEDENT)
+                : set(OPERATOR, LINEEND);
         Expression first = combination(union(k, keys));
         while (token.type == OPERATOR) {
             if (isColon()
@@ -156,20 +155,19 @@ public class Reader {
             if (isColon())
                 token = tokens.next(); // :
             else
-                error("Colon before a block missing.", union(union(ImmutableSet.of(LINEEND, INDENT, DEDENT),
-                        blockH), keys));
+                error("Colon before a block missing.", set(keys, blockH,
+                        LINEEND, INDENT, DEDENT));
             if (token.type == LINEEND)
                 token = tokens.next(); // \n
             else
-                error("Colon before a block missing.", union(union(ImmutableSet.of(INDENT, DEDENT), blockH),
-                        keys));
+                error("Colon before a block missing.", set(keys, blockH,
+                        INDENT, DEDENT));
 
             if (token.type == INDENT)
                 token = tokens.next();
             else
-                error("Colon before a block missing.", union(union(blockH, ImmutableSet.of(DEDENT)), keys)
-                );
-            Block block = block(union(ImmutableSet.of(DEDENT), keys));
+                error("Colon before a block missing.", set(keys, blockH, DEDENT));
+            Block block = block(set(keys, DEDENT));
             if (token.type == DEDENT)
                 token = tokens.next(); // DEDENT
             else
@@ -204,10 +202,10 @@ public class Reader {
             return list;
         }
         // Non-empty list
-        list.add(expression(false, true, union(keys, ImmutableSet.of(BRACKET_CLOSE))));
+        list.add(expression(false, true, set(keys, BRACKET_CLOSE)));
         while (token.type == TokenType.COMMA) {
             token = tokens.next(); // ,
-            list.add(expression(false, true, union(ImmutableSet.of(COMMA, BRACKET_CLOSE), keys)));
+            list.add(expression(false, true, set(keys, COMMA, BRACKET_CLOSE)));
         }
         if (token.type == BRACKET_CLOSE)
             token = tokens.next(); // ]
@@ -223,9 +221,8 @@ public class Reader {
             token = tokens.next(); // }
             return map;
         }
-        Set<? extends TokenType> kc = union(expressionH,
-                ImmutableSet.of(COMMA, OPERATOR));
-        Set<? extends TokenType> k = union(kc, ImmutableSet.of(BRACE_CLOSE));
+        Set<TokenType> kc = set(expressionH, COMMA, OPERATOR);
+        Set<TokenType> k = set(kc, BRACE_CLOSE);
         // Non-empty map
         keyValue(map, union(k, keys));
         while (kc.contains(token.type)) {
@@ -243,8 +240,8 @@ public class Reader {
     }
 
     private void keyValue(SMap map, Set<TokenType> keys) throws IOException {
-        Expression key = expression(false, false, union(keys, union(expressionH,
-                ImmutableSet.of(OPERATOR))));
+        Expression key = expression(false, false, set(keys, expressionH,
+                OPERATOR));
         if (isColon())
             token = tokens.next(); // :
         else
@@ -277,7 +274,7 @@ public class Reader {
             break;
         case PAR_OPEN:
             token = tokens.next(); // (
-            sexp = expression(false, true, union(keys, ImmutableSet.of(PAR_CLOSE)));
+            sexp = expression(false, true, set(keys, PAR_CLOSE));
             if (token.type == PAR_CLOSE)
                 token = tokens.next(); // )
             else
@@ -317,12 +314,25 @@ public class Reader {
      * Report error end skip tokens while one of the key tokens is not found.
      * @param msg  Error message.
      * @param keys A set of recovery tokens. At these tokens it is possible
- *             to recover syntax analysis process.
+     *             to recover syntax analysis process.
      */
     private void error(String msg, Set<TokenType> keys) {
         errors.add(new Error(token.position, msg));
         while (!keys.contains(token.type)) {
             token = tokens.next();
         }
+    }
+
+    private static Set<TokenType> set(TokenType... types) {
+        return ImmutableSet.copyOf(types);
+    }
+
+    private static Set<TokenType> set(Set<TokenType> s1, TokenType... types) {
+        return union(set(types), s1);
+    }
+
+    private static Set<TokenType> set(Set<TokenType> s1, Set<TokenType> s2,
+                                        TokenType... types) {
+        return union(set(types), union(s1, s2));
     }
 }
