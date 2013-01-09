@@ -1,4 +1,5 @@
-/* XHL - Extensible Host Language
+/*
+ * XHL - Extensible Host Language
  * Copyright 2012 Sergej Chodarev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,5 +54,15 @@ public class Token {
         doubleValue = n;
         stringValue = s;
         position = p;
+    }
+
+    @Override
+    public String toString() {
+        if (type == TokenType.NUMBER)
+            return "NUMBER<" + doubleValue + ">";
+        else if (stringValue != null)
+            return type + "<" + stringValue + ">";
+        else
+            return type.toString();
     }
 }
