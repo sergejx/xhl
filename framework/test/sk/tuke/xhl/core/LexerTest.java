@@ -120,9 +120,9 @@ public class LexerTest {
         String code = "a\nb\n";
         Iterator<Token> l = makeLexer(code);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
     }
 
     @Test
@@ -130,14 +130,14 @@ public class LexerTest {
         String code = "a\n(b\n[c\n]\n)\n";
         Iterator<Token> l = makeLexer(code);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(PAR_OPEN, l.next().type);
         assertEquals(SYMBOL, l.next().type);
         assertEquals(BRACKET_OPEN, l.next().type);
         assertEquals(SYMBOL, l.next().type);
         assertEquals(BRACKET_CLOSE, l.next().type);
         assertEquals(PAR_CLOSE, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
     }
 
     @Test
@@ -145,9 +145,9 @@ public class LexerTest {
         String code = "a\n\n   #comment\nb";
         Iterator<Token> l = makeLexer(code);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(EOF, l.next().type);
     }
 
@@ -157,16 +157,16 @@ public class LexerTest {
         Iterator<Token> l = makeLexer(code);
         assertEquals(SYMBOL, l.next().type);
         assertEquals(OPERATOR, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(INDENT, l.next().type);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(DEDENT, l.next().type);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(INDENT, l.next().type);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(DEDENT, l.next().type);
     }
 
@@ -177,7 +177,7 @@ public class LexerTest {
         assertEquals(SYMBOL, l.next().type);
         assertEquals(STRING, l.next().type);
         assertEquals(OPERATOR, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(INDENT, l.next().type);
         assertEquals(SYMBOL, l.next().type);
         assertEquals(BRACKET_OPEN, l.next().type);
@@ -188,7 +188,7 @@ public class LexerTest {
         assertEquals(PAR_OPEN, l.next().type);
         assertEquals(PAR_CLOSE, l.next().type);
         assertEquals(BRACKET_CLOSE, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(DEDENT, l.next().type);
     }
 
@@ -197,7 +197,7 @@ public class LexerTest {
         String code = "a";
         Iterator<Token> l = makeLexer(code);
         assertEquals(SYMBOL, l.next().type);
-        assertEquals(LINEEND, l.next().type);
+        assertEquals(LINE_END, l.next().type);
         assertEquals(EOF, l.next().type);
     }
 

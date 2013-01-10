@@ -138,13 +138,13 @@ public class Lexer {
             }
             // End of line
             if (braceLevel == 0)
-                tokens.add(new Token(LINEEND, getPosition()));
+                tokens.add(new Token(LINE_END, getPosition()));
             // Next line
             line = input.readLine();
         }
         if (braceLevel > 0)
             // Braces was not closed, but the logical line must end
-            tokens.add(new Token(LINEEND, getPosition()));
+            tokens.add(new Token(LINE_END, getPosition()));
         // DEDENT on the ond of file
         while (indent.peek() > 0) {
             indent.pop();

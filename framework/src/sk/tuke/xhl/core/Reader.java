@@ -40,9 +40,9 @@ import static sk.tuke.xhl.core.Token.TokenType.*;
  * Grammar:
  *
  * <pre>
- *   block       ::= { expression LINEEND | expression-with-block }
+ *   block       ::= { expression LINE_END | expression-with-block }
  *   expression  ::= combination { operator combination } | operator
- *   expression-with-block ::= combination ':' LINEEND INDENT block DEDENT
+ *   expression-with-block ::= combination ':' LINE_END INDENT block DEDENT
  *   combination ::= term { term }
  *   term        ::= literal | '(' expression ')'
  *   literal     ::= symbol | string | number | boolean | list | map | 'null'
@@ -126,10 +126,10 @@ public class Reader {
             token = tokens.next();
             return op;
         }
-        Set<TokenType> k = set(blockH, SYMBOL, LINEEND, INDENT, DEDENT);
+        Set<TokenType> k = set(blockH, SYMBOL, LINE_END, INDENT, DEDENT);
         Expression first = combination(union(k, keys));
         while (token.type == OPERATOR) {
-            if (isColon() && (tokens.peek().type == LINEEND))
+            if (isColon() && (tokens.peek().type == LINE_END))
                 break; // Colon is not an operator here, but introduces a block
             Combination exp = new Combination(token.position);
             Symbol op = new Symbol(token.stringValue, token.position);
@@ -141,13 +141,13 @@ public class Reader {
             first = exp;
         }
         if (isColon() // Check if next line is indented (colon may be missing)
-                || (token.type == LINEEND && tokens.peek().type == INDENT)) {
+                || (token.type == LINE_END && tokens.peek().type == INDENT)) {
             if (isColon())
                 token = tokens.next(); // :
             else
                 error("Colon before a block missing.", set(keys, blockH,
-                        LINEEND, INDENT, DEDENT));
-            checkAndRead(LINEEND, "Line end before block missing.",
+                        LINE_END, INDENT, DEDENT));
+            checkAndRead(LINE_END, "Line end before block missing.",
                     set(keys, blockH, INDENT, DEDENT));
             checkAndRead(INDENT, "Block must be indented.",
                     set(keys, blockH, DEDENT));
@@ -161,7 +161,7 @@ public class Reader {
             }
             ((Combination) first).add(block);
         } else {
-            checkAndRead(LINEEND, "Unexpected symbol.",
+            checkAndRead(LINE_END, "Unexpected symbol.",
                     keys);
         }
         return first;
