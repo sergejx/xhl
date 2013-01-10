@@ -17,8 +17,8 @@
 
 package sk.tuke.xhl.util;
 
-import sk.tuke.xhl.core.*;
 import sk.tuke.xhl.core.Error;
+import sk.tuke.xhl.core.*;
 import sk.tuke.xhl.core.elements.Block;
 
 import java.io.File;
@@ -38,14 +38,17 @@ public class Checker {
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("No input files specified\n" +
-                    "Usage: java Checker <file>");
+                    "Usage: java Checker <file-name> [<language>]");
             System.exit(1);
         }
 
         File input = new File(args[0]);
+        String language = null;
+        if (args.length >= 2)
+            language = args[1];
 
         try {
-            check(input);
+            check(input, language);
         } catch (FileNotFoundException e) {
             System.err.println("File '" + args[0] + "' not found");
             System.exit(1);
@@ -55,12 +58,23 @@ public class Checker {
         }
     }
 
-    private static void check(File input) throws IOException {
+    private static void check(File input, String language) throws
+            IOException {
         MaybeError<Block> result = Reader.read(input);
         if (!result.succeed()) {
             printErrors(result.getErrors());
+        } else {
+            ModulesProvider.ModulesLoader loader = new ModulesProvider
+                    .ModulesLoader();
+            Module module = loader.loadModule(language);
+            if (module == null) {
+                System.err.print("Unknown language '" + language + "'");
+                System.exit(1);
+            }
+            LanguageProcessor processor = new LanguageProcessor(module);
+            List<Error> errors = processor.validate(result.get());
+            printErrors(errors);
         }
-
     }
 
     private static void printErrors(List<Error> errors) {
