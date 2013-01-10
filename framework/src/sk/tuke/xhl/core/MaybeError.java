@@ -22,9 +22,9 @@ import java.util.List;
 
 /**
  * An object of type T or errors.
- *
  * This object wraps a value to allow indicating errors that may be returned
- * instead of a result.
+ * instead of a result. Result can be returned even in a case where errors was
+ * found, although it may be incomplete.
  */
 public class MaybeError<T> {
     private final List<Error> errors;
@@ -58,6 +58,18 @@ public class MaybeError<T> {
     }
 
     /**
+     * Wrap the errors of failed operation with incomplete result.
+     *
+     * @param errors Error messages
+     *               @param val P
+     * @param <T>    Type of the result
+     * @return Wrapped errors
+     */
+    public static <T> MaybeError<T> fail(List<Error> errors, T val) {
+        return new MaybeError<>(val, errors);
+    }
+
+    /**
      * Extract the result of successful operation.
      */
     public T get() {
@@ -78,5 +90,12 @@ public class MaybeError<T> {
      */
     public boolean succeed() {
         return errors.isEmpty();
+    }
+
+    /**
+     * Does this object contains the result of operation?
+     */
+    public boolean hasResult() {
+        return value != null;
     }
 }

@@ -96,7 +96,7 @@ public class Lexer {
         if (lexer.errors.isEmpty())
             return MaybeError.succeed(lexer.tokens.iterator());
         else
-            return MaybeError.fail(lexer.errors);
+            return MaybeError.fail(lexer.errors, lexer.tokens.iterator());
     }
 
     /**
@@ -271,7 +271,7 @@ public class Lexer {
                 return new Token(SYMBOL, text, getPosition());
         }
         errors.add(new Error(getPosition(), "Unexpected character '"+ ch +"'"));
-        return null;
+        return new Token(ERROR, getPosition());
     }
 
     /** Read string token. */

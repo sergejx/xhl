@@ -29,7 +29,8 @@ public class Token {
         BRACE_OPEN, BRACE_CLOSE,
         COMMA, DOT, TRUE, FALSE, NULL,
         SYMBOL, OPERATOR, STRING, NUMBER,
-        INDENT, DEDENT, LINEEND, EOF
+        INDENT, DEDENT, LINEEND, EOF,
+        ERROR
     }
 
     public final TokenType type;

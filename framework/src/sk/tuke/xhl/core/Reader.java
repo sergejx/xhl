@@ -88,14 +88,19 @@ public class Reader {
     }
 
     private MaybeError<Block> parse(java.io.Reader input) throws IOException {
+        // Get results from lexical analyzer
         MaybeError<Iterator<Token>> tokensOrErrors =
                 Lexer.readTokens(input, filename);
+        if(!tokensOrErrors.hasResult())
+            return fail(tokensOrErrors.getErrors());
+        if (!tokensOrErrors.succeed())
+            errors.addAll(tokensOrErrors.getErrors());
         tokens = Iterators.peekingIterator(tokensOrErrors.get());
+
         token = tokens.next();
         Block expressions = block(set(EOF));
-        if (errors.isEmpty()) {
+        if (errors.isEmpty())
             return succeed(expressions);
-        }
         else
             return fail(errors);
     }
@@ -156,7 +161,7 @@ public class Reader {
             }
             ((Combination) first).add(block);
         } else {
-            checkAndRead(LINEEND, "Unexpected symbol at the end of line.",
+            checkAndRead(LINEEND, "Unexpected symbol.",
                     keys);
         }
         return first;
