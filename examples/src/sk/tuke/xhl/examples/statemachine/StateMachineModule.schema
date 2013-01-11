@@ -3,6 +3,7 @@ newtype Event
 newtype Command
 
 element events:
+    doc "List of events and their codes (specified as name:code in a block)"
     params [val Block]
 
     element (:):
@@ -10,6 +11,7 @@ element events:
         defines_global 1 Event
 
 element commands:
+    doc "List of commands and their codes (specified as name:code in a block)"
     params [val Block]
 
     element (:):
@@ -17,14 +19,18 @@ element commands:
         defines_global 1 Command
 
 element resetEvents:
+    doc "A list of events resetting machine to the start state"
     params [val List]
 
 element state:
+    doc "Definiton of a state"
     params [sym Symbol, val Block]
     defines_backward 1 State
 
 element actions:
+    doc "List of actions performed in a state"
     params [val List]
 
 element (->):
+    doc "A transition initiated by an event (left side) to a state (right side)"
     params [val Event, val State]

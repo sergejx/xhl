@@ -2,12 +2,15 @@ newtype Processor
 newtype Disk
 
 element computer:
+    doc "Define a new computer configuration. List components in a block."
     params [block(val Block)]
 
 element processor:
+    doc "Define processor parameters. Parameters are stored in a map with following keys: type (symbol), cores (number), speed (number)"
     type Processor
     params [sym Map]
 
 element disk:
+    doc "Define disk parameters. Parameters are stored in a map with following keys: size (number), speed (number), interface (symbol)"
     type Disk
     params [sym Map]

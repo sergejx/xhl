@@ -5,28 +5,36 @@ newtype Entity
 newtype Property
 
 element module:
+    doc "Define a module containing definitions of entities"
     params [sym Symbol, block(val Block)]
 
 element entity:
+    doc "Define an entity"
     params [sym Symbol, block(val Block)]
     defines_backward 1 Entity
 
 element (:):
+    doc "Entity property definition (name : type)"
     params [sym Symbol, val Entity]
     defines 1 Property
 
 element int:
+    doc "Integer type"
     type Entity
 
 element string:
+    doc "String type"
     type Entity
 
 element boolean:
+    doc "Boolean type"
     type Entity
 
 element validate:
+    doc "Validation rule for the entity"
     params [block(val Block)]
 
 element length:
+    doc "Length of a string property value"
     params [val Property]
     type Number

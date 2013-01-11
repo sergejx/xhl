@@ -11,6 +11,7 @@ Rectangle <: Shape
 Ellipse <: Shape
 
 element rgb:
+    doc "A color defined as a triple of numbers (RGB)"
     params [val Number, val Number, val Number]
     type Color
 
@@ -18,12 +19,15 @@ element setcolor:
     params [val Color]
 
 element rectangle:
+    doc "A rectangle defined by width and height"
     params [val Number, val Number]
     type Rectangle
 
 element ellipse:
+    doc "An ellpise defined by two diameters"
     params [val Number, val Number]
     type Ellipse
 
 element draw:
+    "Draw an object (3rd parameter) at specified position (1st and 2nd parameters)"
     params [val Number, val Number, val Shape]

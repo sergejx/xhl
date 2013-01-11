@@ -1,3 +1,4 @@
 element define:
+    doc "Define a new constant with given name (1st parameter) and value (2nd parameter)"
     params [sym Symbol, val AnyType]
     defines 1 AnyType

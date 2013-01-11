@@ -1,15 +1,19 @@
 element (+):
+    doc "Add two numbers"
     params [val Number, val Number]
     type Number
 
 element (-):
+    doc "Subtract numbers"
     params [val Number, val Number]
     type Number
 
 element (*):
+    doc "Multiply two numbers"
     params [val Number, val Number]
     type Number
 
 element (/):
+    doc "Divide numbers"
     params [val Number, val Number]
     type Number

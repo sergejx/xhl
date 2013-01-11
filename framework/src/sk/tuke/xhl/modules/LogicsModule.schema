@@ -1,11 +1,14 @@
 element (&):
+    doc "Logical AND of two boolean values"
     params [val Boolean, val Boolean]
     type Boolean
 
 element (|):
+    doc "Logical OR of two boolean values"
     params [val Boolean, val Boolean]
     type Boolean
 
 element not:
+    doc "Negation of a boolean value"
     params [val Boolean, val Boolean]
     type Boolean

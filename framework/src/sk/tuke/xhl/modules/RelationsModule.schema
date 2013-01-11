@@ -1,19 +1,24 @@
 element (>):
+    doc "'Greater then' test"
     params [val Number, val Number]
     type Boolean
 
 element (<):
+    doc "'Less then' test"
     params [val Number, val Number]
     type Boolean
 
 element (=):
+    doc "Equality test"
     params [val Number, val Number]
     type Boolean
 
 element (>=):
+    doc "'Greater or equals' test"
     params [val Number, val Number]
     type Boolean
 
 element (<=):
+    doc "'Less or equals' test"
     params [val Number, val Number]
     type Boolean
