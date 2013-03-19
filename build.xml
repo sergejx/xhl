@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xhl" default="main">
+
+	<property file="build.properties" />
+
+	<!-- Base paths -->
+	<property name="framework.src.dir" value="framework/src" />
+	<property name="framework.test.dir" value="framework/test" />
+	<property name="examples.src.dir" value="examples/src" />
+
+	<property name="build.dir" value="bin" />
+	<property name="framework.build.dir" value="${build.dir}/framework" />
+	<property name="examples.build.dir" value="${build.dir}/examples" />
+	<property name="jar.dir" value="${build.dir}/dist" />
+
+	<!-- Libraries -->
+	<path id="framework.libs.path">
+		<pathelement location="${libraries.path}/guava.jar" />
+	</path>
+	<path id="examples.libs.path">
+		<path refid="framework.libs.path" />
+		<pathelement location="${libraries.path}/velocity.jar" />
+	</path>
+	<path id="junit.path">
+		<pathelement location="${libraries.path}/junit4.jar" />
+	</path>
+
+	<!-- Clean -->
+	<target name="clean">
+		<delete dir="${framewor.build.dir}" />
+		<delete dir="${example.build.dir}" />
+		<delete dir="${jar.dir}" />
+	</target>
+
+	<!-- Compile the Framework -->
+	<target name="compile" depends="compile-framework,compile-examples" />
+
+	<target name="compile-framework">
+		<mkdir dir="${framework.build.dir}" />
+		<javac srcdir="${framework.src.dir}" destdir="${framework.build.dir}"
+			includeantruntime="no">
+			<classpath>
+				<path refid="framework.libs.path" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar-framework" depends="compile-framework">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar"
+			 basedir="${framework.build.dir}" />
+	</target>
+
+	<!-- Compile examples -->
+	<target name="compile-examples" depends="compile-framework">
+		<mkdir dir="${examples.build.dir}" />
+		<javac srcdir="${examples.src.dir}" destdir="${examples.build.dir}"
+			includeantruntime="no">
+			<classpath>
+				<path location="${jar.dir}/${ant.project.name}.jar" />
+				<path refid="examples.libs.path" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar-examples" depends="compile-examples">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/examples.jar" basedir="${examples.build.dir}" />
+	</target>
+
+	<!-- JUnit Tests -->
+	<target name="test" depends="jar-framework">
+		<junit printsummary="yes">
+			<classpath>
+				<path refid="framework.libs.path" />
+				<path refid="junit.path" />
+				<path location="${jar.dir}/${ant.project.name}.jar" />
+			</classpath>
+
+			<batchtest fork="yes">
+				<fileset dir="${framework.test.dir}" />
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- Main targets -->
+	<target name="jar" depends="jar-framework,jar-examples" />
+	<target name="clean-build" depends="clean,jar,test" />
+	<target name="main" depends="clean-build" />
+
+</project>
