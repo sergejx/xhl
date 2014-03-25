@@ -3,6 +3,21 @@
 
 	<property file="build.properties" />
 
+    <patternset id="compiler.resources">
+      <include name="**/?*.properties"/>
+      <include name="**/?*.xml"/>
+      <include name="**/?*.gif"/>
+      <include name="**/?*.png"/>
+      <include name="**/?*.jpeg"/>
+      <include name="**/?*.jpg"/>
+      <include name="**/?*.html"/>
+      <include name="**/?*.dtd"/>
+      <include name="**/?*.tld"/>
+      <include name="**/?*.ftl"/>
+      <include name="**/*.schema"/>
+      <include name="**/META-INF/**/*"/>
+    </patternset>
+
 	<!-- Base paths -->
 	<property name="framework.src.dir" value="framework/src" />
 	<property name="framework.test.dir" value="framework/test" />
@@ -27,8 +42,8 @@
 
 	<!-- Clean -->
 	<target name="clean">
-		<delete dir="${framewor.build.dir}" />
-		<delete dir="${example.build.dir}" />
+		<delete dir="${framework.build.dir}" />
+		<delete dir="${examples.build.dir}" />
 		<delete dir="${jar.dir}" />
 	</target>
 
@@ -43,6 +58,12 @@
 				<path refid="framework.libs.path" />
 			</classpath>
 		</javac>
+        <copy todir="${framework.build.dir}">
+            <fileset dir="${framework.src.dir}">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
 	</target>
 
 	<target name="jar-framework" depends="compile-framework">
@@ -61,11 +82,18 @@
 				<path refid="examples.libs.path" />
 			</classpath>
 		</javac>
+        <copy todir="${examples.build.dir}">
+            <fileset dir="${examples.src.dir}">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
 	</target>
 
 	<target name="jar-examples" depends="compile-examples">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/examples.jar" basedir="${examples.build.dir}" />
+		<jar destfile="${jar.dir}/examples.jar"
+             basedir="${examples.build.dir}" />
 	</target>
 
 	<!-- JUnit Tests -->
